@@ -1,0 +1,28 @@
+\todo{Introduction to the project and different phases, which setup, what is interesting, poker}
+
+In this thesis I have made a practical study of the application of Multi Party Computation(MPC) protocol. To show what and how MPC's can be used a poker game has been developed as a show case.
+
+It is easy to think of how one could be cheated when playing an online poker game. It is hard for one player to know if the dealer and one of the other players has an agreement such that the dealer deals better cards to one player than the others. The idea of using a MPC protocol here is that as a player of online poker you would like to have a guarantee that the card are dealt fairly.
+
+To ensure that the card are dealt fairly I will use a MPC protocol to take care of the shuffling of the cards. In this study I will use a two party computation(2PC) protocol. Therefore only a two party heads up poker game will be possible. The study is a showcase of the possibilities of MPC protocols and what can be achieved by them. It should be possible to easy extend the work done in this thesis to work in cases with more that only two parties using a protocol designed for that purpose.
+
+\bigskip
+
+For the poker game to work I have studied various fields both inside of computer science and outside. I have read up on different types of poker games to figure out which one was best suited for a two party setting. I have studied the underlying MPC protocol to understand how it works and to ensure that it for fills the right properties needed for an application as a poker game. I have studied different permutation algorithms and implemented them to compare them and see what effects they have on the underlying protocol.
+
+\bigskip
+
+\todo{introduce the different chapters}
+
+\bigskip
+
+In the next section the variant of poker game that will be used in this thesis will be introduced and others will be mentioned to give an idea of their differences.
+
+\section{The Poker Game}
+A poker game is a card game played in various rounds where the player draw cards and place bets. The bets are won according to a predefined list where the card constellation with the lowest probability wins the round. There exists many different variants of poker. The variant chosen to use in this thesis is the five card draw variant and the game is played between two parties. In this variant five cards are dealt to each player. Then the a betting round occurs. After the betting round the players have the possibility to chose between zero to five cards to change to try to improve their hand. Then the last betting round is performed before the cards is revealed and a winner is found.
+
+Five card draw poker is played with a deck of 52 cards where at most 20 cards is used per round. This poses some requirements for our shuffling algorithms. Since there are 52 cards in the deck which yields $52!$ different permutations. We require an algorithm that can produce all these permutations to represent all the possible full permutations of the card deck. Because only the first 20 card of the deck is needed it is enough for the algorithm to produce a complete shuffle of these card and not the remaining 32 cards. This implies that the algorithm used to shuffle the cards needs to produce $$\frac{52!}{(52-20)!}$$ different permutations.
+
+Other variants of poker will have different optimizations. For one example if tree players was used instead of two, 30 cards of the complete deck would be needed. An other example could be the Texas Hold'em variant which is played by dealing two cards to each player and placing tree cards face upwards on the table. These cards are the used as a part of each of the players hand. After this a betting round which is continued by another card dealt facing upwards on the table. This is done twice before the final revelation phase where the winner is found. If the game involves two players then 4 card is dealt to the players and 5 to the table resulting in a total of 9 cards is dealt. This implies an algorithm producing $$\frac{52!}{(52-9)!}$$ different permutations of the card deck is needed.
+
+From here on and on wards when talking about a poker game the five card draw poker will be the reference otherwise it will be specifically mentioned. This is especially interesting when looking for optimizations on the shuffle algorithms and when they are compared. When coming to the protocol used by the protocol the way the cards are dealt will be the interesting part.

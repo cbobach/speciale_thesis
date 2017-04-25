@@ -1,0 +1,22 @@
+\begin{algorithm}
+\caption{\textbf{\textit{Fisher-Yates}} \newline
+    $deck$ is initialised to hold $n$ cards $c$. \newline
+    $seeds$ is initialised to hold $n$ random $r$ values where $r_i\in[i,n]$ for $i\in [1,n]$.
+}
+\label{fisher_yates_alg}
+
+\begin{algorithmic}[1]
+\Function{Swap}{card1, card2}
+\State $tmp = card1$
+\State $card1 = card2$
+\State $card2 = tmp$
+\EndFunction
+\State
+\Function{Shuffle}{deck, seeds}
+\For{i=1 to n}
+\State $r = seeds[i]$
+\State \Call{Swap}{$deck[i],~deck[r]$}
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}

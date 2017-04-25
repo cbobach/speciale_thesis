@@ -1,0 +1,131 @@
+\documentclass[twoside,11pt,openright]{report}
+%
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{appendix}
+\usepackage{a4}
+\usepackage{caption}
+\usepackage{cite}
+\usepackage{color}
+\usepackage{datetime}
+\usepackage{epsfig}
+\usepackage{epstopdf} 
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{latexsym}
+\usepackage{lmodern}
+\usepackage{pstricks}
+%
+\usepackage[english]{babel}
+\usepackage[labeled]{multibib}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%
+\graphicspath{ {figurs/} }
+% Usage: \todo{Document the TODO command.}
+% Comment out second line to disable.
+\newcommand{\todo}[1]{}
+\renewcommand{\todo}[1]{{\color{red} TODO: {#1}} \\}
+\renewcommand*\ttdefault{txtt}
+%
+\DeclareCaptionFormat{myformat}{#1#2#3\hrulefill}
+\captionsetup[figure]{format=myformat}
+%
+\newcites{A,B}{Primary Bibliography,Secondary Bibliography}
+%
+% see http://imf.au.dk/system/latex/bog/
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{empty} 
+\pagenumbering{roman} 
+\vspace*{\fill}\noindent{\rule{\linewidth}{1mm}\\[4ex]
+{\Huge\sf Secure Distributed Poker using MPC}\\[2ex]
+{\huge\sf Christian Bobach, 20104256}\\[2ex]
+\noindent\rule{\linewidth}{1mm}\\[4ex]
+\noindent{\Large\sf Master's Thesis, Computer Science\\[1ex] 
+\monthname\ \the\year  \\[1ex] Advisor: Claudio Orlandi\\[15ex]}\\[\fill]}
+\epsfig{file=logo.eps}\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{plain}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{abstract}
+
+\chapter*{Resum\'e}
+\addcontentsline{toc}{chapter}{Resum\'e}
+\input{resume}
+
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+\input{acknowledgment}
+
+\vspace{2ex}
+\begin{flushright}
+  \emph{Christian Bobach,}\\
+  \emph{Aarhus, \today.}
+\end{flushright}
+
+\tableofcontents
+\pagenumbering{arabic}
+\setcounter{secnumdepth}{2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Introduction}
+\label{ch:intro}
+\input{introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Shuffling Algorithms}
+\label{ch:shuffle}
+\input{shuffling}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{MPC-protocol and Security}
+\label{ch:mpc}
+\input{protocol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Implementation}
+\label{ch:implementation}
+\input{implementation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Conclusion}
+\label{ch:conclusion}
+\input{conclusion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{appendices}
+\chapter{Codebase}
+\input{appendix1}
+\label{appendix1}
+\end{appendices}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\addcontentsline{toc}{chapter}{Primary Bibliography}
+\bibliographystyleA{plain} 
+\bibliographyA{references}
+\addcontentsline{toc}{chapter}{Secondary Bibliography}
+\bibliographystyleB{plain} 
+\bibliographyB{references_sec} % remove this if you don't need secondary literature
+
+%\bibliographystyle{plain}
+%\bibliography{references}
+
+\end{document}

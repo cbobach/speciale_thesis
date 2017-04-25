@@ -1,0 +1,28 @@
+\begin{algorithm}
+\caption{\textbf{\textit{Conditional swap}} \newline
+    $deck$ is initialised to hold $n$ cards $c$. \newline
+    $seeds$ is initialised to hold $\frac{n^2}{2}$ random $bit$ values where $bit_i\in[0,1]$ for $i\in [1,\frac{n^2}{2}]$.
+}
+\label{con_swap_alg}
+
+\begin{algorithmic}[1]
+\Function{ConditionalSwap}{bit, card1, card2}
+\If{bit equal 1}
+\State $tmp = card1$
+\State $card1 = card2$
+\State $card2 = tmp$
+\EndIf
+\EndFunction
+\State
+\Function{Shuffle}{deck, seeds}
+\State $index = 0$
+\For{i=1 to n}
+\For{j=n-1 to i}
+\State $index = index + 1$
+\State $bit = seeds[index]$
+\State \Call{ConditionalSwap}{$bit,~deck[j],~deck[j + 1]$}
+\EndFor
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
