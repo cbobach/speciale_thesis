@@ -1,0 +1,15 @@
+\begin{figure}
+\label{circuit_gate_types}
+\centering
+\scalebox{.9}{
+\begin{tabular}{l || r | r | r}
+Circuit                      & $Fisher\text{-}Yates$ & $Conditiona~swap$ & Difference(\%) \\
+\hline
+Number of wires              & $835$                 & $4151$            & 397    \\
+Number of gates              & $59790$               & $57364$           & 4   \\
+Number of free $XOR$ gates   & $37433$               & $39001$           & 4   \\
+Number of non-free gates     & $22357$               & $18363$           & 21
+\end{tabular}
+}
+\caption{Compariason of the two implemented algorithms after compilation to $DUPLO$ circuits.}
+\end{figure}
