@@ -12,7 +12,29 @@ All these shuffle algorithms is optimized to fit to the poker game introduced in
 %%%%%%%%%%%%%%%%%%%%%%% FISHER YATES %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fisher-Yates}
-\input{fisher_yates}
+\begin{algorithm}
+\caption{\textbf{\textit{Fisher-Yates}} \newline
+    $deck$ is initialized to hold $n$ cards $c$. \newline
+    $seeds$ is initialized to hold $n$ random $r$ values where $r_i\in[i,n]$ for $i\in [1,n]$.
+}
+\label{fisher_yates_alg}
+
+\begin{algorithmic}[1]
+\Function{Swap}{card1, card2}
+\State $tmp = card1$
+\State $card1 = card2$
+\State $card2 = tmp$
+\EndFunction
+\State
+\Function{Shuffle}{deck, seeds}
+\For{i=1 to n}
+\State $r = seeds[i]$
+\State \Call{Swap}{$deck[i],~deck[r]$}
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 $Fisher\text{-}Yates$ is a well known in place permutation algorithm that given two arrays as input one of some values that should be shuffled and another such that the first array is shuffle accordingly to the values of the second array. These swap values of the second array indicate where each of the original values should go in the swapp. When the algorithm runs through the first array which is supposed to be permuted it swaps the value at an given index whit the value specified by the swap value of the second array. Think of the input to be shuffled as a card deck then you take the top card of the deck and swap it with another card at a position predefined by the swap value.
 
 This implies that the algorithm takes two inputs of the same size where the one is holding the values to be permuted, denoted $deck$ with $n$ $c_i$ values, for $i=0,\dots,n$. The other holding the values for which the different $c_i$ in the $deck$ is to be swapped, denoted the $seeds$ with $n$ $r_i$ values. If the swap values $r_i$ from the $seeds$ are not given in the correct interval the probability for the different permutations is not equally likely. Therefore it is important that the $r_i$ values are chosen accordingly to the algorithm. The algorithm states that $r_i$ is chosen from an interval starting with its own index $i$ to the size of the $deck$ which is $n$. This gives exactly the number of permutations required as the first card of $deck$ denoted $c_1$ has exactly $n$ possible places to go. $c_2$ has one less possible places to go an so forth until the algorithm reaches the last card $c_n$ which has no other place to go. Since $r_i\in[i,n]$ we have $n!$ because $i$ runs from $1$ to $n$ which should be the case as described in chapter \ref{ch:intro}.
@@ -23,7 +45,13 @@ If the values contained in $seeds$ is not chosen for the right interval but inst
 
 As described in the section on poker in chapter \ref{ch:intro} we only need a permutation of the first 20 cards. Which means that we only need the $\frac{52!}{32!}$ specific permutations out of the total of $52!$ different permutations. Doing a $m$ out of $n$ permutation using the $Fisher\text{-}Yates$ algorithm is straight forward. Instead of running through $n$ swaps indicated by the size of $seeds$ it is enough to run through $m$ swaps. Resulting in the input $seeds$ only need to have size $20$ and therefore a for-loop running fewer rounds. Those giving us a full permutation on the first $m$ indexes of $deck$.
 
-\input{fisher_yates_fig}
+\begin{figure}
+\label{fisher_yates_fig}
+\centering
+\scalebox{1.5}{\input{figurs/fisher-yates}}
+\caption{Fisher-Yates algorithm in action: In this figure a 9 out of 52 shuffle has been completed to ilustrade how the algorithm works. First 1 is swpaed with 1. Then 2 is swaped with 51. 3 with 14. 4 with 20 and so on until the first 9 numbers has completed a full permutation. Resulting in 1, 51, 14, 20, 10, 37, 9, 33, 6.}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%% SHUFFLE NETWOKS %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,7 +63,35 @@ Applying such a shuffle network in the setting of a poker game is simple. The in
 \bigskip
 
 \paragraph{Conditional Swap:}
-\input{con_swap}
+\begin{algorithm}
+\caption{\textbf{\textit{Conditional swap}} \newline
+    $deck$ is initialized to hold $n$ cards $c$. \newline
+    $seeds$ is initialized to hold $\frac{n^2}{2}$ random $bit$ values where $bit_i\in[0,1]$ for $i\in [1,\frac{n^2}{2}]$.
+}
+\label{con_swap_alg}
+
+\begin{algorithmic}[1]
+\Function{ConditionalSwap}{bit, card1, card2}
+\If{bit equal 1}
+\State $tmp = card1$
+\State $card1 = card2$
+\State $card2 = tmp$
+\EndIf
+\EndFunction
+\State
+\Function{Shuffle}{deck, seeds}
+\State $index = 0$
+\For{i=1 to n}
+\For{j=n-1 to i}
+\State $index = index + 1$
+\State $bit = seeds[index]$
+\State \Call{ConditionalSwap}{$bit,~deck[j],~deck[j + 1]$}
+\EndFor
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 
 The conditional swap algorithm takes ones again two inputs where the first input is an array, here a $deck$ of $n$ cards $c_i$ for $i=1,\dots,n$. The second input is differint from the other algorithm. This time an array $seeds$ of size $l=\frac{n^2}{2}$ bits $b_j$ where $j=1,\dots, l$. The algorithm creates $n-1$ layers of conditional swap gates where each layer is decreasing by one in size. Each layer is constructed such that each swap gate overlap with one input wire. Then each layer is made such that the first layer contains $n-1$ swap gates. The second layer $n-2$ and so on to the last layer containing only one gate. The layers are stacked in a way such that the first input wire is only represented in the first layer. This resembles what is done in the $Fisher\text{-}Yates$ algorithm, where output $c_1$ is determined by the first round in the for-loop. It can be seen in such a way that the first input $c_1$ has $n$ places to go. The second layer determines which output $c_2$ will have. Continuing this way until reaching the last layer and the two last outputs $c_{n-1}$ and $c_n$ is determined. Resulting in a shuffle algorithm with a perfect shuffle and $n!$ different permutations as wanted.
 
@@ -44,15 +100,35 @@ This algorithm requires much more randomness as input compared to the $Fisher\te
 \bigskip
 Once again it is possible to do some optimization to the algorithm since we do not need a complete permutation of the $n$ inputs, but it is enough to only have $m$ out of $n$. This can be done as in the case for the $Fisher\text{-}Yates$ where we let the outer loop run for $m$ iterations and then we are done. This yields $n$ possible values for $c_1$, $n-1$ possible values for $c_2$ and so one until $n-m$ values for $c_{n-m}$. This is exactly the amount of permutation we require for our algorithm as this gives us $\frac{n!}{(n-m)!}$.
 
-\input{con_swap_fig}
+\begin{figure}
+\label{con_swap_fig}
+\centering
+\scalebox{1.5}{\input{figurs/con_swap_fig}}
+\caption{Conditional swap algorithm in action: In this figure a 9 out of 52 shuffle has been completed to ilustrade how the algorithm works. Each bit in the $seeds$ indicate if a gate should be swapped. Since the size of $seeds$ is so big I have tried to ilustrate which wire each value is located at before moved in a layer resulting in 1, 51, 14, 20, 10, 37, 9, 33, 6.}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%% COMPARISONS %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Algorithm comparison}
+\section{Comparison}
 \todo{describe circuit}
 First of all it is important to understand that we cannot just plug the algorithm in to the MPC protocol. Since we use a MPC protocol that uses garbled circuits for the evaluation of the shuffle algorithm we need to provide a circuit that represent this algorithm. Therefor it is essential to understand how such circuits works and how to construct them. These circuits consist of different gates types. Special for the MPC protocol used here shuch type of circuit are all constructed of gates which has two input and one output wire. This results in 16 different gate types which can be used to construct a circuit. These 16 different gate types comes from the result of having two different values $0$ and $1$ for each of the wires. This gives $4$ different ways to combine the two values which results in $2^4$ different combinations. Of these 16 different gates are some of the well known $AND$, $OR$ and $XOR$. All the different gate types can be seen in figure.
 
-\input{truth_table}
+\begin{table}
+\label{truth_table}
+\centering
+\scalebox{.5}{
+\begin{tabular}{c c || c c c c c c c c c c c c c c c c}
+$l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y$ & XOR & NAND & AND & NXOR & $y$ & If $x$ Then $y$ & $x$ & If $y$ Then $x$ & OR & $1$    \\   
+\hline
+0 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1    \\
+0 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1    \\
+1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1    \\
+1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
+\end{tabular}
+}
+\caption{A table of the 16 different gate types that can be used in a circuit of the type used in duplo}
+\end{table}
 
 Since circuits is a static representation of a given algorithm it grow fast in size and become rather complex. Therefor to make the construction of the circuits for the shuffle algorithms easier I have used a compiler called $Frigate$\footnote{I used version 2 which is linked to in appendix \ref{appendix1}. This version is optimized to construct circuits for the duplo protocol.} to help with the circuit generation. The compiler takes a high-level program of a $C$ like structure and translates it to a circuit of the correct format for the MPC protocol chosen to use. This compiler gives the possibility to easy implement the shuffle algorithm and generate a complex circuit that represent the right algorithm.
 
@@ -69,3 +145,78 @@ At last a short comment on other shuffle algorithmic possibilities. There do exi
 \todo{Bitonic algorithm, optimization? can maybe be done by flipping such a sorting network and removing half cleansers}
 
 As a result of this we get that for some card games it can be an idea to check if one algorithm can outperform another. In out case we need only $20$ out of $52$ cards. We now know that a $Bitonic$ algorithm would produce a smaller output but since the two algorithm studied here are easy to optimize such that they produce a relative small circuit. This implies that there will ba a cross over at some point where it is better to shuffle a complete deck than only parts of it even if only a part is needed. This could be in a setting when playing with more the two players for a game of poker.
+
+%%%%%%%%%%%%%%%%% CIRCUIT IMPLEMENTATION %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
+\todo{Describe the implementation of the algorithms}
+\todo{Describe problems}
+\todo{Describe solutions}
+
+\todo{Describe gadgets of the two shuffle protocols}
+
+Because the $DUPLO$ protocol was chosen as the MPC protocol to use in the implementation the first hurdel was to make the circuits that should handle the shuffling of cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly there was a compiler for generating $DUPLO$-circuits that could be used. Therefor before staring to implemt the shuffle algorithms I read up on the documentation for the compiler\footnote{Which can be found at github: \url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}. The documentation is from the first version of the $Frigate$ compiler which was extended to suit the $DUPLO$ format. The documentation was not well specified and it was a long time since I last had worked with circuits in such a way. This resulted in some hard earned experience through trial and error on small exapmles.
+
+The most important and different things to take into account here is the possibility of wirre acces and only one level functions. First of all it is possible to specify which and how many wires should represent a value like $y=x\{index:size\}$. This is the way bit inputs is translated into higher level representations. When it comes to functions there are some restrictions. First of all only one level of functions is allowed. Second of all only assignments in the main method is allowed through function calls. Otherwise the programing language used resembles $C$.
+
+\bigskip
+
+In the implementation of the two shuffle algorithms there are five different functions used. For the $Conditional~swap$ algorithm the first function used is the $xorSeed$ which handles the $XOR$ of the $seeds$ recieved from the two parties. Which is straightforward. The next function used is the $initDeck$ function. This functions inicilises the sorted deck wich is to be shuffled. This is done by a for-loop inserting the right values on the right wires. Here $6$ bits is used for the representation of cards. It is importand to notice that the variable holding the start position of every card needs its own representation with at least $6$ bits to hold the correct value. If only $6$ bits were used only vires up to opsition $63$ could be assigned t value. Therefor $9$ bit is used for this variable. The $9$ bits comes from the fact that $\lceil \log_2(52\cdot 6)\rceil=9$ bits. The last function used in the $Conditional~swap$ algorithm is the $shuffleDeck$ function. This is the function handling the actual shuffling. This is implemented using two for-loops one for the layers of the network and another for the swap gates in each layer.
+
+\bigskip
+
+In the case for the $Fisher\text{-}Yates$ the things stack up a bit differently. The first function in this case is the $correctSeed$ function which takes the $seeds$ from the two parties and correct them as descussed earlier. First a card representation of $6$ bits is added from each of the parties. This can not be represented in $6$ bits therefor a bigger representation is used. The idea is that after the addition a modulo reduction will be use to ensure that the new seed value is inside the right intervall. But because the modulo reduction implemented in $Frigate$ only supports a divisor of power of $2$ modulo can not be used. Because the seed values calculated uses devisor different from these. I used some time to figure out that this was only supported since it is not statet anyware in the documentation. After experiencing this I tried to find some articles on how to implement a circuit for the modulo reduction. But during my search I found out that this is not a trivial task to do. Therefor another solution was chosen. Since the input $seeds$ to the functionality is assumed to be in the right intervalls the solution was to subtract the boundray of the interval if the sum exeeded this. This was done by introducing an $if$ statment. It is nothworthy to mention that all values have had an unsigned representation until now. Since the comparison of to values is needed a signed representation is introduced since the documentation stats that the comparison of two values only works on signed representations. This implemetations now ensures that the randomness used for the $shuffleDeck$ function has the right form. But only if the original inputs are inside the right intervalls.
+
+The second function is the same as in the case for the $Conditional~swap$ algorithm which is the $initDeck$ function. The last function called is the $shuffleDeck$ function which is different from the one from the $Conditional~swap$ algorithm. This function constist of an outer-loop that runs through the cards. Because circuits are static as disscused earlier it is not possible to assign a wire value based on a variable input. Therefor layers of conditional swaps are generated. This is represented by the inner-loop. In this way a gadget for each is constructed such that the index specified by the outer-loop can be swapped with any other value in the rest of the card deck.
+
+
+%%%%%%%%%%%%%%%%%%% CIRCUIT GENERATION %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Circuit generation}
+In this section I will introduce how the circuit compiler worked. Which problems I encountered and how some of them were fixed. 
+
+First of all the compiler needs to be installed which require some special versions of some libarys which are not the latest. This requires that some specific setup for the compiler is done. But folowing the instructions in the installation guide and some internet seach made the compiler run.
+
+Then when a program has been written in the $wir$ format specified by the documentation one compiles it to th $DUPLO$-format using the following command:
+
+\begin{center}
+\begin{verbatim}
+./built/release/Frigate path/to/file.wir -dp
+\end{verbatim}
+\end{center}
+
+This generates some different files where the one with the extention $.wir.GC\_duplo$ is the one that $DOPLO$ can use as input.
+
+\bigskip
+
+The $DOPLO$ framework has a function that allowes for evaluation of these inputfiles. This gives the posibility to specify the inputs from the two parties and get the result. This possibilty allowed me to study the implementations of the algorithms to see if thay did as I expected. First I tried to implement the $Fisher\text{-}Yates$ algorithm and as described earlier this revealed some problems. Since I did not have earlier experience working with the $Frigate$ compiler I was not sure if the problem was in my implementation or in the compiler. At first the focus was on my implementation but it was later discovered that it was the version of the $Frigate$ compiler used to generate $DUPLO$-circuits. First I expected it was in my implemetation. Why I starte to break the implementaion down into smaller modules that could be tested. So I created a framework that allowed me to test the different modules one by one. After this it was clear that something were off when using the modulo reduction. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing only the modulo operator $\%$ which is in the documentation for the compiler it could not be the case that I had made any error. Therefor I started to look into the compiler. Since the compiler I used was an extention of an existing one the idea was that a bug could have been introduced when adding the new fatures. Therefor the old version of $Frigate$ was installed to test if this implemetation had the same bug. The problem was that the old version did not support any circuit output format that $DUPLO$ could read. Since $DUPLO$ supports what is known as composed circuit format files and $bristol$ formatted circuit files. I wrote a parser that took the output from the old version of $Frigate$ and translated that to $bristol$ format. This gave me two versions of the same program that I could run against each other and compare their results. This showed that there was a difference in the results produced. When I looked deeper into the problem it came clear that not all gate types was implemeted an the modulo operator triggered one of these gates.
+
+This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the $DUPLO$ circuit format has two input and one putput wire. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. And now all $16$ gate types from the truth table figure are implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases since all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with two input wires with the same value. For the case of $\textbf{1}$ it was handled as the $NXOR$ of two wires with the same input value.
+
+In this way I have contributed to the $DUPLO$ project and helped secure a stronger research product.
+
+On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. As mentioned earlier the small amount of reserch I did into that area when I noticed the problem seems to indicate that this is not trivilay fixed. Therefor this is leaft unfixed.
+
+\subsection{Circuit comparison}
+\begin{table}
+\label{circuit_gate_types}
+\centering
+\scalebox{.9}{
+\begin{tabular}{l || r | r | r}
+Circuit                      & $Fisher\text{-}Yates$ & $Conditiona~swap$ & Difference(\%) \\
+\hline
+Number of wires              & $835$                 & $4151$            & 397    \\
+Number of gates              & $59790$               & $57364$           & 4   \\
+Number of free $XOR$ gates   & $37433$               & $39001$           & 4   \\
+Number of non-free gates     & $22357$               & $18363$           & 21
+\end{tabular}
+}
+\caption{Compariason of the two implemented algorithms after compilation to $DUPLO$ circuits.}
+\end{table}
+
+
+In this section I will do a compariaon of the two compiled circuits. I chapter \ref{ch:shuffle} on the shuffle algorithms I compared the idea of the algorithms. Now after compiling them it is easier to argu how the two implemetations stack up against each other. In the table above where the circuits are compared on four different parameters. The first parmeter are the number of unique wires in the circuits. It is clearly that the $Fisher\text{-}Yates$ algorithm has less unique wires than the $Conditional~swap$ algorithm.
+
+\todo{Does the number of unique wires effect the performance of the protocol?}
+
+The second parameter mesured in the table is the total number of gates in the circuit. Here the numbers are farly similar. Doing a calculation shows that $Fisher\text{-}Yates$ has around $4\%$ more gates than $Conditional~swap$ which is not that big a differend. But when looking into the difference on the two last parameters. First we rememer that we are in a setting where $XOR$ gates are assumed for free. The parameters are the number of free $XOR$ and non-free. When the amount of these gates are mesured we see a bigger difference. When doing the calculations we see that $Fisher\text{-}Yates$ has $4\%$ less free gates than $Conditional~swap$ which is not much. We see the big difference when looking at the non-free gates. Here $Fisher\text{-}Yates$ has $21\%$ more non-free gates that what is the case for $Conditional~swap$. This is a big difference and in this case the effect of the difference is negativ on the performance of the protocol. Therefor even though the amount of randomness used in the algorithm is much smaller the overhed of ensuring that the seed is in the right intervall and the swap gadgets constructed for each card index result in a wors circuit for the $DUPLO$ protocol. Therefor the $Conditional~swap$ algorithm is used in the implemetation.

@@ -2,98 +2,236 @@ The main idea of this chapter is to introduce the different stages during the im
 
 \todo{Introduce different sections}
 
-%%%%%%%%%%%%%%%%% CIRCUIT IMPLEMENTATION %%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Shuffle algorithm implementation}
-\todo{Describe the implementation of the algorithms}
-\todo{Describe problems}
-\todo{Describe solutions}
-
-\todo{Describe gadgets of the two shuffle protocols}
-
-Because the $DUPLO$ protocol was chosen as the MPC protocol to use in the implementation the first hurdel was to make the circuits that should handle the shuffling of cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly there was a compiler for generating $DUPLO$-circuits that could be used. Therefor before staring to implemt the shuffle algorithms I read up on the documentation for the compiler\footnote{Which can be found at github: \url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}. The documentation is from the first version of the $Frigate$ compiler which was extended to suit the $DUPLO$ format. The documentation was not well specified and it was a long time since I last had worked with circuits in such a way. This resulted in some hard earned experience through trial and error on small exapmles.
-
-The most important and different things to take into account here is the possibility of wirre acces and only one level functions. First of all it is possible to specify which and how many wires should represent a value like $y=x\{index:size\}$. This is the way bit inputs is translated into higher level representations. When it comes to functions there are some restrictions. First of all only one level of functions is allowed. Second of all only assignments in the main method is allowed through function calls. Otherwise the programing language used resembles $C$.
-
-\bigskip
-
-In the implementation of the two shuffle algorithms there are five different functions used. For the $Conditional~swap$ algorithm the first function used is the $xorSeed$ which handles the $XOR$ of the $seeds$ recieved from the two parties. Which is straightforward. The next function used is the $initDeck$ function. This functions inicilises the sorted deck wich is to be shuffled. This is done by a for-loop inserting the right values on the right wires. Here $6$ bits is used for the representation of cards. It is importand to notice that the variable holding the start position of every card needs its own representation with at least $6$ bits to hold the correct value. If only $6$ bits were used only vires up to opsition $63$ could be assigned t value. Therefor $9$ bit is used for this variable. The $9$ bits comes from the fact that $\lceil \log_2(52\cdot 6)\rceil=9$ bits. The last function used in the $Conditional~swap$ algorithm is the $shuffleDeck$ function. This is the function handling the actual shuffling. This is implemented using two for-loops one for the layers of the network and another for the swap gates in each layer.
-
-\bigskip
-
-In the case for the $Fisher\text{-}Yates$ the things stack up a bit differently. The first function in this case is the $correctSeed$ function which takes the $seeds$ from the two parties and correct them as descussed earlier. First a card representation of $6$ bits is added from each of the parties. This can not be represented in $6$ bits therefor a bigger representation is used. The idea is that after the addition a modulo reduction will be use to ensure that the new seed value is inside the right intervall. But because the modulo reduction implemented in $Frigate$ only supports a divisor of power of $2$ modulo can not be used. Because the seed values calculated uses devisor different from these. I used some time to figure out that this was only supported since it is not statet anyware in the documentation. After experiencing this I tried to find some articles on how to implement a circuit for the modulo reduction. But during my search I found out that this is not a trivial task to do. Therefor another solution was chosen. Since the input $seeds$ to the functionality is assumed to be in the right intervalls the solution was to subtract the boundray of the interval if the sum exeeded this. This was done by introducing an $if$ statment. It is nothworthy to mention that all values have had an unsigned representation until now. Since the comparison of to values is needed a signed representation is introduced since the documentation stats that the comparison of two values only works on signed representations. This implemetations now ensures that the randomness used for the $shuffleDeck$ function has the right form. But only if the original inputs are inside the right intervalls.
-
-The second function is the same as in the case for the $Conditional~swap$ algorithm which is the $initDeck$ function. The last function called is the $shuffleDeck$ function which is different from the one from the $Conditional~swap$ algorithm. This function constist of an outer-loop that runs through the cards. Because circuits are static as disscused earlier it is not possible to assign a wire value based on a variable input. Therefor layers of conditional swaps are generated. This is represented by the inner-loop. In this way a gadget for each is constructed such that the index specified by the outer-loop can be swapped with any other value in the rest of the card deck.
-
-
-%%%%%%%%%%%%%%%%%%% CIRCUIT GENERATION %%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Circuit generation}
-In this section I will introduce how the circuit compiler worked. Which problems I encountered and how some of them were fixed. 
-
-First of all the compiler needs to be installed which require some special versions of some libarys which are not the latest. This requires that some specific setup for the compiler is done. But folowing the instructions in the installation guide and some internet seach made the compiler run.
-
-Then when a program has been written in the $wir$ format specified by the documentation one compiles it to th $DUPLO$-format using the following command:
-
-\begin{center}
-\begin{verbatim}
-./built/release/Frigate path/to/file.wir -dp
-\end{verbatim}
-\end{center}
-
-This generates some different files where the one with the extention $.wir.GC\_duplo$ is the one that $DOPLO$ can use as input.
-
-\bigskip
-
-The $DOPLO$ framework has a function that allowes for evaluation of these inputfiles. This gives the posibility to specify the inputs from the two parties and get the result. This possibilty allowed me to study the implementations of the algorithms to see if thay did as I expected. First I tried to implement the $Fisher\text{-}Yates$ algorithm and as described earlier this revealed some problems. Since I did not have earlier experience working with the $Frigate$ compiler I was not sure if the problem was in my implementation or in the compiler. At first the focus was on my implementation but it was later discovered that it was the version of the $Frigate$ compiler used to generate $DUPLO$-circuits. First I expected it was in my implemetation. Why I starte to break the implementaion down into smaller modules that could be tested. So I created a framework that allowed me to test the different modules one by one. After this it was clear that something were off when using the modulo reduction. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing only the modulo operator $\%$ which is in the documentation for the compiler it could not be the case that I had made any error. Therefor I started to look into the compiler. Since the compiler I used was an extention of an existing one the idea was that a bug could have been introduced when adding the new fatures. Therefor the old version of $Frigate$ was installed to test if this implemetation had the same bug. The problem was that the old version did not support any circuit output format that $DUPLO$ could read. Since $DUPLO$ supports what is known as composed circuit format files and $bristol$ formatted circuit files. I wrote a parser that took the output from the old version of $Frigate$ and translated that to $bristol$ format. This gave me two versions of the same program that I could run against each other and compare their results. This showed that there was a difference in the results produced. When I looked deeper into the problem it came clear that not all gate types was implemeted an the modulo operator triggered one of these gates.
-
-This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the $DUPLO$ circuit format has two input and one putput wire. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. And now all $16$ gate types from the truth table figure are implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases since all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with two input wires with the same value. For the case of $\textbf{1}$ it was handled as the $NXOR$ of two wires with the same input value.
-
-In this way I have contributed to the $DUPLO$ project and helped secure a stronger research product.
-
-On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. As mentioned earlier the small amount of reserch I did into that area when I noticed the problem seems to indicate that this is not trivilay fixed. Therefor this is leaft unfixed.
-
-\subsection{Circuit comparison}
-\input{circuit_gate_types}
-
-In this section I will do a compariaon of the two compiled circuits. I chapter \ref{ch:shuffle} on the shuffle algorithms I compared the idea of the algorithms. Now after compiling them it is easier to argu how the two implemetations stack up against each other. In the table above where the circuits are compared on four different parameters. The first parmeter are the number of unique wires in the circuits. It is clearly that the $Fisher\text{-}Yates$ algorithm has less unique wires than the $Conditional~swap$ algorithm.
-
-\todo{Does the number of unique wires effect the performance of the protocol?}
-
-The second parameter mesured in the table is the total number of gates in the circuit. Here the numbers are farly similar. Doing a calculation shows that $Fisher\text{-}Yates$ has around $4\%$ more gates than $Conditional~swap$ which is not that big a differend. But when looking into the difference on the two last parameters. First we rememer that we are in a setting where $XOR$ gates are assumed for free. The parameters are the number of free $XOR$ and non-free. When the amount of these gates are mesured we see a bigger difference. When doing the calculations we see that $Fisher\text{-}Yates$ has $4\%$ less free gates than $Conditional~swap$ which is not much. We see the big difference when looking at the non-free gates. Here $Fisher\text{-}Yates$ has $21\%$ more non-free gates that what is the case for $Conditional~swap$. This is a big difference and in this case the effect of the difference is negativ on the performance of the protocol. Therefor even though the amount of randomness used in the algorithm is much smaller the overhed of ensuring that the seed is in the right intervall and the swap gadgets constructed for each card index result in a wors circuit for the $DUPLO$ protocol. Therefor the $Conditional~swap$ algorithm is used in the implemetation.
-
-
 %%%%%%%%%%%%%%%% 2PC POKER IMPLEMENTATION %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Poker implementation}
-\todo{The DUPLO protocol}
-
-As now known the $DUPLO$ 2PC framework was chosen to use during the experiemnt of implemeting a poker game. The framework consists of different functions to call to allow for the right communication between the two partis. It is specified in wich order thes function should be called to ensure that the right information are at the parties at the right time. But at the same time the spiltup of the functions allow for local computations to be done between these framework calls. Since it is a 2PC protocol a $Constructor$ and an $Evaluator$ are created.
-
-\todo{Describe the roles of the Constructor and Evaluator}
-First of all the read the circuit file specifying the functionality decired by the application I am trying to implement.
-
-
-Once these are created they run the framework function calls in parrallel. First the two parties connect to each other via the $Connect$ call. In this case it is the $Constructor$ hosting the servise and then the $Evaluator$ connects to this. When they are connected they each make a call to the $Setup$ function to initialize the communication protocol. After this they start the preprocess phase of the componets in the circuit by running the $PreprocessComponentType$ function call.
-
-\todo{What does the preprocess componet type call do?}
-
-Then the $PrepareComponents$ function is called to ???
-
-\todo{What do prepare components do?}
-
-After this the composed $Circuit$ is constructed by calling the $Build$ function. This constructs the complete circuit which is to be evaluated later by the call to $Evaluate$. This ensures that the function componets specified by the composed circuit file is soldered together in the right way. Such that the ouput wires from one subfunction is feeded to the right input wire on another subfunction. When the next call is made to $Evaluate$ the input to the circuit is given and the circuit is evaluated on this. When this is done a call to $DecideKeys$ can be made and the output of the circuit can be learned.
-
+\section{The Poker Game}
 This is the overall structure of every implemetation that wants to use the $Duplo$ protocol. In the next part I will introduce how this was used to implement the poker game in this project.
 
 \bigskip
 
 \todo{The pokser setting}
+\begin{figure}
+\label{poker_setting}
+\centering
+\input{figurs/poker_setting}
+\caption{The two different settings discussed to implement. The one on the left where the $Constructor$ and the $Evaluator$ also are the players and the one on the right wher they act as servers where players connect and then localy construct output based on output from the servers.}
+\end{figure}
+
+
+Before starting on the implemetation it was inportant to figure out which setting to study. Different settings was proposed before a choise was made. Mainly two settings were discussed. One where the $Constructor$ and $Evaluatr$ acteded as players of the poker game themselves or a setting where they acted as servers where the players connected to. The first one was the one chosen mainly because of the simplicity of doing it and timelimmet in the project. But the other setting has some nice features which I will note here. That setting resembles more what is done in online poker to day. Where a client connects to a game provider which deals the cards. Then instead of connecting to one party which is not completly trusted the player connects to two servers which runs a secret share of the protocol together. Such that th eplayer recieves a share from each party. One of these serves could be a Stat authorized server in which the palyer would put its trust. This would bring down the main part of the latency from the setting implemented in this study. Which will be discussed later. This could be done as the preprocessing of the circuit could be done on forehand and in times with low load. But this implemetation adds a complexity in the implemetation phase where message authentication codes are needed to ensure that non of the two servers changed the output. This second setting also allow for more the two player to participate in the game.
+
+\bigskip
+
+
 
 \todo{Describe the roles of the two parties}
-\todo{Describe the setting}
-\todo{Describe the different stages in the protocol and the sequense of the stages}
 
 \todo{why can only one hand be played at a time, broken bristol compiler ehn frigate v2 was fixed}
 
 \todo{Describe the more interresting setting, why is it interresting and why is it not implemented}
+
+\todo{Discuss latensy in different framework calls}
+
+\begin{figure}
+    \label{fig:mesurement_ms}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:const_ms_plot}
+        \includegraphics[width=\textwidth]{figurs/const_ms_plot.eps}
+        \caption{Constructor: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+    \end{subfigure}
+
+    \vspace*{1cm}
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:eval_ms_plot}
+        \includegraphics[width=\textwidth]{figurs/eval_ms_plot.eps}
+        \caption{Evaluator: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+    \end{subfigure}
+
+\caption{Comparison of the Constructor and Evaluator on which phases requires the most time.}
+\end{figure}
+
+\begin{figure}
+    \label{fig:mesurement_kb}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:const_kb_plot}
+        \includegraphics[width=\textwidth]{figurs/const_kb_plot.eps}
+        \caption{Constructor: $kb$ sent in different phases.}
+    \end{subfigure}
+
+    \vspace*{1cm}
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:eval_kb_plot}
+        \includegraphics[width=\textwidth]{figurs/eval_kb_plot.eps}
+        \caption{Evaluator: $kb$ sendt in different phases.}
+    \end{subfigure}
+
+\caption{Comparison of Constructor and Evaluator on which phases most $kb$ are sent to the other party.}
+\end{figure}
+
+
+\begin{table}[!htb]
+\label{table:mesurement_ms}
+\centering
+
+    \begin{subtable}{\textwidth}
+    \label{table:const_ms}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l || c |r r r r r}
+          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
+    \hline
+    \multirow{3}{*}{Setup} & 50 & 2210.37 & 162.11 & 17.63 & 2.86 & 2.17   \\
+                           &  0 & 1431.11 & 114.23 & 12.66 & 2.36 & 2.00   \\
+                           \cline{2-7}
+                           &  - &  779.29 &  47.88 &  4.97 & 0.50 & 0.17   \\
+    \hline                       
+    \multirow{3}{*}{Circuit preprocess} & 50 & 4033.93 & 527.35 & 119.99 & 67.52 & 51.36 \\
+                                        &  0 & 1564.52 & 201.07 &  50.75 & 29.75 & 19.50 \\
+                                        \cline{2-7}
+                                        &  - & 2469.41 & 326.28 &  69.24 & 37.77 & 31.86 \\
+    \hline 
+    \multirow{3}{*}{Auth preprocess} & 50 & 1150.64 & 143.22 & 39.92 & 37.93 & 42.54 \\
+                                     &  0 &   93.10 &  31.95 & 20.02 & 22.90 & 33.57 \\
+                                     \cline{2-7}
+                                     &  - & 1057.54 & 121.27 & 19.90 & 17.03 &  8.97 \\
+    \hline                                 
+    \multirow{3}{*}{Build} & 50 & 807.18 & 86.06 & 15.78 & 8.42 & 10.82 \\
+                           &  0 &  22.84 &  6.79 &  6.27 & 6.46 &  9.02 \\
+                           \cline{2-7}
+                           &  - & 784.34 & 79.27 &  9.51 & 1.96 &  1.8 \\
+    \hline                       
+    \multirow{3}{*}{Evaluate} & 50 & 100.82 & 10.22 & 1.18 & 0.30 & 0.30 \\
+                              &  0 &   0.69 &  0.24 & 0.24 & 0.23 & 0.24 \\
+                              \cline{2-7}
+                              &  - & 100.13 &  9.98 & 0.94 & 0.07 & 0.06 \\
+    \hline
+    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.37 & 100.39 & 100.91 & 115.62 & 177.92 \\
+                                          &  0 &   0.20 &   0.13 &   0.37 &  10.20 &  77.15 \\
+                                          \cline{2-7}
+                                          &  - & 100.17 & 100.26 & 100.54 & 105.42 & 100.77 \\
+    \hline
+    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.37 & 10.23 & 1.24 & 0.50 & 0.86 \\
+                                          &  0 &   0.13 &  0.08 & 0.90 & 0.25 & 1.30 \\
+                                          \cline{2-7}
+                                          &  - & 100.24 & 10.15 & 0.34 & 0.25 & -0.44 \\
+    \hline
+    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.35 & 10.22 & 1.23 & 0.48 & 0.57 \\
+                                           &  0 &   0.11 &  0.08 & 0.09 & 0.23 & 0.91 \\
+                                           \cline{2-7}
+                                           &  - & 100.24 & 10.14 & 1.14 & 0.25 & -0.34
+    \end{tabular}
+    }
+    \caption{Constructor: comparison of the different phases and concurrent shuffles with and with out delay.}
+    \end{subtable}%
+
+    \vspace*{1cm}
+
+    \begin{subtable}{\textwidth}
+    \label{table:eval_ms}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l || c |r r r r r}
+          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
+    \hline
+    \multirow{3}{*}{Setup} & 50 & 620.25 & 61.89 & 6.15 & 0.62 & 0.21 \\
+                           &  0 & 117.58 & 11.36 & 1.05 & 0.09 & 0.03 \\
+                           \cline{2-7}
+                           &  - & 502.67 & 50.53 & 5.01 & 0.53 & 0.18 \\
+    \hline                       
+    \multirow{3}{*}{Circuit preprocess} & 50 & 4037.57 & 528.96 & 120.39 & 68.30 & 60.86 \\
+                                        &  0 & 1574.70 & 202.97 &  51.89 & 30.79 & 29.63 \\
+                                        \cline{2-7}
+                                        &  - & 2462.87 & 325.99 &  68.50 & 37.51 & 31.23 \\
+    \hline 
+    \multirow{3}{*}{Auth preprocess} & 50 & 1154.60 & 146.40 & 44.90 & 42.32 & 46.33 \\
+                                     &  0 &   94.98 &  34.70 & 24.73 & 27.37 & 37.65 \\
+                                     \cline{2-7}
+                                     &  - & 1059.62 & 111.70 & 20.17 & 14.95 &  8.68 \\ 
+    \hline                                 
+    \multirow{3}{*}{Build} & 50 & 807.23 & 86.12 & 15.83 & 8.50 & 10.88 \\
+                           &  0 &  22.88 &  6.82 &  6.33 & 6.59 &  9.14 \\
+                           \cline{2-7}
+                           &  - & 784.35 & 79.30 &  9.50 & 1.91 &  1.74 \\
+    \hline                       
+    \multirow{3}{*}{Evaluate} & 50 & 129.49 & 17.91 & 5.43 & 5.44 & 9.58 \\
+                              &  0 &  15.71 &  5.13 & 2.92 & 2.29 & 7.96 \\
+                              \cline{2-7}
+                              &  - & 113.78 & 12.78 & 2.51 & 3.15 & 1.62 \\
+    \hline
+    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.60 & 100.63 & 101.17 & 115.91 & 179.12 \\
+                                          &  0 &   0.29 &   0.19 &   0.43 &  15.01 & 125.68 \\
+                                          \cline{2-7}
+                                          &  - & 100.31 & 100.44 & 100.26 & 100.90 &  53.44 \\
+    \hline
+    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.59 & 10.23 & 1.47 & 22.08 & 128.10 \\
+                                          &  0 &   0.18 &  0.08 & 0.22 & 14.31 & 124.84 \\ 
+                                          \cline{2-7}
+                                          &  - & 100.41 & 10.15 & 1.25 &  7.77 &   3.26 \\
+    \hline
+    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.57 & 10.23 & 12.70 & 21.81 & 122.89 \\
+                                           &  0 &   0.17 &  0.07 &  0.22 & 14.16 & 123.14 \\
+                                           \cline{2-7}
+                                           &  - & 100.40 & 10.16 & 12.48 &  7.65 & -0.25
+    \end{tabular}
+    }
+    \caption{Evaluator: comparison of the different phases and number of concurrent shuffles with and without delay.}
+    \end{subtable}%
+
+\caption{Comparison of the time consumption of the Constructor and Evaluator.}
+\end{table}
+
+
+\begin{table}[!htb]
+\label{table:mesurmet_kb}
+\centering
+
+    \begin{subtable}{\textwidth}
+    \label{table:const_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Setup                       &     12.70 &     1.27 &    0.12 &    0.01 &    0.00 \\
+    Circuit Preprocess          & 158470.00 & 22518.10 & 7023.94 & 4837.94 & 4127.91 \\
+    Auth. Preprocess            &  13329.90 &  4170.08 & 2249.69 & 2437.49 & 1986.51 \\
+    Build                       &    327.71 &   128.49 &  107.24 &  105.12 &  104.96 \\
+    Evaluate                    &    122.84 &   122.84 &  122.84 &  122.48 &  122.84 \\
+    Decode keys                 &      5.94 &     2.38 &    2.02 &    1.99 &    1.99\\
+    \end{tabular}
+    }
+    \caption{Constructor: $kb$ sent per shuffled deck in different phases.}
+    \end{subtable} 
+    
+    \vspace*{1cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Setup                       &  16.55 &  1.65 &  0.17 &  0.02 &  0.01 \\
+    Circuit Preprocess          &   1.59 &  0.16 &  0.02 &  0.00 &  0.00 \\
+    Auth. Preprocess            &   1.06 &  0.11 &  0.01 &  0.00 &  0.00 \\
+    Build                       & 174.55 & 34.67 & 18.95 & 17.55 & 17.49 \\
+    Evaluate                    &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
+    Decode keys                 &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 
+    \end{tabular}
+    }
+    \caption{Evaluator: $kb$ sent per shuffled deck in different phases.}
+    \end{subtable}%
+
+\caption{Comparison of the Constructor and Evaluator on the amount of data sent in the different phases.}
+\end{table}

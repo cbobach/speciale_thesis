@@ -7,3 +7,9 @@ template
 *.toc
 *.ps
 *.out
+*.dvi
+*.svg
+*.ods
+figurs/*.pdf
+figurs/*.png
+figurs/*.tex

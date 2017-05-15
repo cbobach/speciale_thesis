@@ -1,3 +1,24 @@
+\section{The Framework}
+
+\todo{The DUPLO protocol}
+
+As now known the $DUPLO$ 2PC framework was chosen to use during the experiemnt of implemeting a poker game. The framework consists of different functions to call to allow for the right communication between the two partis. It is specified in wich order thes function should be called to ensure that the right information are at the parties at the right time. But at the same time the spiltup of the functions allow for local computations to be done between these framework calls. Since it is a 2PC protocol a $Constructor$ and an $Evaluator$ are created.
+
+\todo{Describe the roles of the Constructor and Evaluator}
+First of all the read the circuit file specifying the functionality decired by the application I am trying to implement.
+
+
+Once these are created they run the framework function calls in parrallel. First the two parties connect to each other via the $Connect$ call. In this case it is the $Constructor$ hosting the servise and then the $Evaluator$ connects to this. When they are connected they each make a call to the $Setup$ function to initialize the communication protocol. After this they start the preprocess phase of the componets in the circuit by running the $PreprocessComponentType$ function call.
+
+\todo{What does the preprocess componet type call do?}
+
+Then the $PrepareComponents$ function is called to ???
+
+\todo{What do prepare components do?}
+
+After this the composed $Circuit$ is constructed by calling the $Build$ function. This constructs the complete circuit which is to be evaluated later by the call to $Evaluate$. This ensures that the function componets specified by the composed circuit file is soldered together in the right way. Such that the ouput wires from one subfunction is feeded to the right input wire on another subfunction. When the next call is made to $Evaluate$ the input to the circuit is given and the circuit is evaluated on this. When this is done a call to $DecideKeys$ can be made and the output of the circuit can be learned.
+
+
 \todo{What is needed of the protocol, active security, single wire opening, duplo}
 \todo{two party protocol}
 \todo{>two party protocol, maks deltager afh;ngig af poker version}
@@ -7,3 +28,10 @@
 \todo{Gameplay}
 
 \todo{Trusted server, state server?}
+
+\todo{Why was DUPLO chosen???}
+Project developed in the research group.
+One wire opening.
+Optimized to do many shuffles in parallel.
+
+\section{Security}

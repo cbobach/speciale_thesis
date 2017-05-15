@@ -1,0 +1,40 @@
+\begin{table}[!htb]
+\label{mesurement_table}
+\centering
+
+\begin{subtable}{\textwidth}
+\begin{tabular}{l ||r r r}
+\multicolumn{4}{c}{Constructor} \\
+    & avg ($kb$) & Local avg ($ms$) & Remote avg ($ms$)    \\
+\hline
+Setup                  &    12.697 & 2302.6941    & 3790.8537  \\
+Circuit preprocess     & 54339.4   & 3012.591     & 8432.849   \\
+Auth preprocess        &  5699.08  &  101.48277   &  941.7243  \\
+Build                  &   142.27  &   18.56494   &  298.0055  \\
+Evaluate               &   122.841 &    0.542494  &   28.55879 \\
+Decode keys first hand &     1.981 &    0.1941766 &   27.74609 \\
+Decode keys final hand &     1.985 &    0.3693014 &   25.7141  \\
+Decode opponents hand  &     1.981 &    0.2999851 &   28.3653
+\end{tabular}
+\caption{}
+\end{subtable}%
+
+\begin{subtable}{\textwidth}
+\begin{tabular}{l ||r r r}
+\multicolumn{4}{c}{Evaluator} \\
+    & avg ($kb$) & Local avg ($ms$) & Remote avg ($ms$)    \\
+\hline
+Setup                  & 16.546 &  323.14293   &  245.0024  \\
+Circuit preprocess     &  0.241 & 3035.604     & 8447.549   \\
+Auth preprocess        &  0.161 &  106.1508    &  949.4123  \\
+Build                  & 22.394 &   20.14987   &  302.5152  \\
+Evaluate               &  0.105 &   98.01083   &  125.746   \\
+Decode keys first hand &  0.481 &    0.2953349 &   28.20213 \\
+Decode keys final hand &  0.485 &    0.5710514 &   26.65006 \\
+Decode opponents hand  &  0.481 &    0.5543712 &   29.05901
+\end{tabular}
+\caption{}
+\end{subtable}
+
+\caption{}
+\end{table}

@@ -18,7 +18,9 @@
 \usepackage{hyperref}
 \usepackage{latexsym}
 \usepackage{lmodern}
+\usepackage{multirow}
 \usepackage{pstricks}
+\usepackage{subcaption}
 \usepackage{verbatim}
 %
 \usepackage[english]{babel}
@@ -35,6 +37,10 @@
 %
 \DeclareCaptionFormat{myformat}{#1#2#3\hrulefill}
 \captionsetup[figure]{format=myformat}
+\DeclareCaptionFormat{myformat1}{#1#2#3}
+\captionsetup[subfigure]{format=myformat1}
+\captionsetup[table]{format=myformat}
+\captionsetup[subtable]{format=myformat1}
 %
 \newcites{A,B}{Primary Bibliography,Secondary Bibliography}
 %
@@ -87,19 +93,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\chapter{DUPLO}
+\label{ch:mpc}
+\input{protocol}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \chapter{Shuffling Algorithms}
 \label{ch:shuffle}
 \input{shuffling}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{MPC-protocol and Security}
-\label{ch:mpc}
-\input{protocol}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Implementation}
+\chapter{Poker Implemetation}
 \label{ch:implementation}
 \input{implementation}
 
