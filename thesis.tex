@@ -200,12 +200,22 @@ To show that the protocol is secure in this setting we need to show that a $cons
 
 %%%%%%%%%%%%%%%%%%% Frigate %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Frigate the $DUPLO$ Circuit Compiler}
-In this section I will introduce how the circuit compiler workes. Which problems I encountered and how some of them were fixed. 
+\section{Frigate the $DUPLO$ Circuit Compiler}
+In this section I will introduce how the new version of the $Frigate$ circuit compiler workes.
 
-First of all the compiler needs to be installed which require some special versions of some libarys which are not the latest. This requires that some specific setup for the compiler is done. But folowing the instructions in the installation guide and some internet seach made the compiler run.
+First of all when installing the compiler some special versions of libarys are required, which are not the latest. Folowing the instructions in the installation guide and some amount of internet search I was able to get it up and running. During the thesis I have been using hardware running Ubuntu 16.04 LTS or higher. Where the standard version of $flex$ and $bison$ is higher that supported by $DUPLO$. This requires that the right versions are installed and keapt back such that these are nut updated later. But as the compilation of circuits are done once and prior to the compilation of the actual $DUPLO$ implemetation this is not a complete deal breaker.
 
-Then when a program has been written in the $wir$ format specified by the documentation one compiles it to th $DUPLO$-format using the following command:
+\todo{Describe the frigate programming language}
+The $Frigate$ compiler came shipped with the documentation for the first version and was not updated when extended to fit the $DUPLO$ framework. This should not be expected since the functionality of the compilers input language was not changed. But this resulted in some time consuming trial and error since it was not well written and specified. It was a long time since I last had worked with circuits in such a way as was the case for generating big circuits with a circuit compiler. This resulted in some hard earned experience on small exapmles.
+
+Some of the most important and different things to take into account when programming for circuit generation is the possibility to do wirre access. First of all it is possible to specify which and how many wires should represent a value by using \verb|y=x{index:size}|. This is the way long bit input strings are translated into higher level representations of smaler instances. This gave some occasions for frustrations because is it not possible to acces vires based on variable inputs which cannot be pre determined by $Frigate$. This makes perfect sence since the compiler can not know which wires should be used as the representation.
+A second point to remember when working with $Frigate$ is that it do not allow for more than one level functions. Which gives some restrictions in programming compared to many other languages. This restriction makes it harder to create small functions with one single specific focus that could be called when the desired functionality was required. This did not give possibility recursive functions. But as the circuits generated is a static representation this is a restriction which cannot easily be handled, since the size of the circuit can not varriate based on the inputs. Another small odidity is that $Frigate$ only allows for assignments in the main method through function calls.
+
+Otherwise the programing language used by $Frigate$ resembles the well known $C$ language. The compiler requires you to specify how many parties the functionality is used by, by the call to \verb|#parties n|. At the same time it requires that the size of input is specified for each of the parties using \verb|input i size_i| and \verb|#output i size_o|. But other wise it allowed for definitions of constants, types, structures and imports just like in $C$ which allows for some easy readability.
+
+\bigskip
+
+When the decired functionality has been implemented using the $wir$ described above used by $Frigate$ the compiler can be used, from inside the compiled $DUPLO$ framework, by calling:
 
 \begin{center}
 \begin{verbatim}
@@ -213,17 +223,34 @@ Then when a program has been written in the $wir$ format specified by the docume
 \end{verbatim}
 \end{center}
 
-This generates some different files where the one with the extention $.wir.GC\_duplo$ is the one that $DOPLO$ can use as input.
+The \verb|-db| flag ensures that the right $DUPLO$ format is generated. This call to the compiler generates different files with different extentions. The file we are interested in is the file with the extention \verb|.wir.GC_duplo| this is the one that the $DOPLO$ framework can use as input file.
 
 \bigskip
 
-The $DOPLO$ framework has a function that allowes for evaluation of these inputfiles. This gives the posibility to specify the inputs from the two parties and get the result. This possibilty allowed me to study the implementations of the algorithms to see if thay did as I expected. First I tried to implement the $Fisher\text{-}Yates$ algorithm and as described earlier this revealed some problems. Since I did not have earlier experience working with the $Frigate$ compiler I was not sure if the problem was in my implementation or in the compiler. At first the focus was on my implementation but it was later discovered that it was the version of the $Frigate$ compiler used to generate $DUPLO$-circuits. First I expected it was in my implemetation. Why I starte to break the implementaion down into smaller modules that could be tested. So I created a framework that allowed me to test the different modules one by one. After this it was clear that something were off when using the modulo reduction. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing only the modulo operator $\%$ which is in the documentation for the compiler it could not be the case that I had made any error. Therefor I started to look into the compiler. Since the compiler I used was an extention of an existing one the idea was that a bug could have been introduced when adding the new fatures. Therefor the old version of $Frigate$ was installed to test if this implemetation had the same bug. The problem was that the old version did not support any circuit output format that $DUPLO$ could read. Since $DUPLO$ supports what is known as composed circuit format files and $bristol$ formatted circuit files. I wrote a parser that took the output from the old version of $Frigate$ and translated that to $bristol$ format. This gave me two versions of the same program that I could run against each other and compare their results. This showed that there was a difference in the results produced. When I looked deeper into the problem it came clear that not all gate types was implemeted an the modulo operator triggered one of these gates.
+The $DOPLO$ framework has a functionality that allowed for evaluation of these input files without setting up both parties. This gave the posibility to specify the inputs for the evaluation and learn the result in a farst return cycle. This possibilty allowed me to study the implementations of the programming language and how the algorithms behaved compared to expected while implementing them. First I tried to implement the $Fisher\text{-}Yates$ algorithm, which is described in details in section \ref{sec:fisher-yates} and can be seen as algorithm \ref{alg:fisher_yates}, in the \verb|.wir| format. During the implemetation I encountered some problems. Since I did not have any earlier experience working with the $Frigate$ compiler I was not sure if the problem was in the implementation of the algorithm or in the compiler. At first the focus was on the implementation as the lack of experience working with $Frigate$ easily could lead to implementation errors. After a lot of modolaisation and debugging it was clear that something was wrong with the version of the $Frigate$ compiler used to generate $DUPLO$-circuits. During the debugging process I created a framework that allowed me to test the different modules of the implementation one by one. It was then clear that something were off when using the modulo reduction in the $Fisher\text{-}Yates$ algorithm. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing the modulo operator \verb|%|, as specified in the documentation, it was clear that some error was introduced during compilation. Therefor I started to take a deeper look at the compiler. Since the compiler was a modified version of the $Frigate$ compiler the posibility was that a bug could have been introduced when adding the new $DUPLO$ featurs. Therefor the old version of $Frigate$ was installed to test if that implemetation had the same bug. Then a problem arose because the old version did not support the $DUPLO$ circuit format. But because $DUPLO$ also has  supports for another circuit file format known as $bristol$, I wrote a parser that took the output from the old version of $Frigate$ and translated that into the$bristol$ format. This gave me two different formatted circuit files that $DUPLO$ could use as input files. Based on these two formats is created a test framework to see if there was any differences on the output when ran on the same input. This showed that there was a difference in the results produced, especailly in the case when using the modular reduction. When taking a deeper look at the problem it came clear that not all gate types was created during compilation using the $DUPLO$ version of the $Frigate$ compiler.
 
-This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the $DUPLO$ circuit format has two input and one putput wire. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. And now all $16$ gate types from the truth table figure are implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases since all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with two input wires with the same value. For the case of $\textbf{1}$ it was handled as the $NXOR$ of two wires with the same input value.
+\begin{table}
+\label{table:gate_rep}
+\centering
+\scalebox{.5}{
+\begin{tabular}{c c || c c c c c c c c c c c c c c c c}
+$l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y$ & XOR & NAND & AND & NXOR & $y$ & If $x$ Then $y$ & $x$ & If $y$ Then $x$ & OR & $1$    \\   
+\hline
+0 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1    \\
+0 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1    \\
+1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1    \\
+1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
+\end{tabular}
+}
+\caption{A table of the 16 different gate types that can be used in a circuit of the type used in duplo}
+\end{table}
 
-In this way I have contributed to the $DUPLO$ project and helped secure a stronger research product.
 
-On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. As mentioned earlier the small amount of reserch I did into that area when I noticed the problem seems to indicate that this is not trivilay fixed. Therefor this is leaft unfixed.
+This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the $DUPLO$ circuit format has two input and one putput wire by standart and are not explicitly written in the formatted file as earlier. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. This change in representation ensured that all $16$ gate types which can be seen in table \ref{table:gate_rep} are now implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases as all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with input wires with the same value. For the case of $\textbf{1}$ it is now handled as the $NXOR$ of input wires with the same value.
+
+In this way by going into details and debugging my implementaion of the algorithm I have contributed to the $DUPLO$ project by reporting my findings and allowed them to fix this problem before publishing their finding. This has helped to secure a stronger overall research product.
+
+On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. This is not mentioned anywhere in the documentation for $Frigate$. When is accounted the problem of the modulo operator I used small amount of reserch to see if this functionality easily could be implemented. During the search I noticed that the implementation of modulo a power of two is simple while research done seems to indicate that the other cases are not trivilay implemented. Therefor this was leaft unfixed and my implementation uses a hack to overcome this problem which is stated in section \ref{sec:fisher-yates}.
 
 
 %%%%%%%%%%%%%%%%%%%% SHUFFLE ALGORITHMS %%%%%%%%%%%%%%%%%%%%
@@ -377,9 +404,7 @@ In figure \ref{fig:con_swap} a run of algorithm \ref{alg:con_swap} can be seen H
 \todo{Describe solutions}
 \todo{Describe gadgets of the two shuffle protocols}
 
-Because the $DUPLO$ protocol was chosen as the MPC protocol to use in the implementation the first hurdel was to make the circuits that should handle the shuffling of cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly there was a compiler for generating $DUPLO$-circuits that could be used. Therefor before staring to implemt the shuffle algorithms I read up on the documentation for the compiler\footnote{Which can be found at github: \url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}. The documentation is from the first version of the $Frigate$ compiler which was extended to suit the $DUPLO$ format. The documentation was not well specified and it was a long time since I last had worked with circuits in such a way. This resulted in some hard earned experience through trial and error on small exapmles.
-
-The most important and different things to take into account here is the possibility of wirre acces and only one level functions. First of all it is possible to specify which and how many wires should represent a value like $y=x\{index:size\}$. This is the way bit inputs is translated into higher level representations. When it comes to functions there are some restrictions. First of all only one level of functions is allowed. Second of all only assignments in the main method is allowed through function calls. Otherwise the programing language used resembles $C$.
+Because the $DUPLO$ protocol was chosen as the MPC protocol to use in this study the first hurdel was to generate the circuits that should handle the shuffling of the cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly the $DUPLO$ project came shiped with a compiler for generating circuits with the right format. Therefor before staring to implemt the shuffle algorithms I had to read up on the documentation for the compiler. The documentation is from the first version of the $Frigate$ compiler which was extended to suit the $DUPLO$ format. 
 
 \bigskip
 
@@ -404,22 +429,6 @@ END
 \label{sec:comp}
 \todo{describe circuit}
 First of all it is important to understand that we cannot just plug the algorithm in to the MPC protocol. Since we use a MPC protocol that uses garbled circuits for the evaluation of the shuffle algorithm we need to provide a circuit that represent this algorithm. Therefor it is essential to understand how such circuits works and how to construct them. These circuits consist of different gates types. Special for the MPC protocol used here shuch type of circuit are all constructed of gates which has two input and one output wire. This results in 16 different gate types which can be used to construct a circuit. These 16 different gate types comes from the result of having two different values $0$ and $1$ for each of the wires. This gives $4$ different ways to combine the two values which results in $2^4$ different combinations. Of these 16 different gates are some of the well known $AND$, $OR$ and $XOR$. All the different gate types can be seen in figure.
-
-\begin{table}
-\label{truth_table}
-\centering
-\scalebox{.5}{
-\begin{tabular}{c c || c c c c c c c c c c c c c c c c}
-$l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y$ & XOR & NAND & AND & NXOR & $y$ & If $x$ Then $y$ & $x$ & If $y$ Then $x$ & OR & $1$    \\   
-\hline
-0 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1    \\
-0 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 1    \\
-1 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1    \\
-1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1
-\end{tabular}
-}
-\caption{A table of the 16 different gate types that can be used in a circuit of the type used in duplo}
-\end{table}
 
 Since circuits is a static representation of a given algorithm it grow fast in size and become rather complex. Therefor to make the construction of the circuits for the shuffle algorithms easier I have used a compiler called $Frigate$\footnote{I used version 2 which is linked to in appendix \ref{appendix1}. This version is optimized to construct circuits for the duplo protocol.} to help with the circuit generation. The compiler takes a high-level program of a $C$ like structure and translates it to a circuit of the correct format for the MPC protocol chosen to use. This compiler gives the possibility to easy implement the shuffle algorithm and generate a complex circuit that represent the right algorithm.
 
@@ -475,8 +484,102 @@ The second parameter mesured in the table is the total number of gates in the ci
 
 \begin{appendices}
 \chapter{Codebase}
-\input{appendix1}
-\label{appendix1}
+In this appendix references will presented to the different codebase used during the thesis. An url to the repositories on github will be presented togheter with a short description of where the most interresting parts for this project can be found.
+
+\bigskip
+
+\todo{What hardware has been used during the project!}
+
+\section{DUPLO}
+\label{app:duplo}
+The $DUPLO$ repository at GitHub can be found here \url{https://github.com/AarhusCrypto/DUPLO}
+
+The documentation on the site is clear and illustrates clearly how it is compiled such it can be tested. No documentation is presented for how interacting with the framework can be done for new implementations. The most interesting part for the sake of this project is located in the \verb|src| folder. Here the \verb|CMakeLists.txt| file is located which specifies how the project is compiled, this is overwritten when compiling the poker implementation. The folder \verb|src/dublo-mains| is where the actual implementations of the $Constructor$ and $Evaluater$ can be found. Here the implementations of the poker $Constructor$ and $Evaluator$ will be placed.
+
+\bigskip
+
+For a easy setup of duplo a docker instance is created and can be found at \url{https://hub.docker.com/r/cbobach/duplo/}. This can be started in docker version \verb|17.05.0-ce| with the command;
+
+\begin{center}
+\begin{verbatim}
+docker run -it --network:host cbobach/duplo
+\end{verbatim}
+\end{center}
+
+The \verb|--network:host| flag is not secure but is the fart easy way to let the container running the $Constructor$ expose the port on wich the container running the $Evaluator$ needs to connect. When running two instances of these docker containers the $Constructor$ and $Evaluator$ is runned using one for these commands for the default setting:
+
+\begin{center}
+\begin{verbatim}
+./build/release/DuploConstructor 
+./build/release/DuploEvaluator
+\end{verbatim}
+\end{center}
+
+
+\section{Frigate}
+\label{app:frigate}
+The $Frigate$ repository on GitHub is a subrepository to $DUPLO$ and can be found at \url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}.
+
+The documentation of how $Frigate$ is installed with the special versions of some of the libraries used is specified in the documentation of $DUPLO$, the link can be found in appendix \ref{app:duplo}. It is also here the documentation of how to compile $DUPLO$ circuit formats are done.
+
+To find the documentation of the \verb|.wir| file format a look should be taken at the link above. Here the specifications are of how wire acces is done for example. It is here all functionallities that are implemented in the language is listed and how they are used. This documentation is narrow at some places. It does for example not specify that the modulo operator \verb|%| does only work on powers of $2$.
+
+\bigskip
+
+Using the docker image from \url{https://hub.docker.com/r/cbobach/duplo/} and running the followint command, in docker version \verb|17.05.0-ce|:
+
+\begin{center}
+\begin{verbatim}
+docker run -it -v host/dir:container/dir cbobach/duplo
+\end{verbatim}
+\end{center}
+
+Will start a container where it is possible to compiler a \verb|.wir| file using the comtainer. For it to work the \verb|.wir| files has to be located in the \verb|host/dir| then the following commad can be run to compile the functionality:
+
+\begin{center}
+\begin{verbatim}
+./build/release/Frigate container/dir/functionality.wir -dp
+\end{verbatim}
+\end{center}
+
+The \verb|-db| flag ensures that the $DUPLO$ file format is generated. The $DUPLO$ generate file will have the extention \verb|.wir.GC_duplo| this can then be feeded to the $DUPLO$ framework using
+
+\begin{center}
+\begin{verbatim}
+./build/release/DuploConstructor -f container/dir/functionality.wir.GC_duplo
+./build/release/DuploEvaluator -f container/dir/functionality.wir.GC_duplo
+\end{verbatim}
+\end{center}
+
+Then the new functionallity will be runned in the default $DUPLO$ environment.
+
+\section{Poker}
+\label{app:poker}
+In this section the GitHub reposioties to the different pahses will be linked. A short description to where the intersting pars are will be presented.
+
+\subsection{Circuit implemetation}
+\label{app:circuit-impl}
+The different circuit \verb|.wir| files can be foun in the Github repository at \url{https://github.com/cbobach/speciale_circuit}.
+
+Here the implementations of the shuffle algorithms are present as \verb|fisher_yates_shuffle.wir| and \verb|conditional_swap_shuffle*.wir|. Multiple versions of the \verb|conditiona_swap_shuffle*.wir| file are present with different values for \verb|*|. This is to allow for multiple sequential hands to be plyead, these files are then used when testing the $DUPLO$ framework to show its capabilities.
+
+Only one version of \verb|fisher_yates_shuffle.wir| is located in the repository since this is a slover algorithm in this setting as discussed in section \ref{sec:comp}.
+
+The files \verb|init_deck.wir|, \verb|xor_seed.wir| and \verb|correcred_seed.wir| are all modules that are called by the shuffle algorithms. The \verb|init_deck.wir| file is used by both algorithms and hardwires the card values to their respective wires. The \verb|corrected_seed.wir| file is used by the $Fisher\text{-}Yates$ algorithm to ensure thet the seed feeded to the shuffle algorithm is in the correct intervalls as explained in section \ref{sec:fisher-yates}. The \verb|xor_seed.wir| file is used by the $Conditional~swap$ algorithm ot generate the seed used by the shuffle.
+
+\bigskip
+
+It is also here that the parser used to debug the $Frigate$ compiler is located and is found as \verb|parse.py|. The other python script found here \verb|count-gate-types.py| is the one used to compare the amount of gates types for the compiled circuits.
+
+
+\subsection{DUPLO implemetation}
+\label{app:duplo-impl}
+
+
+\subsection{Test results}
+\label{app:test-res}
+
+
 \end{appendices}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
