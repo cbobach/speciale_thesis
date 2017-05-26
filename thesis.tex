@@ -45,7 +45,11 @@
 \newcites{A,B}{Primary Bibliography,Secondary Bibliography}
 %
 % see http://imf.au.dk/system/latex/bog/
-
+%
+\newcommand{\FY}{\textit{Fisher-Yates}}
+\newcommand{\CS}{\textit{Conditional-swap}}
+\newcommand{\DUPLO}{\textit{DUPLO}}
+%
 \begin{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,11 +101,13 @@ In this thesis I have made a practical study of the application of a Multi Party
 
 It is easy to think of how one could be cheated when playing an online game of poker. It is hard for me as a player to know if the dealer and one of the other players has an agrangement such that the dealer always deals better cards to that player such this player wins in the long run. The idea by using a MPC protocol here is to guarantee that the cards are dealt fairly. Such that the player of online poker can trust the protocol and know that the cards are guaranteed to be dealt fairly.
 
-To ensure that the card are dealt fairly I will use a MPC protocol to take care of the shuffling of the cards. In this study I will use a two party computation(2PC) protocol called $DUPLO$ which will be introduced in chapter \ref{ch:duplo}. In this thesis a two party heads up poker game will be studied. The study is a showcase of the possibilities of MPC protocols and what can be achieved by them. It should be possible to easy extend the work done in this thesis to work in cases with more that only two parties using a another MPC protocol designed for that purpose. It should also be equaly easy to extend the game to work with more players.
+To ensure that the card are dealt fairly I will use a MPC protocol to take care of the shuffling of the cards. In this study I will use a two party computation(2PC) protocol called \DUPLO which will be introduced in chapter \ref{ch:duplo}. In this thesis a two party heads up poker game will be studied. The study is a showcase of the possibilities of MPC protocols and what can be achieved by them. It should be possible to easy extend the work done in this thesis to work in cases with more that only two parties using a another MPC protocol designed for that purpose. It should also be equaly easy to extend the game to work with more players.
+
+The hope is to show that a MPC protocol can be used to guarantee that the cards are deal fairly without any big cost in terms of time delay for the players.
 
 \bigskip
 
-For the inplemetation of poker I have studied various fields both in computer science and other fields. I have read up on different types of poker games to figure out which one was best suited for a two party setting. I have studied the underlying MPC protocol to understand how it works and to ensure that it for fills the right properties needed for an application as a poker game. I have studied different permutation algorithms and implemented them to compare them and see what effects they have on the underlying protocol.
+For the inplemetation of the poker game I have studied various fields both in computer science and other fields. I have read up on different types of poker games to figure out which one was best suited for a two party setting. I have studied the underlying MPC protocol to understand how it works and to ensure that it for fills the right properties needed for an application as a poker game. I have studied different permutation algorithms and implemented them to compare them and see what effects they have on the underlying protocol.
 
 \bigskip
 \todo{introduce chapter on DUPLO}
@@ -141,17 +147,17 @@ From here on when talking about a poker game the five card draw poker will be th
 \chapter{DUPLO}
 \label{ch:duplo}
 
-In this chapter I will introduce the $DUPLO$ framework introduced in \citeA{duplo} and why this was chossen to handle the communication and security of the poker game. I will explain how the structure of the $DUPLO$ protocol works and describe what the different framework calls handle. I will go over the secury details of the protocol to illustrate how this is guaranteed. Lastly I will introduce the $Frigate$ compiler which is shiped whith the $DUPLO$ framework to generate circuits for the evaluation.
+In this chapter I will introduce the \DUPLO framework introduced in \citeA{duplo} and why this was chossen to handle the communication and security of the poker game. I will explain how the structure of the \DUPLO protocol works and describe what the different framework calls handle. I will go over the secury details of the protocol to illustrate how this is guaranteed. Lastly I will introduce the $Frigate$ compiler which is shiped whith the \DUPLO framework to generate circuits for the evaluation.
 
 \bigskip
 
-As it can be read in \citeA{duplo} the $DUPLO$ framework is among the latest papers where the effency of a two party computation(2PC) protocol using garbled circuit in a malicious setting is studdied. In the paper $DUPLO$ is claimed to reach the protocol performes better then any existing protocol. Their idea came from the fact that the two extreme variants of cut and chose protocols did not preform well in each end of the spectrum when it comes to the size of the circuits. As they cam up with a new approch to the way cut and chose 2PC protocols could be done in the malicious setting. The idea is to garble subcomponets of the circuit and get a optimum somwhare inbetween the two extremes; garbling of complete circuits or garbling on gate level, cut and chose. The aim was to show that the gate level cut and chose added an overhead when soldering these thogether again when the circuits for evaluation is build. At the same time to show when the number of subcomponents goes up there is a performance gain compared to whole gate cut and chose because of the amortized benefits. 
+As it can be read in \citeA{duplo} the \DUPLO framework is among the latest papers where the effency of a two party computation(2PC) protocol using garbled circuit in a malicious setting is studdied. In the paper \DUPLO is claimed to reach the protocol performes better then any existing protocol. Their idea came from the fact that the two extreme variants of cut and chose protocols did not preform well in each end of the spectrum when it comes to the size of the circuits. As they cam up with a new approch to the way cut and chose 2PC protocols could be done in the malicious setting. The idea is to garble subcomponets of the circuit and get a optimum somwhare inbetween the two extremes; garbling of complete circuits or garbling on gate level, cut and chose. The aim was to show that the gate level cut and chose added an overhead when soldering these thogether again when the circuits for evaluation is build. At the same time to show when the number of subcomponents goes up there is a performance gain compared to whole gate cut and chose because of the amortized benefits. 
 
-As seen in section 7 on performance in \citeA{duplo} it is clearly that the experiments done on real life circuits yealds an optimal cut and chose strategy which differs from the earlier known possibilities. The gain in terms of running time encreases as the size of the circuits get bigger. Which shows that the $DUPLO$ protocol scales signicicantly better that the rest.
+As seen in section 7 on performance in \citeA{duplo} it is clearly that the experiments done on real life circuits yealds an optimal cut and chose strategy which differs from the earlier known possibilities. The gain in terms of running time encreases as the size of the circuits get bigger. Which shows that the \DUPLO protocol scales signicicantly better that the rest.
 
 \bigskip
 
-As this is the best performing 2PC protocol at the moment combined with the fact that it is developed at Aarhus University such that the people with knolaged of the protocol is in the same building was the main factors for using $DUPLO$. The fact that $DUPLO$ supported the possibility of single and destinct wire openings to a desired party helped the decision. 
+As this is the best performing 2PC protocol at the moment combined with the fact that it is developed at Aarhus University such that the people with knolaged of the protocol is in the same building was the main factors for using \DUPLO. The fact that \DUPLO supported the possibility of single and destinct wire openings to a desired party helped the decision. 
 
 \bigskip
 
@@ -159,32 +165,34 @@ In the next section I will introduce the different fundtions in the framework an
 
 %%%%%%%%%%%%%%%%%%%%% DUPLO FRAMEWORK %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The Framework}
-\label{sec:framework}
-The $DUPLO$ 2PC framework was chosen to use during the experiemnt of implemeting a poker game. $DUPLO$ consist of two parties, a $Constructor$ and an $Evaluator$ with different roles during the protocol. The $Constructor$ generates the garbled circuits and sends to them to the $Evaluator$. The $Evaluator$ verifies a number of these circuits. If these pass the $Evaluator$ trust that the remaining circuits are valid. Then these remaining circuits is used during evaluation.
+\section{The \DUPLO Framework}
+\label{sec:duplo_framework}
+The \DUPLO 2PC framework was chosen to use during the experiemnt of implemeting a poker game. \DUPLO consist of two parties, a $Constructor$ and an $Evaluator$ with different roles during the protocol. The $Constructor$ generates the garbled circuits and sends to them to the $Evaluator$. The $Evaluator$ verifies a number of these circuits. If these pass the $Evaluator$ trust that the remaining circuits are valid. Then these remaining circuits is used during evaluation.
 
 The overall construction of the framework consists of different functions to call to allow for the right communication between the two partis. It is specified in wich order thes function should be called to ensure that the right information are at the parties at the right time. At the same time the spiltup of the functions allow for local computations to be done between these framework calls.
 
 To run the protocol and use the famework a $Constructor$ and an $Evaluator$ is created. First of all they read the circuitfile specifying the functionality decired. In our case it is the shuffle algorithm which is introduced in chapter \ref{ch:shuffle}.
 
-Once these are created they run the framework function calls in parrallel. First the two parties connect to each other via the $Connect$ call. In this case it is the $Constructor$ hosting the servise and then the $Evaluator$ connects to this. When they are connected they each make a call to the $Setup$ function to initialize the communication protocol which is the $XOR$-homomorphic commitment protocol. After this they start the preprocess phase of the componets in the circuit by running the $PreprocessComponentType$ function call. Which generates a garbles representation of the shuffle algorithm.
+Once these are created they run the framework function calls in parrallel. First the two parties connect to each other via the \verb|Connect| call. In this case it is the $Constructor$ hosting the servise and then the $Evaluator$ connects to this. When they are connected they each make a call to the \verb|Setup| function to initialize the communication protocol which is the $XOR$-homomorphic commitment protocol. After this they start the preprocess phase of the componets in the circuit by running the \verb|PreprocessComponentType| function call. Which generates a garbles representation of the shuffle algorithm.
 
-Then the $PrepareComponents$ function is called to produce input and output authentication such that the inputs and outputs can be transfered securly between the two parties.
+Then the \verb|PrepareComponents| function is called to produce input and output authentication such that the inputs and outputs can be transfered securly between the two parties.
 
-After this the composed $Circuit$ is constructed by calling the $Build$ function. This constructs the complete circuit which is to be evaluated later by the call to $Evaluate$. This ensures that the function componets specified by the composed circuit file is soldered together in the right way. Such that the ouput wires from one subfunction is feeded to the right input wire on another subfunction. This is also done using the $XOR$-homomorphic commitments. When the next call is made to $Evaluate$ the input to the circuit is given and the circuit is evaluated on this. Such that a garbled output is generated. When this is done a call to $DecodeKeys$ can be made and the output of the circuit can be learned.
+After this the composed $Circuit$ is constructed by calling the \verb|Build| function. This constructs the complete circuit which is to be evaluated later by the call to \verb|Evaluate|. This ensures that the function componets specified by the composed circuit file is soldered together in the right way. Such that the ouput wires from one subfunction is feeded to the right input wire on another subfunction. This is also done using the $XOR$-homomorphic commitments. When the next call is made to \verb|Evaluate| the input to the circuit is given and the circuit is evaluated on this. Such that a garbled output is generated. When this is done a call to \verb|DecodeKeys| can be made and the output of the circuit can be learned.
 
 \bigskip
 
-The evaluation of circuits in the $DUPLO$ protocol allows for openings of outwires to both parties or only one. This will allow us to only reveal some cards to one player and other cards to the other. The split up of $Evaluate$ and $DecodeKey$ functions allows for opening of output wires in different rounds which helps us achive good round complexity when doing our implementation.
+The evaluation of circuits in the \DUPLO protocol allows for openings of outwires to both parties or only one. This will allow us to only reveal some cards to one player and other cards to the other. The split up of \verb|Evaluate| and \verb|DecodeKey| functions allows for opening of output wires in different rounds which helps us achive good round complexity when doing our implementation.
 
+
+\todo{Evt. introduction to; 2PC, GC, $XOR$-HC. Fordele ulemper}
 
 \section{Security}
-\label{sec:secutity}
-In this section I will introduce the security of the protocol to show that plyers playeing a game of poker with an implementation using the $DUPLO$ framework will have $oblivioness$, implying that the oponent can not learn more that supposed to. The players will also be ensured $correctnes$ of the protocol, meaning that if garbled evaluation is done it gives the right output. $DUPLO$ also ensures $authenticity$ because it is not possible for a player to doing evaluation of the functionality on other input the the party garbling the circuit.
+\label{sec:duplo_secutity}
+In this section I will introduce the security of the protocol to show that plyers playeing a game of poker with an implementation using the \DUPLO framework will have $oblivioness$, implying that the oponent can not learn more that supposed to. The players will also be ensured $correctnes$ of the protocol, meaning that if garbled evaluation is done it gives the right output. \DUPLO also ensures $authenticity$ because it is not possible for a player to doing evaluation of the functionality on other input the the party garbling the circuit.
 
 \bigskip
 
-The proff of security for the protocol is done using the Universal Composision(UC) framework. This is an easy digested abstract protocol proof technuiqe which allows for sequential predefined interaction between parties using actions and reactions. It has a modular approche to functionality proofs, when one functionality has been proved it can be used as a steppingstone for the next proof. In $DUPLO$ they use the hybrid model with ideal functionalities $\mathcal{F}_{HCOM}$ and $\mathcal{F}_{OT}$. Where the $\mathcal{F}_{HCOM}$ functionality is for the $XOR$-homomorphic commitment scheme used by the protocol, and $\mathcal{F}_{OT}$ for the one out of two oblivious transfer. These functions are then used to prove $correctness$, $obliviousness$ and $authenticity$ of the protocol. 
+The proff of security for the protocol is done using the Universal Composision(UC) framework. This is an easy digested abstract protocol proof technuiqe which allows for sequential predefined interaction between parties using actions and reactions. It has a modular approche to functionality proofs, when one functionality has been proved it can be used as a steppingstone for the next proof. In \DUPLO they use the hybrid model with ideal functionalities $\mathcal{F}_{HCOM}$ and $\mathcal{F}_{OT}$. Where the $\mathcal{F}_{HCOM}$ functionality is for the $XOR$-homomorphic commitment scheme used by the protocol, and $\mathcal{F}_{OT}$ for the one out of two oblivious transfer. These functions are then used to prove $correctness$, $obliviousness$ and $authenticity$ of the protocol. 
 
 \todo{Protocol overall security proof appendix a}
 In the section on protocol details in \citeA{duplo} appendix $A$ they describe and analyse the protocol. Here structioring the main protocol and going into details on how $correctness$, $obliviousness$ and $authenticity$ is guaranteed therough the different protocol function calls. The proof end up beeing rather complex as the main structur consist of $8$ subfunctions, which each is a combination of futher subcircuits. All of these functions are guaranteed to satisfy the properties. During the analysis of these functions they end up with lemmas proving correctness of; soldering and evaluation of subcircuits. They end up with leammas proving robustness of; the key authenticator bucketes, evaluation of key authenticators, input of constructor, input of evaluator, evaluation of subcircuits and output of evaluator. This colminate in the theorem proving robustness of the protocol, showing that if the $constructor$ is corrupt and the $evaluator$ is honest and the protocol does not abort, then the protocol compleets holding the before mentioned property, except with negligible propability. As known when using MPC protocols where half or more of the parties are corrupt we can not guarantee termination.
@@ -192,7 +200,7 @@ In the section on protocol details in \citeA{duplo} appendix $A$ they describe a
 \todo{Protocol security analysis appendix b}
 In appendix $B$ they prove the fact that the protocol is secure agains a corrupt $constructor$ or $evaluator$. Since it is a 2PC we may assume that one of the parties is honest as the partis trust in them selfs. When proving in the UC framework it is worth to remember that a poly-time simulator $\mathcal{S}$ should be presented. For the case of a corrupted $constructor$, $\mathbf{G}$ for generator, and a honest $Evaluator$, $\mathbf{E}$. $\mathcal{S}$ plays the role of $\mathbf{E}$ in the protocol, but is not given acces to the inputs of $\mathbf{E}$, $x_{\mathbf{E}}$. Instead $\mathcal{S}$ has access to an oracle $\mathcal{O}_{x_{\mathbf{E}}}(\cdot)$ containing $x_{\mathbf{E}}$. $\mathcal{S}$ might contact $\mathcal{O_{x_{\mathbf{E}}}}$ giving input $x_{\mathbf{G}}$ and in return learn $y_{\mathbf{G}}$ as if the evaluation of the functionality was done with $x_{\mathbf{E}}$ and $x_{\mathbf{G}}$ as input.
 
-To show that the protocol is secure in this setting we need to show that a $constructor$ running the protocol can not distinguige between talking to $\mathbf{E}$ or $\mathcal{S}$. ???  
+To show that the protocol is secure in this setting we need to show that a $constructor$ running the protocol can not distinguige between talking to $\mathbf{E}$ or $\mathcal{S}$. \todo{END PROOF}
 
 \todo{What is needed of the protocol, active security, single wire opening, duplo}
 
@@ -200,13 +208,14 @@ To show that the protocol is secure in this setting we need to show that a $cons
 
 %%%%%%%%%%%%%%%%%%% Frigate %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Frigate the $DUPLO$ Circuit Compiler}
+\section{Frigate the \DUPLO Circuit Compiler}
+\label{sec:frigate}
 In this section I will introduce how the new version of the $Frigate$ circuit compiler workes.
 
-First of all when installing the compiler some special versions of libarys are required, which are not the latest. Folowing the instructions in the installation guide and some amount of internet search I was able to get it up and running. During the thesis I have been using hardware running Ubuntu 16.04 LTS or higher. Where the standard version of $flex$ and $bison$ is higher that supported by $DUPLO$. This requires that the right versions are installed and keapt back such that these are nut updated later. But as the compilation of circuits are done once and prior to the compilation of the actual $DUPLO$ implemetation this is not a complete deal breaker.
+First of all when installing the compiler some special versions of libarys are required, which are not the latest. Folowing the instructions in the installation guide and some amount of internet search I was able to get it up and running. During the thesis I have been using hardware running Ubuntu 16.04 LTS or higher. Where the standard version of $flex$ and $bison$ is higher that supported by \DUPLO. This requires that the right versions are installed and keapt back such that these are nut updated later. But as the compilation of circuits are done once and prior to the compilation of the actual \DUPLO implemetation this is not a complete deal breaker.
 
 \todo{Describe the frigate programming language}
-The $Frigate$ compiler came shipped with the documentation for the first version and was not updated when extended to fit the $DUPLO$ framework. This should not be expected since the functionality of the compilers input language was not changed. But this resulted in some time consuming trial and error since it was not well written and specified. It was a long time since I last had worked with circuits in such a way as was the case for generating big circuits with a circuit compiler. This resulted in some hard earned experience on small exapmles.
+The $Frigate$ compiler came shipped with the documentation for the first version and was not updated when extended to fit the \DUPLO framework. This should not be expected since the functionality of the compilers input language was not changed. But this resulted in some time consuming trial and error since it was not well written and specified. It was a long time since I last had worked with circuits in such a way as was the case for generating big circuits with a circuit compiler. This resulted in some hard earned experience on small exapmles.
 
 Some of the most important and different things to take into account when programming for circuit generation is the possibility to do wirre access. First of all it is possible to specify which and how many wires should represent a value by using \verb|y=x{index:size}|. This is the way long bit input strings are translated into higher level representations of smaler instances. This gave some occasions for frustrations because is it not possible to acces vires based on variable inputs which cannot be pre determined by $Frigate$. This makes perfect sence since the compiler can not know which wires should be used as the representation.
 A second point to remember when working with $Frigate$ is that it do not allow for more than one level functions. Which gives some restrictions in programming compared to many other languages. This restriction makes it harder to create small functions with one single specific focus that could be called when the desired functionality was required. This did not give possibility recursive functions. But as the circuits generated is a static representation this is a restriction which cannot easily be handled, since the size of the circuit can not varriate based on the inputs. Another small odidity is that $Frigate$ only allows for assignments in the main method through function calls.
@@ -215,7 +224,7 @@ Otherwise the programing language used by $Frigate$ resembles the well known $C$
 
 \bigskip
 
-When the decired functionality has been implemented using the $wir$ described above used by $Frigate$ the compiler can be used, from inside the compiled $DUPLO$ framework, by calling:
+When the decired functionality has been implemented using the $wir$ described above used by $Frigate$ the compiler can be used, from inside the compiled \DUPLO framework, by calling:
 
 \begin{center}
 \begin{verbatim}
@@ -223,11 +232,11 @@ When the decired functionality has been implemented using the $wir$ described ab
 \end{verbatim}
 \end{center}
 
-The \verb|-db| flag ensures that the right $DUPLO$ format is generated. This call to the compiler generates different files with different extentions. The file we are interested in is the file with the extention \verb|.wir.GC_duplo| this is the one that the $DOPLO$ framework can use as input file.
+The \verb|-db| flag ensures that the right \DUPLO format is generated. This call to the compiler generates different files with different extentions. The file we are interested in is the file with the extention \verb|.wir.GC_duplo| this is the one that the $DOPLO$ framework can use as input file.
 
 \bigskip
 
-The $DOPLO$ framework has a functionality that allowed for evaluation of these input files without setting up both parties. This gave the posibility to specify the inputs for the evaluation and learn the result in a farst return cycle. This possibilty allowed me to study the implementations of the programming language and how the algorithms behaved compared to expected while implementing them. First I tried to implement the $Fisher\text{-}Yates$ algorithm, which is described in details in section \ref{sec:fisher-yates} and can be seen as algorithm \ref{alg:fisher_yates}, in the \verb|.wir| format. During the implemetation I encountered some problems. Since I did not have any earlier experience working with the $Frigate$ compiler I was not sure if the problem was in the implementation of the algorithm or in the compiler. At first the focus was on the implementation as the lack of experience working with $Frigate$ easily could lead to implementation errors. After a lot of modolaisation and debugging it was clear that something was wrong with the version of the $Frigate$ compiler used to generate $DUPLO$-circuits. During the debugging process I created a framework that allowed me to test the different modules of the implementation one by one. It was then clear that something were off when using the modulo reduction in the $Fisher\text{-}Yates$ algorithm. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing the modulo operator \verb|%|, as specified in the documentation, it was clear that some error was introduced during compilation. Therefor I started to take a deeper look at the compiler. Since the compiler was a modified version of the $Frigate$ compiler the posibility was that a bug could have been introduced when adding the new $DUPLO$ featurs. Therefor the old version of $Frigate$ was installed to test if that implemetation had the same bug. Then a problem arose because the old version did not support the $DUPLO$ circuit format. But because $DUPLO$ also has  supports for another circuit file format known as $bristol$, I wrote a parser that took the output from the old version of $Frigate$ and translated that into the$bristol$ format. This gave me two different formatted circuit files that $DUPLO$ could use as input files. Based on these two formats is created a test framework to see if there was any differences on the output when ran on the same input. This showed that there was a difference in the results produced, especailly in the case when using the modular reduction. When taking a deeper look at the problem it came clear that not all gate types was created during compilation using the $DUPLO$ version of the $Frigate$ compiler.
+The $DOPLO$ framework has a functionality that allowed for evaluation of these input files without setting up both parties. This gave the posibility to specify the inputs for the evaluation and learn the result in a farst return cycle. This possibilty allowed me to study the implementations of the programming language and how the algorithms behaved compared to expected while implementing them. First I tried to implement the \FY algorithm, which is described in details in section \ref{sec:fisher-yates} and can be seen as algorithm \ref{alg:fisher_yates}, in the \verb|.wir| format. During the implemetation I encountered some problems. Since I did not have any earlier experience working with the $Frigate$ compiler I was not sure if the problem was in the implementation of the algorithm or in the compiler. At first the focus was on the implementation as the lack of experience working with $Frigate$ easily could lead to implementation errors. After a lot of modolaisation and debugging it was clear that something was wrong with the version of the $Frigate$ compiler used to generate \DUPLO-circuits. During the debugging process I created a framework that allowed me to test the different modules of the implementation one by one. It was then clear that something were off when using the modulo reduction in the \FY algorithm. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing the modulo operator \verb|%|, as specified in the documentation, it was clear that some error was introduced during compilation. Therefor I started to take a deeper look at the compiler. Since the compiler was a modified version of the $Frigate$ compiler the posibility was that a bug could have been introduced when adding the new \DUPLO featurs. Therefor the old version of $Frigate$ was installed to test if that implemetation had the same bug. Then a problem arose because the old version did not support the \DUPLO circuit format. But because \DUPLO also has  supports for another circuit file format known as $bristol$, I wrote a parser that took the output from the old version of $Frigate$ and translated that into the$bristol$ format. This gave me two different formatted circuit files that \DUPLO could use as input files. Based on these two formats is created a test framework to see if there was any differences on the output when ran on the same input. This showed that there was a difference in the results produced, especailly in the case when using the modular reduction. When taking a deeper look at the problem it came clear that not all gate types was created during compilation using the \DUPLO version of the $Frigate$ compiler.
 
 \begin{table}
 \label{table:gate_rep}
@@ -246,11 +255,11 @@ $l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y
 \end{table}
 
 
-This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the $DUPLO$ circuit format has two input and one putput wire by standart and are not explicitly written in the formatted file as earlier. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. This change in representation ensured that all $16$ gate types which can be seen in table \ref{table:gate_rep} are now implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases as all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with input wires with the same value. For the case of $\textbf{1}$ it is now handled as the $NXOR$ of input wires with the same value.
+This resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format of the circuits. Now all gates in the \DUPLO circuit format has two input and one putput wire by standart and are not explicitly written in the formatted file as earlier. The representation of gates chaged from a more human readable type like $XOR$ to a truth table frendly type like $0110$ for $XOR$. This change in representation ensured that all $16$ gate types which can be seen in table \ref{table:gate_rep} are now implemented. The representation of the two constant wires $\textbf{0}$ and $\textbf{1}$ is handled as special cases as all gates now has two input wires. For the case of $\textbf{0}$ it is handled as an $XOR$ gate with input wires with the same value. For the case of $\textbf{1}$ it is now handled as the $NXOR$ of input wires with the same value.
 
-In this way by going into details and debugging my implementaion of the algorithm I have contributed to the $DUPLO$ project by reporting my findings and allowed them to fix this problem before publishing their finding. This has helped to secure a stronger overall research product.
+In this way by going into details and debugging my implementaion of the algorithm I have contributed to the \DUPLO project by reporting my findings and allowed them to fix this problem before publishing their finding. This has helped to secure a stronger overall research product.
 
-On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. This is not mentioned anywhere in the documentation for $Frigate$. When is accounted the problem of the modulo operator I used small amount of reserch to see if this functionality easily could be implemented. During the search I noticed that the implementation of modulo a power of two is simple while research done seems to indicate that the other cases are not trivilay implemented. Therefor this was leaft unfixed and my implementation uses a hack to overcome this problem which is stated in section \ref{sec:fisher-yates}.
+On the other side the compiler has not been updated to support modulo with a deviser that is not the power of $2$. This is not mentioned anywhere in the documentation for $Frigate$. When I accounted the problem of the modulo operator I used a small amount of time to reserch if it was posible to implement this functionality easily. During the search I noticed that the implementation of modulo to some power of $2$ is simple. While the research I did seemed to indicate that for valuse not a power of $2$ are not trivilay implemented. Therefor this was leaft unfixed and my implementation uses a hack to overcome this problem which is stated in section \ref{sec:fisher-yates}.
 
 
 %%%%%%%%%%%%%%%%%%%% SHUFFLE ALGORITHMS %%%%%%%%%%%%%%%%%%%%
@@ -264,25 +273,21 @@ The permutation algorithms studied are with the purpose of shuffling card decks.
 
 The first algorithm studied is the Fisher-Yates algorithm introduced in \citeB{fisher_yates}. It may also be known as Knuth shuffle which was introduced to computer science by R. Durstenfeld in \citeA{durstenfeld} as algorithm 235. This algorithm uses an in place permutation approach and gives a perfect uniform random permutation. This algorithm is introduced in section \ref{sec:fisher-yates} and can be seen in pseudocode as algorithm \ref{alg:fisher_yates}.
 
-The second algorithm proposed uses ideas from shuffling networks and \citeA{psi} as conditional swap combined with the well known $bubble\text{-}sort$ algorithm. The idea is simple and use conditional swaps gadgets which swaps two inputs based on some condition. This algorithm is introduced in section \ref{sec:con_swap} and can be seen in pseudocode as algorithm \ref{alg:con_swap}. This algorithm yields a perfect uniform permutation.
+The second algorithm proposed uses ideas from shuffling networks and \citeA{psi} as conditional swap combined with the well known \textit{Bubble-sort} algorithm. The idea is simple and use conditional swaps gadgets which swaps two inputs based on some condition. This algorithm is introduced in section \ref{sec:con_swap} and can be seen in pseudocode as algorithm \ref{alg:con_swap}. This algorithm yields a perfect uniform permutation.
 
 These shuffle algorithms is optimized to fit to the poker setting introduced in the section \ref{sec:poker} on poker in chapter \ref{ch:intro}. This is done such that it only shuffles the required cards and not the whole deck.
 
 The implementations of these algorithms will be introduced in section \ref{sec:cir_imp} where the choises made will be discussed. At last in section \ref{sec:comp} a comparison of the algorithms is done. Here I chose which algorithm to use in the implemetation of the poker game and benchmark upon. In this section other type of shuffling networks called Bitonic shuffle network will be introduced and discussed shortly. No implementation of such a shuffle network was done.
 
-\bigskip
-
-In the next section the $Fisher\text{-}Yates$ algorithm will be studied, it can be found as algorithm \ref{alg:fisher_yates} in section \ref{sec:fisher-yates}.
 
 %%%%%%%%%%%%%%%%%%%%%%% FISHER YATES %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fisher-Yates}
 \label{sec:fisher-yates}
-
 \begin{algorithm}
 \caption{\textbf{\textit{Fisher-Yates}} \newline
     $deck$ is initialized to hold $n$ cards $c$. \newline
-    $seeds$ is initialized to hold $n$ random $r$ values where $r_i\in[i,n]$ for $i\in [1,n]$.
+    $seed$ is initialized to hold $n$ random $r$ values where $r_i\in[i,n]$ for $i\in [1,n]$.
 }
 \label{alg:fisher_yates}
 
@@ -302,11 +307,11 @@ In the next section the $Fisher\text{-}Yates$ algorithm will be studied, it can 
 \end{algorithmic}
 \end{algorithm}
 
-The $Fisher\text{-}Yates$ algorithm can be seen in algorithm \ref{alg:fisher_yates}. It is a well known in place permutation algorithm that given two arrays as input; one that contains the values that should be shuffled, here denoted $deck$, and another holding the values specifing how the first array should be shuffled, here denoted $seeds$. These swap values from $seeds$ indicate where each of the original values should go in the swap. When the algorithm runs through the first array which is supposed to be permuted it swaps the value at an given index whit the value specified by the swap value of the second array. Think of the input to be shuffled as a card deck then you take the top card of the deck and swap it with another card at a position defined by the swap value.
+The \FY algorithm can be seen in algorithm \ref{alg:fisher_yates}. It is a well known in place permutation algorithm that given two arrays as input; one that contains the values that should be shuffled, here denoted $deck$, and another holding the values specifing how the first array should be shuffled, here denoted $seed$. These swap values from $seed$ indicate where each of the original values should go in the swap. When the algorithm runs through the first array which is supposed to be permuted it swaps the value at an given index whit the value specified by the swap value of the second array. Think of the input to be shuffled as a card deck then you take the top card of the deck and swap it with another card at a position defined by the swap value.
 
-This implies that the algorithm takes two inputs of the same size where the one is holding the values to be permuted, $deck$ with $n$ vlause $card_i$, for $i=0,\dots,n$. The other holding the values for which the different $card_i$ in the $deck$ is to be swapped, $seeds$ with $n$ values $seed_i$. If the swap values $seed_i$ from the $seeds$ are not given in the correct interval the probability for the different permutations is not equally likely. Therefore it is important that the $seed_i$ values are chosen accordingly to the algorithm. The algorithm states that $seed_i$ is chosen from an interval starting with its own index $i$ to the size $n$ of the $deck$. This gives exactly the number of permutations required as $card_1$ has exactly $n$ possible places to go. $card_2$ has $n-1$ possible places and so forth until the algorithm reaches $card_n$ which has no other place to go. Since $seed_i\in[i,n]$ we have $n!$ because $i$ runs from $1$ to $n$ which should be the case as described in section \ref{sec:poker}.
+This implies that the algorithm takes two inputs of the same size where the one is holding the values to be permuted, $deck$ with $n$ vlause $card_i$, for $i=0,\dots,n$. The other holding the values for which the different $card_i$ in the $deck$ is to be swapped, $seed$ with $n$ values $seed_i$. If the swap values $seed_i$ from the $seed$ are not given in the correct interval the probability for the different permutations is not equally likely. Therefore it is important that the $seed_i$ values are chosen accordingly to the algorithm. The algorithm states that $seed_i$ is chosen from an interval starting with its own index $i$ to the size $n$ of the $deck$. This gives exactly the number of permutations required as $card_1$ has exactly $n$ possible places to go. $card_2$ has $n-1$ possible places and so forth until the algorithm reaches $card_n$ which has no other place to go. Since $seed_i\in[i,n]$ we have $n!$ because $i$ runs from $1$ to $n$ which should be the case as described in section \ref{sec:poker}.
 
-If the $seed_i$ values contained in $seeds$ is not chosen for the right interval but instead all is chosen from $1$ to $n$ we would end up having a skew on the probability of the different permutations. As $card_i$ in this case has $n$ possible places to go, this yields $n^n$ distinct permutations. This introduces an error into the algorithm as there should only be $n!$ and as $n^n$ is not divisible by $n!$ for $n>2$. This result in a non uniform probability of the different permutations. The same is the problem if $seed_i$ is not chosen from $[i,n]$ but instead $]i,n]$ such that the own index is not in the interval. By introducing this error to the algorithm the empty shuffle is not possible. In other words it is not possible to get the same output as the input. Which does not give the desired uniform distribution of permutations.
+If the $seed_i$ values contained in $seed$ is not chosen for the right interval but instead all is chosen from $1$ to $n$ we would end up having a skew on the probability of the different permutations. As $card_i$ in this case has $n$ possible places to go, this yields $n^n$ distinct permutations. This introduces an error into the algorithm as there should only be $n!$ and as $n^n$ is not divisible by $n!$ for $n>2$. This result in a non uniform probability of the different permutations. The same is the problem if $seed_i$ is not chosen from $[i,n]$ but instead $]i,n]$ such that the own index is not in the interval. By introducing this error to the algorithm the empty shuffle is not possible. In other words it is not possible to get the same output as the input. Which does not give the desired uniform distribution of permutations.
 
 \bigskip
 
@@ -314,7 +319,7 @@ In case of the poker game we need $52!$ permutations. If all $seed_i$ is chosen 
 
 \bigskip
 
-As described in section \ref{sec:poker} no more then a permutation on the first 20 cards is needed. Which means that we only need the $\frac{52!}{32!}$ specific permutations out of the total of $52!$ different permutations. Doing a $m$ out of $n$ permutation using the $Fisher\text{-}Yates$ algorithm is straight forward. Instead of running through $n$ swaps indicated by the size of $seeds$ it is enough to run through $m$ swaps. In out case resulting in the input $seeds$ only need to have size $20$ and therefore the for-loop seen in algorithm \ref{alg:fisher_yates} in the shuffle function needs to have fewer iterations. Those giving us a full permutation on the first $m$ indexes of $deck$.
+As described in section \ref{sec:poker} no more then a permutation on the first 20 cards is needed. Which means that we only need the $\frac{52!}{32!}$ specific permutations out of the total of $52!$ different permutations. Doing a $m$ out of $n$ permutation using the \FY algorithm is straight forward. Instead of running through $n$ swaps indicated by the size of $seed$ it is enough to run through $m$ swaps. In out case resulting in the input $seed$ only need to have size $20$ and therefore the for-loop seen in algorithm \ref{alg:fisher_yates} in the shuffle function needs to have fewer iterations. Those giving us a full permutation on the first $m$ indexes of $deck$.
 
 \bigskip
 
@@ -325,15 +330,15 @@ As described in section \ref{sec:poker} no more then a permutation on the first 
 \label{fig:fisher_yates}
 \end{figure}
 
-In figure \ref{fig:fisher_yates} it is possible to see the $Fisher\text{-}Yates$ shuffle in action. Here the first $9$ cards of a sorted deck is shuffled according to the giving seed. Running the algorithm on these inputs give the $9$ first cards $1,~52,~14,~20,~10,~37,~9,~33,~6$ as output. It is interesting to notice that $37$ in the seed twice. Since the algorithm permute the imput $deck$ the value $37$ will not be in the output twice. We see that $6$ is swapped in the second time the seed $37$ is used. This is because the first time $6$ and $37$ was swapped. This illustate that it is possible for a $card$ to be swapped multible times.
+In figure \ref{fig:fisher_yates} it is possible to see the \FY shuffle in action. Here the first $9$ cards of a sorted deck is shuffled according to the giving seed. Running the algorithm on these inputs give the $9$ first cards $1,~52,~14,~20,~10,~37,~9,~33,~6$ as output. It is interesting to notice that $37$ in the seed twice. Since the algorithm permute the imput $deck$ the value $37$ will not be in the output twice. We see that $6$ is swapped in the second time the seed $37$ is used. This is because the first time $6$ and $37$ was swapped. This illustate that it is possible for a $card$ to be swapped multible times.
 
 
 %%%%%%%%%%%%%%%%%%%%% SHUFFLE NETWOKS %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Shuffle Networks}
-Shuffling networks or permutation networks has a lot of resemblance to sorting networks. The idea behind this type of networks is that they consist of a number of input wires and equally many output wires. These wires go through the entire network. On these wires a swap gate is plased. This gate is constructed such that if a condition is satisfied the input on the two wires are swapped. By placing these swap gates correctly on the input wires it is possible to get a complete uniform random permutation of the input on the output wires.
+Shuffling networks or permutation networks has a lot of resemblance to sorting networks. The idea behind this type of networks is that they consist of a number of input wires and equally many output wires. These wires go through the entire network. On these wires a swap gadget is plased. This gadget is constructed such that if a condition is satisfied the input on the two wires are swapped. By placing these swap gadgets correctly on the input wires it is possible to get a complete uniform random permutation of the input on the output wires. The swap gadgets are created according to \citeA{psi} as figure 3.
 
-Applying such a shuffle network in the setting of a poker game is simple. The input to the shuffle algorithm is the $deck$ that we want to shuffle and the output is the shuffled $deck$. The more interesting part is how to place the swap gates to ensure that the right number of possible permutations is satisfied. There are many different shuffle algorithms that can be implemented using shuffle networks. The one I have looked into and implemeted builds on ideas from \citeA{psi} where they introduces the conditional swap gate. The algorithm is a combination of the well known $bubble\text{-}sort$ algorithm and the conditional swap.
+Applying such a shuffle network in the setting of a poker game is simple. The input to the shuffle algorithm is the $deck$ that we want to shuffle and the output is the shuffled $deck$. The more interesting part is how to place the swap gadgets to ensure that the right number of possible permutations is satisfied. There are many different shuffle algorithms that can be implemented using shuffle networks. The one I have looked into and implemeted builds on ideas from \citeA{psi} where they introduces the conditional swap gadget. The algorithm is a combination of the well known $bubble\text{-}sort$ algorithm and the conditional swap.
 
 \bigskip
 
@@ -347,7 +352,7 @@ In the next section I will introduce the conditional swap algorithm, which can b
 \begin{algorithm}
 \caption{\textbf{\textit{Conditional swap}} \newline
     $deck$ is initialized to hold $n$ cards $c$. \newline
-    $seeds$ is initialized to hold $\frac{n^2}{2}$ random $bit$ values where $bit_i\in[0,1]$ for $i\in [1,\frac{n^2}{2}]$.
+    $seed$ is initialized to hold $\frac{n^2}{2}$ random $bit$ values where $bit_i\in[0,1]$ for $i\in [1,\frac{n^2}{2}]$.
 }
 \label{alg:con_swap}
 
@@ -374,9 +379,9 @@ In the next section I will introduce the conditional swap algorithm, which can b
 \end{algorithm}
 
 
-The conditional swap algorithm takes two inputs; the first input is an array, denoted $deck$ of $n$ cards $card_i$ for $i=1,\dots,n$, and the second an array $seeds$ of size $l=\frac{n^2}{2}$ bits $b_j$ where $j=1,\dots, l$. The algorithm creates $n-1$ layers of conditional swap gates. The first layer contains $n-1$ conditional swap gates. The second $n-2$ and so on until the las layer consisting of one gate. Each layer is constructed such that a swap gate is placed on two adjacent input wires. Each of these gates overlap with one of the inputwires at the adjacent swap gate. This is illustarated in figure \ref{fig:con_swap}. The layers are stacked in such a way that the first input wire is only represented in the first layer. Thereby is the first value on the first output wires determined by the first layer of swap gates. Resulting in the first input $card_1$ has $n$ places to go. The second layer determines which output $card_2$ will have and so on. Continuing this way until reaching the last layer where the two last outputs $card_{n-1}$ and $card_n$ will be determined. This gives us a shuffle algorithm with a perfect shuffle and $n!$ different permutations as decired.
+The conditional swap algorithm takes two inputs; the first input is an array, denoted $deck$ of $n$ cards $card_i$ for $i=1,\dots,n$, and the second an array $seed$ of size $l=\frac{n^2}{2}$ bits $b_j$ where $j=1,\dots, l$. The algorithm creates $n-1$ layers of conditional swap gadgets. The first layer contains $n-1$ conditional swap gadgets. The second $n-2$ and so on until the las layer consisting of one gate. Each layer is constructed such that a swap gadget is placed on two adjacent input wires. Each of these gates overlap with one of the inputwires at the adjacent swap gadget. This is illustarated in figure \ref{fig:con_swap}. The layers are stacked in such a way that the first input wire is only represented in the first layer. Thereby is the first value on the first output wires determined by the first layer of swap gadgets. Resulting in the first input $card_1$ has $n$ places to go. The second layer determines which output $card_2$ will have and so on. Continuing this way until reaching the last layer where the two last outputs $card_{n-1}$ and $card_n$ will be determined. This gives us a shuffle algorithm with a perfect shuffle and $n!$ different permutations as decired.
 
-If each layer of the swap gates are not decreasing by one on the amount of swap gates this algorithm suffers the problem of producing $n^n$ permutations. Which is not devisible by the decired $n!$ permutations. This resulting in a skew of the probability on the different permutations such that the propability of each permutation is no longer uniform.
+If each layer of the swap gadgets are not decreasing by one on the amount of swap gadgets this algorithm suffers the problem of producing $n^n$ permutations. Which is not devisible by the decired $n!$ permutations. This resulting in a skew of the probability on the different permutations such that the propability of each permutation is no longer uniform.
 
 \bigskip
 
@@ -387,92 +392,385 @@ Again some optimization can be done to the algorithm since we only need a $m$ ou
 \begin{figure}
 \centering
 \scalebox{1.5}{\input{figurs/con_swap_fig}}
-\caption{Conditional swap algorithm in action: In this figure a 9 out of 52 shuffle has been completed to ilustrade how the algorithm works. Each bit in the $seeds$ indicate if a gate should be swapped. Since the size of $seeds$ is so big I have tried to ilustrate which wire each value is located at before moved in a layer resulting in 1, 51, 14, 20, 10, 37, 9, 33, 6.}
+\caption{Conditional swap algorithm in action: In this figure a 9 out of 52 shuffle has been completed to ilustrade how the algorithm works. Each bit in the $seed$ indicate if a gate should be swapped. Since the size of $seed$ is so big I have tried to ilustrate which wire each value is located at before moved in a layer resulting in 1, 51, 14, 20, 10, 37, 9, 33, 6.}
 \label{fig:con_swap}
 \end{figure}
 
-In figure \ref{fig:con_swap} a run of algorithm \ref{alg:con_swap} can be seen Here a $9$ out of $52$ variant is used. It can be seen that the inputs $deck$ is soreted and holds the values to be shuffled and $seeds$ which are binary and indicates if two values should be swaped. The first $52$ bits of the $seeds$ decides if the first $card$ values should be shuffled. Which is not the case in this run. Then the next $51$ bist from $seeds$ indicate that $51$ should be swapped all the way accross to the wire repecenting the second out card. This implies that all cards $51$ passed on its way will now be on the right adjacent wire to where it was prior to the swap. That is why the third output $card$ with value $14$ starts at wire index $15$ and output wire four with value $20$ starts at wire index 21. So the algorithm continiues until it outputs the first $9$ cards shuffled as $1,~51,~14,~20,~10,~37,~9,~33,~6$.
+In figure \ref{fig:con_swap} a run of algorithm \ref{alg:con_swap} can be seen Here a $9$ out of $52$ variant is used. It can be seen that the inputs $deck$ is soreted and holds the values to be shuffled and $seed$ which are binary and indicates if two values should be swaped. The first $52$ bits of the $seed$ decides if the first $card$ values should be shuffled. Which is not the case in this run. Then the next $51$ bist from $seed$ indicate that $51$ should be swapped all the way accross to the wire repecenting the second out card. This implies that all cards $51$ passed on its way will now be on the right adjacent wire to where it was prior to the swap. That is why the third output $card$ with value $14$ starts at wire index $15$ and output wire four with value $20$ starts at wire index 21. So the algorithm continiues until it outputs the first $9$ cards shuffled as $1,~51,~14,~20,~10,~37,~9,~33,~6$.
 
 
 %%%%%%%%%%%%%%%%% CIRCUIT IMPLEMENTATION %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{sec:cir_imp}
-
-\todo{Describe the implementation of the algorithms}
-\todo{Describe problems}
-\todo{Describe solutions}
-\todo{Describe gadgets of the two shuffle protocols}
-
-Because the $DUPLO$ protocol was chosen as the MPC protocol to use in this study the first hurdel was to generate the circuits that should handle the shuffling of the cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly the $DUPLO$ project came shiped with a compiler for generating circuits with the right format. Therefor before staring to implemt the shuffle algorithms I had to read up on the documentation for the compiler. The documentation is from the first version of the $Frigate$ compiler which was extended to suit the $DUPLO$ format. 
+Because the \DUPLO protocol was chosen as the MPC protocol to use in this study the first hurdel was to generate the circuits that should handle the shuffling of the cards. Since circuits become rather complex when trying to implement functions it was important to have a compiler that could translate the algorithms into the desired circuit representation. Luckly the \DUPLO project came shiped with a compiler for generating circuits with the right format. Therefor before staring to implemt the shuffle algorithms I had to read up on the documentation for the compiler, which can be found by following the descriptions in appendix \ref{app:frigate}. The documentation was from the first version of the $Frigate$ compiler which was extended during the \DUPLO project generate the decired \DUPLO format. An introduction to the $Frigate$ compiler created in the \DUPLO project can be fondu in section \ref{sec:frigate} and the codebase is introduced in appendix \ref{app:frigate}. Because it was a long time since I last had worked with circuits and the documentation of the incorporated functionality of $Frigate$ I used some time getting up to speed. Much of this time was by trial and error which gave me some hard earned experience throug small examples.
 
 \bigskip
 
-In the implementation of the two shuffle algorithms there are five different functions used. For the $Conditional~swap$ algorithm the first function used is the $xorSeed$ which handles the $XOR$ of the $seeds$ recieved from the two parties. Which is straightforward. The next function used is the $initDeck$ function. This functions inicilises the sorted deck wich is to be shuffled. This is done by a for-loop inserting the right values on the right wires. Here $6$ bits is used for the representation of cards. It is importand to notice that the variable holding the start position of every card needs its own representation with at least $6$ bits to hold the correct value. If only $6$ bits were used only vires up to opsition $63$ could be assigned t value. Therefor $9$ bit is used for this variable. The $9$ bits comes from the fact that $\lceil \log_2(52\cdot 6)\rceil=9$ bits. The last function used in the $Conditional~swap$ algorithm is the $shuffleDeck$ function. This is the function handling the actual shuffling. This is implemented using two for-loops one for the layers of the network and another for the swap gates in each layer.
+Before going into details on the implementations a link to the sourcecode can be found in appendix \ref{app:circuit-impl}. In the implementation of the two shuffle algorithms there are five different functions was implemented as different modules that could be used. Both shuffle algorithms \FY and \CS makes calls to the function \verb|initDeck|. Which initializes a hardcoded representation of the card deck which is to be shuffled when evaluating the generated circuit. This is done by a for-loop inserting the values of the deck on the right wires. In the implementation $6$ bit variables is used for the representation of each card, as $6$ bist allows for $64$ different representations, because $2^6=64$. Which is enough to represent each unique card in the deck. It is importand to notice that the variable indexing the start position of every card needs a representation with at least $9$ bits to hold the correct value, since $\lceil \log_2(52\cdot 6)\rceil=9$. If only $6$ bits were used for indexing only wires up to opsition $63$ could be assigned and not all $312$, as required since $52\cdot 6=312$. Therefor $9$ bit is used for this variable.
 
 \bigskip
 
-In the case for the $Fisher\text{-}Yates$ the things stack up a bit differently. The first function in this case is the $correctSeed$ function which takes the $seeds$ from the two parties and correct them as descussed earlier. First a card representation of $6$ bits is added from each of the parties. This can not be represented in $6$ bits therefor a bigger representation is used. The idea is that after the addition a modulo reduction will be use to ensure that the new seed value is inside the right intervall. But because the modulo reduction implemented in $Frigate$ only supports a divisor of power of $2$ modulo can not be used. Because the seed values calculated uses devisor different from these. I used some time to figure out that this was only supported since it is not statet anyware in the documentation. After experiencing this I tried to find some articles on how to implement a circuit for the modulo reduction. But during my search I found out that this is not a trivial task to do. Therefor another solution was chosen. Since the input $seeds$ to the functionality is assumed to be in the right intervalls the solution was to subtract the boundray of the interval if the sum exeeded this. This was done by introducing an $if$ statment. It is nothworthy to mention that all values have had an unsigned representation until now. Since the comparison of to values is needed a signed representation is introduced since the documentation stats that the comparison of two values only works on signed representations. This implemetations now ensures that the randomness used for the $shuffleDeck$ function has the right form. But only if the original inputs are inside the right intervalls.
+Then looking into the rest of the stucture of the \CS algorithm we see that the first function used is the \verb|xorSeed|. This function handles the $XOR$ of the $seed$ recieved from the two parties. This is a straightforward implementation using the build-in $XOR$ function \verb|^|. After this the calle to \verb|initDeck| is done shuch that the result for the two functions can be fead into the shuffle algorithm. Such that the last function used in the \CS algorithm is the \verb|shuffleDeck| function. This is the function handling the actual shuffling. This is implemented using two for-loops; one for constructing the layers in the network, and another for generating the swap gadgets in each respective layer. Folowing the structure of algorithm \ref{alg:con_swap} we ensure that we are ending up with an algorithm producing the right amount of permutations according the discussion made in section \ref{sec:con_swap}. Using the optimizations proposed in the same sections results in a clear reduction in the number of gates, as seen in table \ref{table:con_swap_comp}. Most important we see a $62\%$ reduction in the non-free gates on the optimized version.
 
-The second function is the same as in the case for the $Conditional~swap$ algorithm which is the $initDeck$ function. The last function called is the $shuffleDeck$ function which is different from the one from the $Conditional~swap$ algorithm. This function constist of an outer-loop that runs through the cards. Because circuits are static as disscused earlier it is not possible to assign a wire value based on a variable input. Therefor layers of conditional swaps are generated. This is represented by the inner-loop. In this way a gadget for each is constructed such that the index specified by the outer-loop can be swapped with any other value in the rest of the card deck.
+\begin{table}
+\centering
+\begin{tabular}{l || r r r}
+Gate Type      & Non-optimized  & Optimized & Difference($\%$)    \\
+\hline
+Gates          & $145491$       & $57364$   & $60$ \\
+Free Gates     &  $97753$       & $39001$   & $60$ \\
+Non-free Gates &  $47739$       & $18363$   & $62$
+\end{tabular}
+\caption{\CS: Comparison of the non-optimized and optimized versions of the algotithm. The comparison is done on the amount of each gate type in the compiled circuit.}
+\label{table:con_swap_comp}
+\end{table}
+
+\bigskip
+
+In case of the \FY algorithm the things stack up a bit differently. The first function in this case is the \verb|correctSeed|. The function takes the $seed$ from the two parties and correct them as described in section \ref{sec:fisher-yates}. At first each of the inputs are splitted up into representations of $6$ bits such that they each hold $52$ values, $seed_{C_i}$ for the $Constructors$ and $seed_{E_i}$ for the $Evaluator$. Then the new input reprsentations are added such that $seed_{C_1}$ is added with $seed_{E_1}$. This ensures that the new value $seed_i$ is at most $2\cdot (2^6 - 1)$ because of the representation. Since the addition of two $6$ bit values can not be guaranteed to fit inside another $6$ bit value a representation with more bits is used to store the resulting value.
+The idea was to use a modulo reduction on $seed_i$ to gurantee that it was inside the intervall describetd in section \ref{sec:fisher-yates}. Since the modulo reduction implemented in $Frigate$ only supports divisors that is a power of $2$ the modulo reduction in $Frigate$ can not be used, because $seed_i$ is not guaranteed to have this property. I used a lot of time to figure out that the $Frigate$ modulo operator only worked on powers of $2$. This implemetation detail was not specified anywhere in the documentation. The first idea was to fix the problem by implementing a modulo function that I could use instead. I therfor put some research time into this problem, but it is to be rather complex to achive. Therefor another solution was chosen to overcome the problem. Since the input $seed_{C_i}$ and $seed_{E_i}$ to the functionality is assumed to be in the right intervalls the solution was to subtract the boundray of the interval $I_u=52-i$ from $seed_i$ if this exceets $I_u$. Doing it this way it yealds a resulting value $seed_i$ in the right intervall. This is do to the fact that $seed_{C_i}$ and $seed_{E_i}$ can at most be $I_u$. This ensures that $seed_i$ is at most $2\cdot I_u$. Then $seed_i - I_u$ is guaranteed to be at most $I_u$.
+In the implemetation this was done by introducing an $if$ statment checking if $seed_i$ exceeded $I_u$. It is nothworthy to mention that all values have had an unsigned representation until now. But since the comparison of to values needs a signed representation as stated by the documentation $seed_i$ was converted. This corrections to the implemetations now ensures that the randomness given to \verb|shuffleDeck| has the right form. But only if $seed_{C_i}$ and $seed_{E_i}$ are inside the right intervall $[0;I_u]$.
+
+The second function used in the implementation is the same as in the case for the \CS algorithm where the \verb|initDeck| function is called to initialize the representation of the $deck$ which is to be shuffled. The last function called is the \verb|shuffleDeck| function which is different from the one from the \CS algorithm. This function consist of an outer for-loop that runs through the cards $card_i$ of the deck. Because circuits are a static representation as disscused earlier in section \ref{sec:frigate} it is not possible to assign a wire value based on a variable input. Therefor this for-loop generates layers of conditional swap gadgets. Resulting in $52-i$ swap gadgets in each layer, for $i=0,\dots, 51$. This is represented by the inner for-loop. In this way a composed gadget is generated for each $card_i$ such that the $card_i$ can be swapped with any other $card_j$, where $j=i,\dots,51$. This composed gadget is a composition of $52-j$ desitinc swap gadgets. Such that the desired propability is reached as described in section \ref{sec:poker}.
+Both an optimized and non-optimized version of the algorithm was implemented to see how big the gain of the optimization was. This can be seen in table \ref{table:fy_swap_comp}, where we see that the optimization result in a $40\%$ decresae in the number of non-free $XOR$ gates.
+
+\begin{table}
+\centering
+\begin{tabular}{l || r r r}
+Gate Type      & Non-optimized  & Optimized & Difference($\%$)    \\
+\hline
+Gates          & $99150$        & $57790$   & $42$ \\
+Free Gates     & $61806$        & $37433$   & $39$ \\
+Non-free Gates & $37344$        & $22357$   & $40$
+\end{tabular}
+\caption{\FY: Comparison of the non-optimized and optimized versions of the algotithm. The comparison is done on the amount of each gate type in the compiled circuit.}
+\label{table:fy_swap_comp}
+\end{table}
 
 
 %%%%%%%%%%%%%%%%%%%%%%% COMPARISONS %%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-EVT SOMEWHERE HERE:
-BEGIN
-This algorithm requires much more randomness as input compared to the $Fisher\text{-}Yates$ algorithm. But this algorithm does not have the same problems of how the randomness should be chosen. This algorithm uses one bit of randomness at a time and therefore do not suffer from the problem of choosing randomness outside of the correct interval. Therefore this algorithm is more robust in terms of the input seeds. But if the inner for-loop is not running fewer and fewer rounds it will suffer the same problems as encountered by $Fisher\text{-}Yates$ because it will produce $n^n$ distinct possible sequences of swaps which is not compatible with the $n!$ possible permutations.
-END
-
 \section{Comparison}
 \label{sec:comp}
-\todo{describe circuit}
-First of all it is important to understand that we cannot just plug the algorithm in to the MPC protocol. Since we use a MPC protocol that uses garbled circuits for the evaluation of the shuffle algorithm we need to provide a circuit that represent this algorithm. Therefor it is essential to understand how such circuits works and how to construct them. These circuits consist of different gates types. Special for the MPC protocol used here shuch type of circuit are all constructed of gates which has two input and one output wire. This results in 16 different gate types which can be used to construct a circuit. These 16 different gate types comes from the result of having two different values $0$ and $1$ for each of the wires. This gives $4$ different ways to combine the two values which results in $2^4$ different combinations. Of these 16 different gates are some of the well known $AND$, $OR$ and $XOR$. All the different gate types can be seen in figure.
 
-Since circuits is a static representation of a given algorithm it grow fast in size and become rather complex. Therefor to make the construction of the circuits for the shuffle algorithms easier I have used a compiler called $Frigate$\footnote{I used version 2 which is linked to in appendix \ref{appendix1}. This version is optimized to construct circuits for the duplo protocol.} to help with the circuit generation. The compiler takes a high-level program of a $C$ like structure and translates it to a circuit of the correct format for the MPC protocol chosen to use. This compiler gives the possibility to easy implement the shuffle algorithm and generate a complex circuit that represent the right algorithm.
-
-\bigskip
-In the next section I will try to compare the to different algorithms and their circuit representation. The first to look for in the two algorithms is the amount of loops. In the $Fisher\text{-}Yates$ algorithm there is one for-loop and which makes a direct swap resulting in $n$ total swaps. Where as in the $Conditional~swap$ algorithm we have both an outer for-loop and an inner for-loop. Which at creates $\frac{n^2}{2}$ calls to the conditional swap function. At first sight this seems to be many more calls to swap than for the $Fisher\text{-}Yates$ algorithm. But as mentioned earlier circuits are a static representation of an algorithm and therefore the two algorithms do not differ much from each other when comparing their circuit representation. First of all since circuits is a static representation of the algorithm the $Fisher\text{-}Yates$ algorithm can not do a swap based on an input to the algorithm unless all possible swaps are represented in the circuit. This resulting in the need for conditional swaps in the algorithm. Therefore in each of the rounds of the for-loop it should be possible for a value at a given index to go to all the indexes there or higher. This resulting in $n-1$ conditional swaps in the first round. $n-2$ conditional swaps in the second round and so forth. Since both algorithms now need to use conditional swaps they are easy to compare. We know that this gives exactly the same amount of conditional swaps for both algorithms, which is $(n-1)!$ if we do not take the optimizations into account. The biggest difference is how the two algorithms swap in the rounds of the outer for-loop. Here the $Fisher\text{-}Yates$ algorithm has conditional swaps from index $i$ to all the indexes $i'$ where $i<i'$. Where the $Conditional~swap$ algorithm has swaps from $j$ to $j'= j+1$ where $j$ is running from $i$ defined by the forloop to $n-1$.
-
-Another different aspect of the algorithms is to compare the input. Both algorithms takes a $deck$ and $seeds$ as input. Where the $deck$ is the representation of the cards which is the same for both algorithms. But the input $seeds$ differs a lot. This is because of how the two algorithms handle the swaps. Therefore this is the interesting part to look at. First of all it is important to remember what the goal is for this thesis. It is to create a secure distributed poker game. Therefore we use a MPC protocol that help us overcome the security part. We can therefore expect that one of the players will try to cheat. As the protocol takes $seeds$ from both parties on how to shuffle the $deck$ we need to handle this in some way. The easy way is just to $XOR$ these $seeds$ together to get a new seed to use in the shuffle algorithm. This is completely fine in the $Conditional~swap$ algorithm since it uses one bit of randomness at a time for each swap gate. We know that the $XOR$ of to random bits yields a equally random bit. But for the $Fisher\text{-}Yates$ it makes the algorithm insecure since the $XOR$ of the two $seeds$ can result in a new seed that do not forfill the requirements to the inputs. This will give a bias that result in a higher probability of getting low cards. This is because the algorithm relies on the random $r$ values of the seed to be in given intervals. Therefore when $XOR$ the $seeds$ from the two parties it can not be guarantee that the random $r$ values for the shuffle is inside the correct interval. The easy solution to this will be to take the modulo reduction of $r$ to fit inside the desired interval. Here I will come with an example to show the problems by doing so. In our case we need to represent $52$ cards. These can be represented in base 2 using 6 bits since $\lceil{log_2(52)}\rceil=6$. But as we know $2^6=64$. This implies that we have $11$ possible values for our $r$ in the first round after the $seeds$ have been $XOR$'ed together. This result in the first $11$ values from $0$ to $10$ to have the probability $\frac{2}{64}$ while the last $31$ values from $11$ to $51$ have probability $\frac{1}{64}$ giving us a bias. 
-Instead of using $XOR$ to construct the new $r$ values for the shuffle algorithm the $seeds$ will be added $6$ bits at a time. This resulting in a uniform propability on the $r$ values. Here it is important to notice that while $6$ bits is enough to hold the 52 card values it is not sufficient to hold the sum of such two values.
+In this section I will try to compare the two algorithms on their internal structure. I will compare the algorithms based uppon their gate composition and based on that choose which one to continiue with in the implementatin of the poker game. When comparing the algorithms I use the optimized versions as it would be one of these that will be used because of their gain in the number of non-free $XOR$-gates.
 
 \bigskip
 
-At last a short comment on other shuffle algorithmic possibilities. There do exist other types of sorting networks that could be used. In \citeA{psi} they also uses a algorithm known as the $Bitonic$ algorithm refering to the way the network is constructed. Such a network is constructed of what is known as $half-cleansers$ known from sorting networks. These $half-cleansers$ are constructed such that the input has one peak, $i_1\leq \dots \leq p \geq \dots \geq i_n$. Then the output is half sorted such that the highest values are in one of the two halfs. This creates a circuit of size $O(n\cdot log(n))$ which is better then what the $Conditional~swap$ and $Fisher\text{-}Yates$ algorithms can aquire since it creates a circuit of size $O(n^2)$. But as argued earlier the $Conditional~swap$ and $Fisher\text{-}Yates$ algorithms are easily optimized to the setting studied in this thesis.
+The first we will look at is the input to the \verb|shuffleDeck| functions. The both take the $deck$ as input, which in both cases is generated by the function \verb|initDeck|. This does therfore not yeald any difference to the algorithms. Then when looking at the $seed$ it is clear that there are some differences. Both in terms of representation and in size. First looking at the representation of $seed$, in \FY $seed_{FY}$ and \CS $seed_{CS}$. The $seed_{FY}$ is a representation of $20$ values $seed_{FY_i}$ in the interval $[0;52-i]$, for $i=1,\dots, 52$. Where $seed_{CS}$ does not have any abstrac representation and therefore $seed_{CS_i}$ has the binary representation $[0;1]$. The difference in the representations is one reason why we se a difference in the size of the $seed_{FY}$ and $seed_{CS}$ in terms of bits. Where the size of $seed_{FY}$ is $112$ since $6$ bists are used for the representation of the $20$ seed values. The size of $seed_{FY}$ is $830$ because one bit is needed per swap gadget, which is $\sum_{i=52-20}^{51} i$. As we see it is also the way the algorithm uses the $seed$ that effect the size. Where the \FY algorithm constructs composed gadgest consisting of multiple swap gadets the \CS algorithm only constructs swap gadgets. Even thoug the algorithms has different approches to generate the swap gadgets they end up generating the same amount of swap gadgets. Because \FY generates $19$ composed gedgest $CG_i$ consisting of $52-i$ swap gadgets, for $i=1,\dots,19$. Yealding the same number of swap gadgets as in \CS .
+
+If we then instead turn our attention to the way the algorithms handle the $seed$ before they are fead to \verb|shuffleDeck| we se some big differences. Because both algorithms takes $seed_C$ and $seed_E$ as inputs from $Constructor$ and $Evaluator$ the algorithms needs to generate one single $seed$ that can be used by \verb|shuffleDeck|. This adds an overhead to the algorithms. This is not much for the \CS algorithm since it can use the $XOR$ function because it uses one bit of randomness at a time. As described in section \ref{sec:fisher-yates} this is not the case for \FY since it uses $6$ bits of randomness $seed_i$ at a time. Because there is the restriction on the $seed_C$ and $seed_E$ and the $seed$ input to \verb|shuffleDeck| in \FY the overhead added is more. The split-up of $seed_C$ and $seed_E$ into $seed_{C_i}$ and $seed_{E_i}$ does not add any overhead, but the addition of these does. Also the check to test if $seed_i$ is greather then $I_u$ and the subtraction adds an overhead to the overall circuit. The differences can be seen in table \ref{table:alg_preprocess_overhead} where it is clear that \verb|xorSeed| adds significantly less overhead to the circuit compared to \verb|correctedSeed|. 
+
+\begin{table}
+\centering
+\begin{tabular}{l || r r r}
+Gate Type      & \verb|correctSeed| & \verb|xorSeed| & Difference($\%$)    \\
+\hline
+Gates          & $6220$             & $1663$         &  $73$ \\
+Free Gates     & $4347$             & $1661$         &  $62$ \\
+Non-free Gates & $1873$             &    $2$         & $100$
+\end{tabular}
+\caption{Comparison of the overhead added to the algorithms by handling the $seed$'s. The comparison is done on the amount of each gate type in the compiled circuit.}
+\label{table:alg_preprocess_overhead}
+\end{table}
+
+We see that the \verb|xorSeed| has two non-free gates, which is strange since it only does $XOR$ as should be free. This is because of the bit constants \textbf{0} and \textbf{1} which are implemented using $AND$ or $NADN$ with both inputs comming from the same wire. Therefore will every circuit generated with the compiler have these two non-free $XOR$ gates.
+
+\bigskip
+
+When looking in to the overall composition of \FY and \CS we get the results as seen in table \ref{table:circuit_gate_types}. We see that \CS is overall $4\%$ bigger in terms of the amount of gates than \FY. On the more important comparison is that \CS has $18\%$ less non-free $XOR$ gates. Therefore is the \CS algorithm the one that will be used in the implementation of the poker game.
+
+\begin{table}
+\centering
+\begin{tabular}{l || r | r | r}
+Gate Types     & \FY     & \CS     & Difference(\%) \\
+\hline
+Gates          & $59790$ & $57364$ &  $4$   \\
+Free Gates     & $37433$ & $39001$ & $-4$   \\
+Non-free Gates & $22357$ & $18363$ & $18$
+\end{tabular}
+\caption{Compariason of the \FY and \CS algorithms after compilation to \DUPLO circuits. The comparison is done on the amount of each gate type.}
+\label{table:circuit_gate_types}
+\end{table}
+
+As a note to the comparison it shouls be mentioned that some of the variables used in \verb|correctedSeed| are bigger in terms of bit size than needed. But since this is only a fraction of the $1873$ non-free gates seen in table \ref{table:alg_preprocess_overhead} this wouls not change that \CS has less non-free gates then \FY .
+
+\bigskip
+
+At last I will give a short comment on another possible shuffle algorithm that could have been used. This other types of sorting networks that the one studdied in section \ref{sec:con_swap}. In \citeA{psi} they also uses a algorithm known as the $Bitonic$ merge sort algorithm. Such an algorithm is constructed of what is known as $half-cleansers$. These $half-cleansers$ are constructed such that the input is guaranteed to have one peak $p$, $i_1\leq \dots \leq p \geq \dots \geq i_n$. Then the output is half sorted such that the highest values are in one of the two halfs. Resulting in a algorithm that can sort any input. This guarantees that one input $seed_i$ can every other place. If the conditional swap gadget is used then it can be used as a shuffle algorithm instead of a sorting algorithm. This type of sorting network generates a circuit of size $O(n\cdot log(n))$ which is better then what the \CS and \FY algorithms can aquire which is $O(n^2)$. But as argued earlier the \CS and \FY algorithms are easily optimized.
 
 \todo{Bitonic algorithm, optimization? can maybe be done by flipping such a sorting network and removing half cleansers}
 
-As a result of this we get that for some card games it can be an idea to check if one algorithm can outperform another. In out case we need only $20$ out of $52$ cards. We now know that a $Bitonic$ algorithm would produce a smaller output but since the two algorithm studied here are easy to optimize such that they produce a relative small circuit. This implies that there will ba a cross over at some point where it is better to shuffle a complete deck than only parts of it even if only a part is needed. This could be in a setting when playing with more the two players for a game of poker.
+As a result of this we see that for some card games it can be better to use another algorithm then the ones studied in this thesis since it may outperform them. We now know that a $Bitonic$ algorithm would produce a smaller circuit that \FY and \CS but since the two algorithm are easy to optimize such that they produce a relative small circuit. It is not clear that a $Bitonic$ algorithm will produce a circuit that is smaller. This implies that there will ba a cross over at some point where it is better to shuffle a complete deck then only parts of it as is done in our case. This can even be the case when only a part of the deck is needed.
 
-\begin{table}
-\label{circuit_gate_types}
+
+%%%%%%%%%%%%%%%%%%%%%%%% POKER IMPLEMENTATION %%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Poker Implemetation}
+\label{ch:implementation}
+The main idea of this chapter is to introduce the different stages during the implementation. Here I will introduce the different problems I have encountered and how I have chosen to overcome those.
+
+\todo{Introduce different sections}
+
+%%%%%%%%%%%%%%%% 2PC POKER IMPLEMENTATION %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Poker Game}
+As described in section \ref{sec:duplo_framework} where the structure of the framework was introduced. This structure is what every implemetation using the \DUPLO protocol needs to have. In the next part I will introduce how this was used to implement the poker game in this project.
+
+\bigskip
+
+\todo{The pokser setting}
+\begin{figure}
 \centering
-\scalebox{.9}{
-\begin{tabular}{l || r | r | r}
-Circuit                      & $Fisher\text{-}Yates$ & $Conditiona~swap$ & Difference(\%) \\
-\hline
-Number of wires              & $835$                 & $4151$            & 397    \\
-Number of gates              & $59790$               & $57364$           & 4   \\
-Number of free $XOR$ gates   & $37433$               & $39001$           & 4   \\
-Number of non-free gates     & $22357$               & $18363$           & 21
-\end{tabular}
-}
-\caption{Compariason of the two implemented algorithms after compilation to $DUPLO$ circuits.}
+\input{figurs/poker_setting}
+\caption{The two different settings discussed to implement. The one on the left where the $Constructor$ and the $Evaluator$ also are the players and the one on the right wher they act as servers where players connect and then localy construct output based on output from the servers.}
+\label{fig:poker_setting}
+\end{figure}
+
+
+Before starting on the implemetation it is inportant to decide which setting of the poker game should be studdied. Two different settings was proposed and discussed, these can be seen in figure \ref{fig:poker_setting}. The first is one where the $Constructor$ and $Evaluatr$ act as players of the poker game themselves. They will play against each other and each decide on which and how many cards should be changed. The other setting is where the $Constructor$ and $Evaluator$ act as servers where players connect to. These players will act as clients connecting to both the $Constructor$ and $Evaluator$. Here the $Constructor$ and $Evaluator$ will run the protocol as described, but use inputs from the clients. The first one is the one chosen mainly because of the simplicity and timelimit of the project. The other setting has some interesting features which I will mention here. The second setting resembles what is used in real world online poker today. Today a player connects to a server which handles the shuffleing and dealing of cards. Then instead of connecting to one server which is not completly trusted the player connects to two servers which runs a secret share of the \DUPLO protocol. Then the player will recieve a share from each party and reconstruct the computed output. This setting distribut the trust issiue with the setting used to day. It could be the example that one of the serves in the \DUPLO setting is a State authorized server in which the palyer then would put its trust. Then game makers is then required to use the protocol against this server to be allowed to sell games in that contry. It will alow for a distributed instead of a single piont trus issiue. In the second setting there are no limits to how many playes could connect to the servers to play a game of poker. In this way the $2PC$ is not a restriction for the amount of players. This setting requiers a way of handling authentisity between the players, the $Constructor$ and $Evaluator$. This is needed to encure that non of the players sends different inputs to the $Constructor$ and $Evaluator$, and to encure that the $Constructor$ and $Evaluator$ does not send different outputs to the players. This is not a simple task to overcome, therefor the first setting was chosen.
+
+The way \DUPLO is constructed it allows for preprocessing of the circuits, such that the right informtion is at the right party before evaluation. The overall protocol can be catogorized in 3 different main phases. The first phase is the $Preprocess$ phase which consist of the framework calls from section \ref{sec:duplo_framework}; \verb|Connect|, \verb|Setup|, \verb|PreprocessComponentType|, \verb|PrepareComponets| and \verb|Build|. The next phase is the $Evaluation$ phase which calls the \verb|Evaluate| framework function. The last phase is the $Online$ phase which consists of the \verb|DecodeKeys| calls. Building the protocol this way allows for an intens $Preprocess$ phase where a lot data is processed and communications is done. This allows for a faster $Evaluation$ phase and results in a small overhead when running the $Online$ pahse.
+
+\bigskip
+
+I will now describe the implementation of the poker game. First of all we need to both implementa a $Constructor$ and an $Evaluator$. These runs the protocol in parallel with the same framework calls, but holds different information during the phases. First we read the composed circuits in to both parties such that they know which functionality is to be computed. 
+Then the first interaction between the two parties is when the \verb|Connect| call is done. On the $Constructor$ site this generates the server functionality which the $Evaluator$ connect to with this call. 
+\todo{Missing setup???}
+Then a call to \verb|PreprocessComponetType| is done on each of the subcircuits. \todo{What does preprocessComponetType???}.  
+Efter this a call to \verb|PrepareComponets| is done, such that \todo{What does prepareComponets???}.
+At last the circuit are generated by the call to \verb|Build|. \todo{What deos build???}.
+As can be seen no special input is given to any of the parties during the phase except of the circuit representing the functionality to be computed. Therefor this is called the $Preprocess$ pase. As this can be done without futher input.
+
+The next phase is the $Evaluate$ phase, where the evaluation of the circuit that has been build. But before the call to \verb|Evaluate| can be done each of the parties need to generate their inputs to the shuffle algorithms. Since the $deck$ is harcoded into the circuit it is sufficient for them to provide the $seed$. This is done by generating $16$ bytes of random data and using this as a seed for a pseudo random generator producing the 830 bit randomness used for each $deck$. Then this is used as input to the \verb|Evaluate| function. 
+
+The last phase is the $Online$ phase it is here the calls to \verb|DecodeKeys| is done. This phase is run for each game played. The amount of games possible is specified in the number of simuntainiusly shuffled decks. In this phase the $Constructor$ and $Evaluator$ must first agree on which outputwires should be opened to which party. Therefor the first the do is to generate an array containing the wire indexes to be opened to the $Constructor$ and then those to the $Evaluator$. These are then opened and displayed to the players. For the first hand the $Constructor$ is always dealt the first five cards from the deck, the $Evaluator$ five cards starting from index 10. This is the most optimal way to deal the cards as this requires the least calls to \verb|DecodeKeys|. This does not change the propability of the cards dealt. As known for real world card games one or two cards are normaly dealt at a time, this is propably done because the shuffle algorithm doeas not have a uniform distribution. But has a skew such that sequences of cards are more likely to repeat in the next game. This is not the case for our shuffle algorithms, since the start with the same initial $deck$ and has a uniform propability distribution on the output. 
+
+Then a input interface is displayed to the players to allow them to choose which cards to change. This is done using a terminal interface where the user writes; $0$ if no cards needs to changes, $1$ if the first card should be changed, $2$ for the second and so on, if multiple cards is to be changes this is done by seperating the card indexes with a comma $,$ like $4,5$. To allow for a new hand to be dealt with the specified cards changed the parties first sents the amount of cards thay want to change, after this the indexes of the cards are sent. Now each party knows which wires should be opened, therefor the old index of output wires is updated to hold the new index wires. Then the second and final hand is opened an displayed to the parties by the second call to \verb|DecodeKeys| The cards with indexes from 5 to 9 is reserved for the $Constructor$'s second hand and the cards 15 to 19 to the $Evaluator$'s. By opening the last hand in this way adds an overhead since one card may be openend in both the first and second hand. But this allows for less communication before the last revilation round in the game.
+
+The last round of each game is the revelation phase of the oponents hand. This is done without any communicatin other than a last call to \verb|DecodeKeys|. The input to this last call is done by switching the inputs for the $Constructor$ and $Evaluator$ as they already know which wires was openend in the last hand to the oponent. By opening the oponents card this way we ensure that the oponenet does not lear the cards which were discarded.
+
+At last when all the decks are played the statisitcs are writen to the log files. This is the timings and amount of data send by the different calls. This data is used in the section \ref{sec:bechmarking} to discuss the effeciency of the \DUPLO protocol in the setting of a poker game.
+
+\bigskip
+
+A small note on the leak of information when communication indexes for \verb|DecodeKeys|. The oponent always know how many and which cards are changed because the parties needs to agree on which wires to open, but this is not any different from real life poker. Therefor this leak of information should not be considered a security problem.
+
+
+\section{Benchmarking}
+\label{sec:bechmarking}
+\todo{Implementation interaction, flags}
+First a shuffle algorithm is compiled wich is described how to do in appendix \ref{app:frigate}. We use the \CS circuit implemented in section \ref{sec:cir_imp} as this has the leas non-free $XOR$ gates as seen in section \ref{sec:comp}. When this is inplace  
+
+\todo{Bash scripts}
+
+\todo{Removed values, ref loged values}
+
+\begin{figure}
+    \label{fig:mesurement_ms}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:const_ms_plot}
+        \includegraphics[width=\textwidth]{figurs/const_ms_plot.eps}
+        \caption{Constructor: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+    \end{subfigure}
+
+    \vspace*{1cm}
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:eval_ms_plot}
+        \includegraphics[width=\textwidth]{figurs/eval_ms_plot.eps}
+        \caption{Evaluator: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+    \end{subfigure}
+
+\caption{Comparison of the Constructor and Evaluator on which phases requires the most time.}
+\end{figure}
+
+\begin{figure}
+    \label{fig:mesurement_kb}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:const_kb_plot}
+        \includegraphics[width=\textwidth]{figurs/const_kb_plot.eps}
+        \caption{Constructor: $kb$ sent in different phases.}
+    \end{subfigure}
+
+    \vspace*{1cm}
+
+    \begin{subfigure}{\textwidth}
+        \label{fig:eval_kb_plot}
+        \includegraphics[width=\textwidth]{figurs/eval_kb_plot.eps}
+        \caption{Evaluator: $kb$ sendt in different phases.}
+    \end{subfigure}
+
+\caption{Comparison of Constructor and Evaluator on which phases most $kb$ are sent to the other party.}
+\end{figure}
+
+
+\begin{table}[!htb]
+\label{table:mesurement_ms}
+\centering
+
+    \begin{subtable}{\textwidth}
+    \label{table:const_ms}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l || c |r r r r r}
+          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
+    \hline
+    \multirow{3}{*}{Setup} & 50 & 2210.37 & 162.11 & 17.63 & 2.86 & 2.17   \\
+                           &  0 & 1431.11 & 114.23 & 12.66 & 2.36 & 2.00   \\
+                           \cline{2-7}
+                           &  - &  779.29 &  47.88 &  4.97 & 0.50 & 0.17   \\
+    \hline                       
+    \multirow{3}{*}{Circuit preprocess} & 50 & 4033.93 & 527.35 & 119.99 & 67.52 & 51.36 \\
+                                        &  0 & 1564.52 & 201.07 &  50.75 & 29.75 & 19.50 \\
+                                        \cline{2-7}
+                                        &  - & 2469.41 & 326.28 &  69.24 & 37.77 & 31.86 \\
+    \hline 
+    \multirow{3}{*}{Auth preprocess} & 50 & 1150.64 & 143.22 & 39.92 & 37.93 & 42.54 \\
+                                     &  0 &   93.10 &  31.95 & 20.02 & 22.90 & 33.57 \\
+                                     \cline{2-7}
+                                     &  - & 1057.54 & 121.27 & 19.90 & 17.03 &  8.97 \\
+    \hline                                 
+    \multirow{3}{*}{Build} & 50 & 807.18 & 86.06 & 15.78 & 8.42 & 10.82 \\
+                           &  0 &  22.84 &  6.79 &  6.27 & 6.46 &  9.02 \\
+                           \cline{2-7}
+                           &  - & 784.34 & 79.27 &  9.51 & 1.96 &  1.8 \\
+    \hline                       
+    \multirow{3}{*}{Evaluate} & 50 & 100.82 & 10.22 & 1.18 & 0.30 & 0.30 \\
+                              &  0 &   0.69 &  0.24 & 0.24 & 0.23 & 0.24 \\
+                              \cline{2-7}
+                              &  - & 100.13 &  9.98 & 0.94 & 0.07 & 0.06 \\
+    \hline
+    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.37 & 100.39 & 100.91 & 115.62 & 177.92 \\
+                                          &  0 &   0.20 &   0.13 &   0.37 &  10.20 &  77.15 \\
+                                          \cline{2-7}
+                                          &  - & 100.17 & 100.26 & 100.54 & 105.42 & 100.77 \\
+    \hline
+    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.37 & 10.23 & 1.24 & 0.50 & 0.86 \\
+                                          &  0 &   0.13 &  0.08 & 0.90 & 0.25 & 1.30 \\
+                                          \cline{2-7}
+                                          &  - & 100.24 & 10.15 & 0.34 & 0.25 & -0.44 \\
+    \hline
+    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.35 & 10.22 & 1.23 & 0.48 & 0.57 \\
+                                           &  0 &   0.11 &  0.08 & 0.09 & 0.23 & 0.91 \\
+                                           \cline{2-7}
+                                           &  - & 100.24 & 10.14 & 1.14 & 0.25 & -0.34
+    \end{tabular}
+    }
+    \caption{Constructor: comparison of the different phases and concurrent shuffles with and with out delay.}
+    \end{subtable}%
+
+    \vspace*{1cm}
+
+    \begin{subtable}{\textwidth}
+    \label{table:eval_ms}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l || c |r r r r r}
+          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
+    \hline
+    \multirow{3}{*}{Setup} & 50 & 620.25 & 61.89 & 6.15 & 0.62 & 0.21 \\
+                           &  0 & 117.58 & 11.36 & 1.05 & 0.09 & 0.03 \\
+                           \cline{2-7}
+                           &  - & 502.67 & 50.53 & 5.01 & 0.53 & 0.18 \\
+    \hline                       
+    \multirow{3}{*}{Circuit preprocess} & 50 & 4037.57 & 528.96 & 120.39 & 68.30 & 60.86 \\
+                                        &  0 & 1574.70 & 202.97 &  51.89 & 30.79 & 29.63 \\
+                                        \cline{2-7}
+                                        &  - & 2462.87 & 325.99 &  68.50 & 37.51 & 31.23 \\
+    \hline 
+    \multirow{3}{*}{Auth preprocess} & 50 & 1154.60 & 146.40 & 44.90 & 42.32 & 46.33 \\
+                                     &  0 &   94.98 &  34.70 & 24.73 & 27.37 & 37.65 \\
+                                     \cline{2-7}
+                                     &  - & 1059.62 & 111.70 & 20.17 & 14.95 &  8.68 \\ 
+    \hline                                 
+    \multirow{3}{*}{Build} & 50 & 807.23 & 86.12 & 15.83 & 8.50 & 10.88 \\
+                           &  0 &  22.88 &  6.82 &  6.33 & 6.59 &  9.14 \\
+                           \cline{2-7}
+                           &  - & 784.35 & 79.30 &  9.50 & 1.91 &  1.74 \\
+    \hline                       
+    \multirow{3}{*}{Evaluate} & 50 & 129.49 & 17.91 & 5.43 & 5.44 & 9.58 \\
+                              &  0 &  15.71 &  5.13 & 2.92 & 2.29 & 7.96 \\
+                              \cline{2-7}
+                              &  - & 113.78 & 12.78 & 2.51 & 3.15 & 1.62 \\
+    \hline
+    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.60 & 100.63 & 101.17 & 115.91 & 179.12 \\
+                                          &  0 &   0.29 &   0.19 &   0.43 &  15.01 & 125.68 \\
+                                          \cline{2-7}
+                                          &  - & 100.31 & 100.44 & 100.26 & 100.90 &  53.44 \\
+    \hline
+    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.59 & 10.23 & 1.47 & 22.08 & 128.10 \\
+                                          &  0 &   0.18 &  0.08 & 0.22 & 14.31 & 124.84 \\ 
+                                          \cline{2-7}
+                                          &  - & 100.41 & 10.15 & 1.25 &  7.77 &   3.26 \\
+    \hline
+    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.57 & 10.23 & 12.70 & 21.81 & 122.89 \\
+                                           &  0 &   0.17 &  0.07 &  0.22 & 14.16 & 123.14 \\
+                                           \cline{2-7}
+                                           &  - & 100.40 & 10.16 & 12.48 &  7.65 & -0.25
+    \end{tabular}
+    }
+    \caption{Evaluator: comparison of the different phases and number of concurrent shuffles with and without delay.}
+    \end{subtable}%
+
+\caption{Comparison of the time consumption of the Constructor and Evaluator.}
 \end{table}
 
 
-In this section I will do a compariaon of the two compiled circuits. I chapter \ref{ch:shuffle} on the shuffle algorithms I compared the idea of the algorithms. Now after compiling them it is easier to argu how the two implemetations stack up against each other. In the table above where the circuits are compared on four different parameters. The first parmeter are the number of unique wires in the circuits. It is clearly that the $Fisher\text{-}Yates$ algorithm has less unique wires than the $Conditional~swap$ algorithm.
+\begin{table}[!htb]
+\label{table:mesurmet_kb}
+\centering
 
-\todo{Does the number of unique wires effect the performance of the protocol?}
+    \begin{subtable}{\textwidth}
+    \label{table:const_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Setup                       &     12.70 &     1.27 &    0.12 &    0.01 &    0.00 \\
+    Circuit Preprocess          & 158470.00 & 22518.10 & 7023.94 & 4837.94 & 4127.91 \\
+    Auth. Preprocess            &  13329.90 &  4170.08 & 2249.69 & 2437.49 & 1986.51 \\
+    Build                       &    327.71 &   128.49 &  107.24 &  105.12 &  104.96 \\
+    Evaluate                    &    122.84 &   122.84 &  122.84 &  122.48 &  122.84 \\
+    Decode keys                 &      5.94 &     2.38 &    2.02 &    1.99 &    1.99\\
+    \end{tabular}
+    }
+    \caption{Constructor: $kb$ sent per shuffled deck in different phases.}
+    \end{subtable} 
+    
+    \vspace*{1cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Setup                       &  16.55 &  1.65 &  0.17 &  0.02 &  0.01 \\
+    Circuit Preprocess          &   1.59 &  0.16 &  0.02 &  0.00 &  0.00 \\
+    Auth. Preprocess            &   1.06 &  0.11 &  0.01 &  0.00 &  0.00 \\
+    Build                       & 174.55 & 34.67 & 18.95 & 17.55 & 17.49 \\
+    Evaluate                    &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
+    Decode keys                 &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 
+    \end{tabular}
+    }
+    \caption{Evaluator: $kb$ sent per shuffled deck in different phases.}
+    \end{subtable}%
 
-The second parameter mesured in the table is the total number of gates in the circuit. Here the numbers are farly similar. Doing a calculation shows that $Fisher\text{-}Yates$ has around $4\%$ more gates than $Conditional~swap$ which is not that big a differend. But when looking into the difference on the two last parameters. First we rememer that we are in a setting where $XOR$ gates are assumed for free. The parameters are the number of free $XOR$ and non-free. When the amount of these gates are mesured we see a bigger difference. When doing the calculations we see that $Fisher\text{-}Yates$ has $4\%$ less free gates than $Conditional~swap$ which is not much. We see the big difference when looking at the non-free gates. Here $Fisher\text{-}Yates$ has $21\%$ more non-free gates that what is the case for $Conditional~swap$. This is a big difference and in this case the effect of the difference is negativ on the performance of the protocol. Therefor even though the amount of randomness used in the algorithm is much smaller the overhed of ensuring that the seed is in the right intervall and the swap gadgets constructed for each card index result in a wors circuit for the $DUPLO$ protocol. Therefor the $Conditional~swap$ algorithm is used in the implemetation.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\caption{Comparison of the Constructor and Evaluator on the amount of data sent in the different phases.}
+\end{table}
 
-\chapter{Poker Implemetation}
-\label{ch:implementation}
-\input{implementation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -486,19 +784,47 @@ The second parameter mesured in the table is the total number of gates in the ci
 \chapter{Codebase}
 In this appendix references will presented to the different codebase used during the thesis. An url to the repositories on github will be presented togheter with a short description of where the most interresting parts for this project can be found.
 
-\bigskip
+\section{Hardware}
+\label{app:hardware}
+For compilations of the circuits with the $Frigate$ compiler the following setup has been used:
 
-\todo{What hardware has been used during the project!}
+\begin{center}
+\begin{verbatim}
+OS:        Ubuntu 16.10/17.04
+Processor: Intel i5-4210U CPU @ 1.70GHz
+Cores:     2
+Threads:   4
+RAM:       12 GB
+\end{verbatim}
+\end{center}
+
+I did not encounter any problems or slow compilations of circuits using this setup.
+
+\bigskip
+For the testing of the poker game that setup was not sufficient as it could not handle more than 500 simuntainios shuffles. Therefore another setup up was used:
+
+\begin{center}
+\begin{verbatim}
+OS:        Ubuntu 16.04 LTS
+Processor: Intel i7-3770K CPU @ 3.50GHz
+Cores:     4
+Threads:   8
+RAMS:      32 GB
+\end{verbatim}
+\end{center}
+
+This setup allowed for testing up to 3000 simuntainious shuffles, which is the highest done in the testing phase. When going up to 4000 this setup ran out of memmory on the $Evaluator$ site of the execution.
+
 
 \section{DUPLO}
 \label{app:duplo}
-The $DUPLO$ repository at GitHub can be found here \url{https://github.com/AarhusCrypto/DUPLO}
+The \DUPLO repository at GitHub can be found here \footnote{\url{https://github.com/AarhusCrypto/DUPLO}}.
 
 The documentation on the site is clear and illustrates clearly how it is compiled such it can be tested. No documentation is presented for how interacting with the framework can be done for new implementations. The most interesting part for the sake of this project is located in the \verb|src| folder. Here the \verb|CMakeLists.txt| file is located which specifies how the project is compiled, this is overwritten when compiling the poker implementation. The folder \verb|src/dublo-mains| is where the actual implementations of the $Constructor$ and $Evaluater$ can be found. Here the implementations of the poker $Constructor$ and $Evaluator$ will be placed.
 
 \bigskip
 
-For a easy setup of duplo a docker instance is created and can be found at \url{https://hub.docker.com/r/cbobach/duplo/}. This can be started in docker version \verb|17.05.0-ce| with the command;
+For a easy setup of duplo a docker instance is created and can be found here \footnote{\url{https://hub.docker.com/r/cbobach/duplo/}}. This can be started in docker version \verb|17.05.0-ce| with the command;
 
 \begin{center}
 \begin{verbatim}
@@ -518,15 +844,15 @@ The \verb|--network:host| flag is not secure but is the fart easy way to let the
 
 \section{Frigate}
 \label{app:frigate}
-The $Frigate$ repository on GitHub is a subrepository to $DUPLO$ and can be found at \url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}.
+The $Frigate$ repository on GitHub is a subrepository to \DUPLO and can be found here \footnote{\url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}.
 
-The documentation of how $Frigate$ is installed with the special versions of some of the libraries used is specified in the documentation of $DUPLO$, the link can be found in appendix \ref{app:duplo}. It is also here the documentation of how to compile $DUPLO$ circuit formats are done.
+The documentation of how $Frigate$ is installed with the special versions of some of the libraries used is specified in the documentation of \DUPLO, the link can be found in appendix \ref{app:duplo}. It is also here the documentation of how to compile \DUPLO circuit formats are done.
 
 To find the documentation of the \verb|.wir| file format a look should be taken at the link above. Here the specifications are of how wire acces is done for example. It is here all functionallities that are implemented in the language is listed and how they are used. This documentation is narrow at some places. It does for example not specify that the modulo operator \verb|%| does only work on powers of $2$.
 
 \bigskip
 
-Using the docker image from \url{https://hub.docker.com/r/cbobach/duplo/} and running the followint command, in docker version \verb|17.05.0-ce|:
+Using the docker image from docker \footnote{\url{https://hub.docker.com/r/cbobach/duplo/}} and running the following command, in docker version \verb|17.05.0-ce|;
 
 \begin{center}
 \begin{verbatim}
@@ -534,7 +860,7 @@ docker run -it -v host/dir:container/dir cbobach/duplo
 \end{verbatim}
 \end{center}
 
-Will start a container where it is possible to compiler a \verb|.wir| file using the comtainer. For it to work the \verb|.wir| files has to be located in the \verb|host/dir| then the following commad can be run to compile the functionality:
+will start a container where it is possible to compiler a \verb|.wir| file using the comtainer. For it to work the \verb|.wir| files has to be located in the \verb|host/dir| then the following commad can be run to compile the functionality:
 
 \begin{center}
 \begin{verbatim}
@@ -542,7 +868,7 @@ Will start a container where it is possible to compiler a \verb|.wir| file using
 \end{verbatim}
 \end{center}
 
-The \verb|-db| flag ensures that the $DUPLO$ file format is generated. The $DUPLO$ generate file will have the extention \verb|.wir.GC_duplo| this can then be feeded to the $DUPLO$ framework using
+The \verb|-db| flag ensures that the \DUPLO file format is generated. The \DUPLO generate file will have the extention \verb|.wir.GC_duplo| this can then be feeded to the \DUPLO framework using
 
 \begin{center}
 \begin{verbatim}
@@ -551,7 +877,7 @@ The \verb|-db| flag ensures that the $DUPLO$ file format is generated. The $DUPL
 \end{verbatim}
 \end{center}
 
-Then the new functionallity will be runned in the default $DUPLO$ environment.
+Then the new functionallity will be runned in the default \DUPLO environment.
 
 \section{Poker}
 \label{app:poker}
@@ -559,25 +885,47 @@ In this section the GitHub reposioties to the different pahses will be linked. A
 
 \subsection{Circuit implemetation}
 \label{app:circuit-impl}
-The different circuit \verb|.wir| files can be foun in the Github repository at \url{https://github.com/cbobach/speciale_circuit}.
+The different circuit \verb|.wir| files can be foun in the Github repository here \footnote{\url{https://github.com/cbobach/speciale_circuit}}.
 
-Here the implementations of the shuffle algorithms are present as \verb|fisher_yates_shuffle.wir| and \verb|conditional_swap_shuffle*.wir|. Multiple versions of the \verb|conditiona_swap_shuffle*.wir| file are present with different values for \verb|*|. This is to allow for multiple sequential hands to be plyead, these files are then used when testing the $DUPLO$ framework to show its capabilities.
+Here the implementations of the shuffle algorithms are present as \verb|fisher_yates_shuffle.wir| and \verb|conditional_swap_shuffle*.wir|. Multiple versions of the \verb|conditiona_swap_shuffle*.wir| file are present with different values for \verb|*|. This is to allow for multiple sequential hands to be plyead, these files are then used when testing the \DUPLO framework to show its capabilities.
 
 Only one version of \verb|fisher_yates_shuffle.wir| is located in the repository since this is a slover algorithm in this setting as discussed in section \ref{sec:comp}.
 
-The files \verb|init_deck.wir|, \verb|xor_seed.wir| and \verb|correcred_seed.wir| are all modules that are called by the shuffle algorithms. The \verb|init_deck.wir| file is used by both algorithms and hardwires the card values to their respective wires. The \verb|corrected_seed.wir| file is used by the $Fisher\text{-}Yates$ algorithm to ensure thet the seed feeded to the shuffle algorithm is in the correct intervalls as explained in section \ref{sec:fisher-yates}. The \verb|xor_seed.wir| file is used by the $Conditional~swap$ algorithm ot generate the seed used by the shuffle.
+The files \verb|init_deck.wir|, \verb|xor_seed.wir| and \verb|correcred_seed.wir| are all modules that are called by the shuffle algorithms. The \verb|init_deck.wir| file is used by both algorithms and hardwires the card values to their respective wires. The \verb|corrected_seed.wir| file is used by the \FY algorithm to ensure thet the seed feeded to the shuffle algorithm is in the correct intervalls as explained in section \ref{sec:fisher-yates}. The \verb|xor_seed.wir| file is used by the \CS algorithm ot generate the seed used by the shuffle.
 
 \bigskip
 
-It is also here that the parser used to debug the $Frigate$ compiler is located and is found as \verb|parse.py|. The other python script found here \verb|count-gate-types.py| is the one used to compare the amount of gates types for the compiled circuits.
+It is also here that the parser used to debug the $Frigate$ compiler is located and is found as \verb|parse.py|. The other python script found in \verb|count-gate-types.py| is the one used to compare the amount of gates types for the compiled circuits.
 
 
 \subsection{DUPLO implemetation}
 \label{app:duplo-impl}
+The poker repository for the implementation using the duplo framework can be found here \footnote{\url{https://github.com/cbobach/speciale_implementation}}.
+
+Here the \verb|CMakeLists.txt| file is the one used to overwrite the original file found in the \DUPLO framework to allow for compilation of the poker $Constructor$ and $Evaluator$. In the folder \verb|duplo-mains| the implementations of these are located as \verb|poker-const-main.cpp| for the $Constructor$ and \verb|poker-eval-main.cpp| for the $Evaluator$. In this filder thir shared functionality is found in the \verb|poker-mains.h|.
+
+\bigskip
+
+Back in the main dir of the repository the docker files are found for generating the docker instanc of \DUPLO used in appendix \ref{app:duplo} and \ref{app:frigate}. This is the \verb|Dockerfile.DUPLO| where as the \verb|Dockerfile| is the one used for running the poker implementation. The \verb|entry-point.sh| files is used to start the docker containers correct shuch that thay can run in the background. The docker image can be found here \footnote{\url{https://hub.docker.com/r/cbobach/duplo-poker/}}. The containers can be started using the following commands in docker:
+
+\begin{center}
+\begin{verbatim}
+docker run -d -p 2800:2800 cbobach/duplo-poker --profile const -i 0
+docker run -d -network:host cbobach/duplo-poker --profile eval -i 0
+\end{verbatim}
+\end{center}
+
+The \verb|-d| flag tells docker that the continers should run detached. The \verb|-p| flags tells docker to connect the host port $2800$ to the containers internal port 2800. \verb|--network:host| is the easy way to let the container have acces to the hosts network ports. These commands will play one hand of poker in the background, if more are required the \verb|-f| flag can be used to specify which circuits should be used. To get the the right timings the \verb|-n| falg is required together with the \verb|-f| flag. This flag needs to reflect the nomber of simuntainus shuffles in the circuit.
+
+Using the \verb|-it| flag in docker instead of the \verb|-d| flag allow for interactive rounds of poker if the \verb|-i| flag is set to $1$ instead of $0$.
 
 
 \subsection{Test results}
 \label{app:test-res}
+In this section a link to the repository on GitHub with all the generated statistics. Here all generated graphs and timings can be found. The repositor can be found here \footnote{\url{https://github.com/cbobach/speciale_thesis/tree/master/figurs}}
+
+\todo{Add log files to GitHub}
+
 
 
 \end{appendices}
