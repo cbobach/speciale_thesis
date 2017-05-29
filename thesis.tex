@@ -711,143 +711,111 @@ In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicati
 
 \bigskip
 
-
-
-
 \begin{figure}
     \centering
 
     \begin{subfigure}{\textwidth}
-        \label{fig:const_ms_plot}
+        \centering
+        \scalebox{.7}{
         \includegraphics[width=\textwidth]{figurs/const_ms_log_xy.eps}
+        }
         \caption{}
+        \label{fig:const_kb_plot}
     \end{subfigure}
 
-    \vspace*{1cm}
+    \vspace*{0cm}
 
     \begin{subfigure}{\textwidth}
-        \label{fig:eval_ms_plot}
+        \centering
+        \scalebox{.7}{
         \includegraphics[width=\textwidth]{figurs/eval_ms_log_xy.eps}
+        }
         \caption{}
+        \label{fig:eval_kb_plot}
     \end{subfigure}
 
-    \caption{}
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/total_ms_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:total_kb_plot}
+    \end{subfigure}
+
+    \caption{Time: Comparison of $Constructor$ and $Evaluator$ in $ms$'s used. (a) $Constructor$: Accumulated time per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated time per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated time per deck shuffled on a duble logaritmic scale.}
     \label{fig:mesurement_ms}
 \end{figure}
 
+In the next section we will look a the time used per shuffled deck. 
 
+\todo{Timings in online phase is fluctuating, maybe I/O wait. More shuffles higher propability that some will end up waiting.}
 
-\begin{table}[!htb]
-\label{table:mesurement_ms}
-\centering
+\begin{table}
+    \centering
 
     \begin{subtable}{\textwidth}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l ||r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &       1 &      10 &    100 &   1000 & 3000    \\
+    \hline
+    Preprocess & 8202.12 &  918.74 & 193.32 & 116.73 & 106.89 \\
+    Evaluate   &  100.82 &   10.22 &   1.18 &   0.30 &   0.30 \\
+    Online     &  301.09 &  120.84 & 103.38 & 116.60 & 179.35 \\
+    \hline
+    Total      & 8604.03 & 1049.80 & 297.88 & 233.63 & 286.54 
+    \end{tabular}
+    }
+    \caption{$Constructor$}
     \label{table:const_ms}
-    \centering
-    \scalebox{.7}{
-    \begin{tabular}{l || c |r r r r r}
-          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
-    \hline
-    \multirow{3}{*}{Setup} & 50 & 2210.37 & 162.11 & 17.63 & 2.86 & 2.17   \\
-                           &  0 & 1431.11 & 114.23 & 12.66 & 2.36 & 2.00   \\
-                           \cline{2-7}
-                           &  - &  779.29 &  47.88 &  4.97 & 0.50 & 0.17   \\
-    \hline                       
-    \multirow{3}{*}{Circuit preprocess} & 50 & 4033.93 & 527.35 & 119.99 & 67.52 & 51.36 \\
-                                        &  0 & 1564.52 & 201.07 &  50.75 & 29.75 & 19.50 \\
-                                        \cline{2-7}
-                                        &  - & 2469.41 & 326.28 &  69.24 & 37.77 & 31.86 \\
-    \hline 
-    \multirow{3}{*}{Auth preprocess} & 50 & 1150.64 & 143.22 & 39.92 & 37.93 & 42.54 \\
-                                     &  0 &   93.10 &  31.95 & 20.02 & 22.90 & 33.57 \\
-                                     \cline{2-7}
-                                     &  - & 1057.54 & 121.27 & 19.90 & 17.03 &  8.97 \\
-    \hline                                 
-    \multirow{3}{*}{Build} & 50 & 807.18 & 86.06 & 15.78 & 8.42 & 10.82 \\
-                           &  0 &  22.84 &  6.79 &  6.27 & 6.46 &  9.02 \\
-                           \cline{2-7}
-                           &  - & 784.34 & 79.27 &  9.51 & 1.96 &  1.8 \\
-    \hline                       
-    \multirow{3}{*}{Evaluate} & 50 & 100.82 & 10.22 & 1.18 & 0.30 & 0.30 \\
-                              &  0 &   0.69 &  0.24 & 0.24 & 0.23 & 0.24 \\
-                              \cline{2-7}
-                              &  - & 100.13 &  9.98 & 0.94 & 0.07 & 0.06 \\
-    \hline
-    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.37 & 100.39 & 100.91 & 115.62 & 177.92 \\
-                                          &  0 &   0.20 &   0.13 &   0.37 &  10.20 &  77.15 \\
-                                          \cline{2-7}
-                                          &  - & 100.17 & 100.26 & 100.54 & 105.42 & 100.77 \\
-    \hline
-    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.37 & 10.23 & 1.24 & 0.50 & 0.86 \\
-                                          &  0 &   0.13 &  0.08 & 0.90 & 0.25 & 1.30 \\
-                                          \cline{2-7}
-                                          &  - & 100.24 & 10.15 & 0.34 & 0.25 & -0.44 \\
-    \hline
-    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.35 & 10.22 & 1.23 & 0.48 & 0.57 \\
-                                           &  0 &   0.11 &  0.08 & 0.09 & 0.23 & 0.91 \\
-                                           \cline{2-7}
-                                           &  - & 100.24 & 10.14 & 1.14 & 0.25 & -0.34
-    \end{tabular}
-    }
-    \caption{Constructor: comparison of the different phases and concurrent shuffles with and with out delay.}
     \end{subtable}%
 
-    \vspace*{1cm}
+    \vspace*{.5cm}
 
     \begin{subtable}{\textwidth}
-    \label{table:eval_ms}
     \centering
     \scalebox{.7}{
-    \begin{tabular}{l || c |r r r r r}
-          &           & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase & Delay(ms) & 1 & 10 & 100 & 1000 & 3000    \\
+    \begin{tabular}{l || r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &       1 &     10 &    100 &   1000 & 3000    \\
     \hline
-    \multirow{3}{*}{Setup} & 50 & 620.25 & 61.89 & 6.15 & 0.62 & 0.21 \\
-                           &  0 & 117.58 & 11.36 & 1.05 & 0.09 & 0.03 \\
-                           \cline{2-7}
-                           &  - & 502.67 & 50.53 & 5.01 & 0.53 & 0.18 \\
-    \hline                       
-    \multirow{3}{*}{Circuit preprocess} & 50 & 4037.57 & 528.96 & 120.39 & 68.30 & 60.86 \\
-                                        &  0 & 1574.70 & 202.97 &  51.89 & 30.79 & 29.63 \\
-                                        \cline{2-7}
-                                        &  - & 2462.87 & 325.99 &  68.50 & 37.51 & 31.23 \\
-    \hline 
-    \multirow{3}{*}{Auth preprocess} & 50 & 1154.60 & 146.40 & 44.90 & 42.32 & 46.33 \\
-                                     &  0 &   94.98 &  34.70 & 24.73 & 27.37 & 37.65 \\
-                                     \cline{2-7}
-                                     &  - & 1059.62 & 111.70 & 20.17 & 14.95 &  8.68 \\ 
-    \hline                                 
-    \multirow{3}{*}{Build} & 50 & 807.23 & 86.12 & 15.83 & 8.50 & 10.88 \\
-                           &  0 &  22.88 &  6.82 &  6.33 & 6.59 &  9.14 \\
-                           \cline{2-7}
-                           &  - & 784.35 & 79.30 &  9.50 & 1.91 &  1.74 \\
-    \hline                       
-    \multirow{3}{*}{Evaluate} & 50 & 129.49 & 17.91 & 5.43 & 5.44 & 9.58 \\
-                              &  0 &  15.71 &  5.13 & 2.92 & 2.29 & 7.96 \\
-                              \cline{2-7}
-                              &  - & 113.78 & 12.78 & 2.51 & 3.15 & 1.62 \\
+    Preprocess & 6619.65 & 823.37 & 187.27 & 119.74 & 118.28\\    
+    Evaluate   &  129.49 &  17.91 &   5.43 &   5.44 &   9.58 \\
+    Online     &  301.76 & 121.09 & 116.34 & 159.80 & 430.11\\
     \hline
-    \multirow{3}{*}{Decode keys 1st hand} & 50 & 100.60 & 100.63 & 101.17 & 115.91 & 179.12 \\
-                                          &  0 &   0.29 &   0.19 &   0.43 &  15.01 & 125.68 \\
-                                          \cline{2-7}
-                                          &  - & 100.31 & 100.44 & 100.26 & 100.90 &  53.44 \\
-    \hline
-    \multirow{3}{*}{Decode keys 2nd hand} & 50 & 100.59 & 10.23 & 1.47 & 22.08 & 128.10 \\
-                                          &  0 &   0.18 &  0.08 & 0.22 & 14.31 & 124.84 \\ 
-                                          \cline{2-7}
-                                          &  - & 100.41 & 10.15 & 1.25 &  7.77 &   3.26 \\
-    \hline
-    \multirow{3}{*}{Decode Opponents hand} & 50 & 100.57 & 10.23 & 12.70 & 21.81 & 122.89 \\
-                                           &  0 &   0.17 &  0.07 &  0.22 & 14.16 & 123.14 \\
-                                           \cline{2-7}
-                                           &  - & 100.40 & 10.16 & 12.48 &  7.65 & -0.25
+    Total      & 7050.90 & 962.37 & 309.04 & 284.98 & 557.97
     \end{tabular}
     }
-    \caption{Evaluator: comparison of the different phases and number of concurrent shuffles with and without delay.}
+    \caption{$Evaluator$}
+    \label{table:eval_ms}
     \end{subtable}%
 
-\caption{Comparison of the time consumption of the Constructor and Evaluator.}
+    \vspace*{.5cm}
+
+    \begin{subtable}{\textwidth}
+    \centering
+    \scalebox{.7}{
+    \begin{tabular}{l || r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &        1 &      10 &    100 &   1000 & 3000    \\
+    \hline
+    Preprocess & 14821.77 & 1742.11 & 380.59 & 236.47 & 225.17 \\    
+    Evaluate   &   230.31 &   28.13 &   6.61 &   5.74 &   9.88 \\
+    Online     &   602.85 &  241.93 & 219.72 & 276.40 & 609.46 \\
+    \hline
+    Total      & 15654.93 & 2012.17 & 606.92 & 518.61 & 844.51 
+    \end{tabular}
+    }
+    \caption{Total}
+    \label{table:eval_ms}
+    \end{subtable}%
+
+    \caption{Comparison of $Constructor$ and $Evaluator$ in terms of time consumption in $ms$ during framework calls. (a) $Constructor$: Time consumption in different phases. (b) $Evalauator$: Time consumption in different phases. (c) $Total$: Time consumption in different phases.}
+    \label{table:mesurement_ms}
 \end{table}
 
 \todo{Timing total, phases, different amount od shuffles, different amount of delay, different amount of bandwidth}
