@@ -46,9 +46,9 @@
 %
 % see http://imf.au.dk/system/latex/bog/
 %
-\newcommand{\FY}{\textit{Fisher-Yates}}
-\newcommand{\CS}{\textit{Conditional-swap}}
-\newcommand{\DUPLO}{\textit{DUPLO}}
+\newcommand{\FY}{\textit{Fisher-Yates} }
+\newcommand{\CS}{\textit{Conditional-swap} }
+\newcommand{\DUPLO}{\textit{DUPLO} }
 %
 \begin{document}
 
@@ -239,7 +239,6 @@ The \verb|-db| flag ensures that the right \DUPLO format is generated. This call
 The $DOPLO$ framework has a functionality that allowed for evaluation of these input files without setting up both parties. This gave the posibility to specify the inputs for the evaluation and learn the result in a farst return cycle. This possibilty allowed me to study the implementations of the programming language and how the algorithms behaved compared to expected while implementing them. First I tried to implement the \FY algorithm, which is described in details in section \ref{sec:fisher-yates} and can be seen as algorithm \ref{alg:fisher_yates}, in the \verb|.wir| format. During the implemetation I encountered some problems. Since I did not have any earlier experience working with the $Frigate$ compiler I was not sure if the problem was in the implementation of the algorithm or in the compiler. At first the focus was on the implementation as the lack of experience working with $Frigate$ easily could lead to implementation errors. After a lot of modolaisation and debugging it was clear that something was wrong with the version of the $Frigate$ compiler used to generate \DUPLO-circuits. During the debugging process I created a framework that allowed me to test the different modules of the implementation one by one. It was then clear that something were off when using the modulo reduction in the \FY algorithm. After different attempts to get it to work without any luck the focus shifted from being on the implemetaion to be on the compiler. After breaking the implementation down and testing the modulo operator \verb|%|, as specified in the documentation, it was clear that some error was introduced during compilation. Therefor I started to take a deeper look at the compiler. Since the compiler was a modified version of the $Frigate$ compiler the posibility was that a bug could have been introduced when adding the new \DUPLO featurs. Therefor the old version of $Frigate$ was installed to test if that implemetation had the same bug. Then a problem arose because the old version did not support the \DUPLO circuit format. But because \DUPLO also has  supports for another circuit file format known as $bristol$, I wrote a parser that took the output from the old version of $Frigate$ and translated that into the$bristol$ format. This gave me two different formatted circuit files that \DUPLO could use as input files. Based on these two formats is created a test framework to see if there was any differences on the output when ran on the same input. This showed that there was a difference in the results produced, especailly in the case when using the modular reduction. When taking a deeper look at the problem it came clear that not all gate types was created during compilation using the \DUPLO version of the $Frigate$ compiler.
 
 \begin{table}
-\label{table:gate_rep}
 \centering
 \scalebox{.5}{
 \begin{tabular}{c c || c c c c c c c c c c c c c c c c}
@@ -252,6 +251,7 @@ $l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y
 \end{tabular}
 }
 \caption{A table of the 16 different gate types that can be used in a circuit of the type used in duplo}
+\label{table:gate_rep}
 \end{table}
 
 
@@ -418,9 +418,10 @@ Then looking into the rest of the stucture of the \CS algorithm we see that the 
 \begin{tabular}{l || r r r}
 Gate Type      & Non-optimized  & Optimized & Difference($\%$)    \\
 \hline
-Gates          & $145491$       & $57364$   & $60$ \\
 Free Gates     &  $97753$       & $39001$   & $60$ \\
-Non-free Gates &  $47739$       & $18363$   & $62$
+Non-free Gates &  $47739$       & $18363$   & $62$ \\
+\hline
+Total          & $145491$       & $57364$   & $60$
 \end{tabular}
 \caption{\CS: Comparison of the non-optimized and optimized versions of the algotithm. The comparison is done on the amount of each gate type in the compiled circuit.}
 \label{table:con_swap_comp}
@@ -440,9 +441,10 @@ Both an optimized and non-optimized version of the algorithm was implemented to 
 \begin{tabular}{l || r r r}
 Gate Type      & Non-optimized  & Optimized & Difference($\%$)    \\
 \hline
-Gates          & $99150$        & $57790$   & $42$ \\
 Free Gates     & $61806$        & $37433$   & $39$ \\
-Non-free Gates & $37344$        & $22357$   & $40$
+Non-free Gates & $37344$        & $22357$   & $40$ \\
+\hline
+Total          & $99150$        & $57790$   & $42$
 \end{tabular}
 \caption{\FY: Comparison of the non-optimized and optimized versions of the algotithm. The comparison is done on the amount of each gate type in the compiled circuit.}
 \label{table:fy_swap_comp}
@@ -467,9 +469,10 @@ If we then instead turn our attention to the way the algorithms handle the $seed
 \begin{tabular}{l || r r r}
 Gate Type      & \verb|correctSeed| & \verb|xorSeed| & Difference($\%$)    \\
 \hline
-Gates          & $6220$             & $1663$         &  $73$ \\
 Free Gates     & $4347$             & $1661$         &  $62$ \\
-Non-free Gates & $1873$             &    $2$         & $100$
+Non-free Gates & $1873$             &    $2$         & $100$ \\
+\hline
+Total          & $6220$             & $1663$         &  $73$
 \end{tabular}
 \caption{Comparison of the overhead added to the algorithms by handling the $seed$'s. The comparison is done on the amount of each gate type in the compiled circuit.}
 \label{table:alg_preprocess_overhead}
@@ -486,12 +489,13 @@ When looking in to the overall composition of \FY and \CS we get the results as 
 \begin{tabular}{l || r | r | r}
 Gate Types     & \FY     & \CS     & Difference(\%) \\
 \hline
-Gates          & $59790$ & $57364$ &  $4$   \\
 Free Gates     & $37433$ & $39001$ & $-4$   \\
-Non-free Gates & $22357$ & $18363$ & $18$
+Non-free Gates & $22357$ & $18363$ & $18$   \\
+\hline
+Total          & $59790$ & $57364$ &  $4$
 \end{tabular}
 \caption{Compariason of the \FY and \CS algorithms after compilation to \DUPLO circuits. The comparison is done on the amount of each gate type.}
-\label{table:circuit_gate_types}
+\label{table:circuit_comp}
 \end{table}
 
 As a note to the comparison it shouls be mentioned that some of the variables used in \verb|correctedSeed| are bigger in terms of bit size than needed. But since this is only a fraction of the $1873$ non-free gates seen in table \ref{table:alg_preprocess_overhead} this wouls not change that \CS has less non-free gates then \FY .
@@ -547,7 +551,7 @@ The next phase is the $Evaluate$ phase, where the evaluation of the circuit that
 
 The last phase is the $Online$ phase it is here the calls to \verb|DecodeKeys| is done. This phase is run for each game played. The amount of games possible is specified in the number of simuntainiusly shuffled decks. In this phase the $Constructor$ and $Evaluator$ must first agree on which outputwires should be opened to which party. Therefor the first the do is to generate an array containing the wire indexes to be opened to the $Constructor$ and then those to the $Evaluator$. These are then opened and displayed to the players. For the first hand the $Constructor$ is always dealt the first five cards from the deck, the $Evaluator$ five cards starting from index 10. This is the most optimal way to deal the cards as this requires the least calls to \verb|DecodeKeys|. This does not change the propability of the cards dealt. As known for real world card games one or two cards are normaly dealt at a time, this is propably done because the shuffle algorithm doeas not have a uniform distribution. But has a skew such that sequences of cards are more likely to repeat in the next game. This is not the case for our shuffle algorithms, since the start with the same initial $deck$ and has a uniform propability distribution on the output. 
 
-Then a input interface is displayed to the players to allow them to choose which cards to change. This is done using a terminal interface where the user writes; $0$ if no cards needs to changes, $1$ if the first card should be changed, $2$ for the second and so on, if multiple cards is to be changes this is done by seperating the card indexes with a comma $,$ like $4,5$. To allow for a new hand to be dealt with the specified cards changed the parties first sents the amount of cards thay want to change, after this the indexes of the cards are sent. Now each party knows which wires should be opened, therefor the old index of output wires is updated to hold the new index wires. Then the second and final hand is opened an displayed to the parties by the second call to \verb|DecodeKeys| The cards with indexes from 5 to 9 is reserved for the $Constructor$'s second hand and the cards 15 to 19 to the $Evaluator$'s. By opening the last hand in this way adds an overhead since one card may be openend in both the first and second hand. But this allows for less communication before the last revilation round in the game.
+Then a input interface is displayed to the players to allow them to choose which cards to change. This is done using a terminal interface where the user writes; $0$ if no cards needs to changes, $1$ if the first card should be changed, $2$ for the second and so on, if multiple cards is to be changes this is done by seperating the card indexes with a comma $','$ like $4,5$. To allow for a new hand to be dealt with the specified cards changed the parties first sents the amount of cards thay want to change, after this the indexes of the cards are sent. Now each party knows which wires should be opened, therefor the old index of output wires is updated to hold the new index wires. Then the second and final hand is opened an displayed to the parties by the second call to \verb|DecodeKeys| The cards with indexes from 5 to 9 is reserved for the $Constructor$'s second hand and the cards 15 to 19 to the $Evaluator$'s. By opening the last hand in this way adds an overhead since one card may be openend in both the first and second hand. But this allows for less communication before the last revilation round in the game.
 
 The last round of each game is the revelation phase of the oponents hand. This is done without any communicatin other than a last call to \verb|DecodeKeys|. The input to this last call is done by switching the inputs for the $Constructor$ and $Evaluator$ as they already know which wires was openend in the last hand to the oponent. By opening the oponents card this way we ensure that the oponenet does not lear the cards which were discarded.
 
@@ -558,56 +562,179 @@ At last when all the decks are played the statisitcs are writen to the log files
 A small note on the leak of information when communication indexes for \verb|DecodeKeys|. The oponent always know how many and which cards are changed because the parties needs to agree on which wires to open, but this is not any different from real life poker. Therefor this leak of information should not be considered a security problem.
 
 
+\todo{DecodeKey's, found bug}
+
+
 \section{Benchmarking}
 \label{sec:bechmarking}
-\todo{Implementation interaction, flags}
-First a shuffle algorithm is compiled wich is described how to do in appendix \ref{app:frigate}. We use the \CS circuit implemented in section \ref{sec:cir_imp} as this has the leas non-free $XOR$ gates as seen in section \ref{sec:comp}. When this is inplace  
 
-\todo{Bash scripts}
+In this section I will introduce all the testing that have been done on the poker implementation. This has been done to see if a implementaion using a $2PC$ framework can reach runningtimes close to known solutions.
 
-\todo{Removed values, ref loged values}
+To do benchmarking a local machine was used. The hardware setup can be found in appendix \ref{app:hardware}. This setup was used to ensure a stabile environment such that no newtwork latency chunks would obstruct the results. To handle the experience of real networks a script was used to simulate bandwidth and latency. The bandwith was set to 1 Gb/s during all test. This is in the high end compared to most bandwith connections found in Denmark, but was choosen to get a faster roudtrip on the test environment. The latency was changed during the testing to see how it effected the implementation.
+
+In the implemntation different flags was implemnted to allow for an easy change of the setup. The flags implemented were; \verb|-f| for specification of the circuit file to use, \verb|-e| for the number of threads to use in the different phase, \verb|-n| for the number of parallel shuffles in the circuit, \verb|-i| to allow for interaction or not in the card change phase, \verb|-ip_const| for specifing the ip address of the constructor, \verb|-p_const| for specifing the port the $Constructor$ is listening on and lastly the \verb|-d| flag for ram only mode, where the computation is done without writing anythig to disk.
+
+\bigskip
+
+The first tested was the timing of each shuffle done when multiple was done in parallel. This was done to see how the approch to cut and chose in \DUPLO effected the poker implementation. This allows us to see if we reach a optimum of the number of simuntainious shuffles. To do this different circuits was generated and compiled to mesure the timings. Because the \DUPLO framework do not allow for soldering of \DUPLO format circuits, the ciruit file used should contain all simuntainiously shuffle of decks. Therefor different variants of the \CS algorithm was made where 1, 10, 100, 1000 and 3000 simuntainius decks was shuffled. The 3000 was choosen as a maximum since the memory limit was exceede on the hardware when more was tested. These variants of circuits was all compiled following the instructions in appendis \ref{app:frigate}. The \CS implementations from section \ref{sec:con_swap} was used because it has the least amount of non-free $XOR$ gates and therefor should be faster then \FY . This is was is shown in table \ref{table:circuit_comp}.
+
+A bash script was setup to allow for automatic testing of all these different circuits, this is explained in \ref{app:test-res}. This script ensured that 10 timings was done for each of the circuits to guarantee more fair timing when taking the average. All the timings were loged and can be found via appendix \ref{app:test-res}. One timing was removed from the $Constructor$ since it differentiated form the rest. This is the timing for the first run of the poker game where the timing of \verb|Setup| was long, this is because of the time it takes to start the $Evaluator$ and prepare the bandwith. These tests was done with a latency of $50$ms. This was found to be a fair latency based on pinging different ip addresses in europa as seen in table \ref{table:ping}. 
+
+\begin{table}
+\centering
+\begin{tabular}{l || r}
+Homepage & Avg. latency(ms)    \\
+\hline
+google.dk    &  18    \\
+google.com   &  54    \\
+au.dk        &   2    \\
+uoa.gr       & 132    \\
+uzh.ch       &  41    \\
+univie.ac.at &  36    \\
+\hline
+Total avg.   &  47
+\end{tabular}
+\caption{Ping: Timings of network latency to different locations in europa.}
+\label{table:ping}
+\end{table}
+
+When dicussing the results I will refer to the phases as described in section \ref{sec:poker}, $Preprocess$, $Evaluate$ and $Online$. This is done to reduce the amount of information in the figures auch that only the most necesary information is precent.
+
+\bigskip
 
 \begin{figure}
-    \label{fig:mesurement_ms}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/const_kb_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:const_kb_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/eval_kb_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:eval_kb_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/total_kb_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:total_kb_plot}
+    \end{subfigure}
+
+    \caption{Data sent: Comparison of $Constructor$ and $Evaluator$ in $kb$'s sent to the other party. (a) $Constructor$: Accumulated data sent per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated data sent per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated data sent per deck shuffled on a duble logaritmic scale.}
+    \label{fig:mesurement_kb}
+\end{figure}
+
+The first we will look at is the amount of data send in $kb$ per shuffled card deack as seen in figure \ref{fig:mesurement_kb}. We see the accumulated dats sent per deck shuffled. The data is represented on a duble logaritmic scale. It is easy to see that as more simuntainiously shuffles are done the least data is sent. This implies that the most data sent is the overhead of setting up the protocol. As we see it is har to distinguish the different lines on the plot. This is because the $Preprocess$ phase is the one where the most data is sent. Relative to this nearly no data is sent in the $Evaluate$ and $Online$ phase. Remembering har it is only the input to the functionality that is sent in the $Evaluate$ pahse. In the $Online$ pahse we call $DecodeKey$ three times and therefore is only these keys that are sent. Where as in the $Preprocess$ phase the information of the garbling, soldering and authentication is done. Therfore more data is sent.
+
+In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicating that there are not much more to gain on the $Evaluator$ site in terms of $kb$ sent, by shuffleing more decks simuntainious. Looking at figure \ref{fig:const_kb_plot} we see a different tendency where the plot is still decreasing indicating that some gain can still be done on the $Constructor$ site. This may indicate that more than $3000$ simuntainus shuffles can benefit on the amount of data sent as seen in \ref{fig:total_kb_plot}, which is still decreasing. In table \ref{table:mesurmet_kb} it is possible to se the actual amounts of data sent. Here it is obvious that it is the $Constructor$ that sents the most data and therefore the one that require the most simuntanious shuffles to bring the overhead of doing $2PC$ down.
+
+\begin{table}
+\centering
+
+    \begin{subtable}{\textwidth}
+    \label{table:const_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Preprocess & 172140.31 & 26817.94 & 9380.99 & 7380.56 & 6219.38  \\
+    Evaluate   &    122.84 &   122.84 &  122.84 &  122.84 &  122.84  \\
+    Online     &      5.94 &     2.38 &    2.02 &    1.99 &    1.99  \\
+    \hline
+    Total      & 172269.09 & 26943.16 & 9505.85 & 7505.42 & 6344.21
+    \end{tabular}
+    }
+    \caption{$Constructor$}
+    \end{subtable}%
+    
+    \vspace*{.5cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &      1 &    10 &   100 &  1000 & 3000 \\
+    \hline
+    Preprocess & 193.75 & 36.59 & 19.15 & 17.57 & 17.50 \\
+    Evaluate   &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
+    Online     &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 \\
+    \hline
+    Total      & 195.30 & 37.27 & 19.74 & 18.15 & 18.08
+    \end{tabular}
+    }
+    \caption{$Evaluator$}
+    \end{subtable}%
+
+    \vspace*{.5cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Preprocess & 172334.06 & 26854.53 & 9400.14 & 7398.13 & 6236.88 \\
+    Evaluate   &    122.95 &   122.94 &  122.94 &  122.94 &  122.94 \\
+    Online     &      7.38 &     2.96 &    1.50 &    2.47 &    2.47 \\
+    \hline
+    Total      & 172464.39 & 26980.43 & 9525.59 & 7523.57 & 6362.29 
+    \end{tabular}
+    }
+    \caption{$Total$}
+    \end{subtable}%
+
+    \caption{Data sent: Comparison of $Constructor$ and $Evaluator$ in $kb$'s sent to the other party. (a) $Constructor$: $kb$'s data sent in different phases. (b) $Evaluator$: $kb$'s data sent in different phases.}
+    \label{table:mesurmet_kb}
+\end{table}
+
+\bigskip
+
+
+
+
+\begin{figure}
     \centering
 
     \begin{subfigure}{\textwidth}
         \label{fig:const_ms_plot}
-        \includegraphics[width=\textwidth]{figurs/const_ms_plot.eps}
-        \caption{Constructor: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+        \includegraphics[width=\textwidth]{figurs/const_ms_log_xy.eps}
+        \caption{}
     \end{subfigure}
 
     \vspace*{1cm}
 
     \begin{subfigure}{\textwidth}
         \label{fig:eval_ms_plot}
-        \includegraphics[width=\textwidth]{figurs/eval_ms_plot.eps}
-        \caption{Evaluator: 50ms simulated network latency. Showing the time used in different phases per deck shuffled.}
+        \includegraphics[width=\textwidth]{figurs/eval_ms_log_xy.eps}
+        \caption{}
     \end{subfigure}
 
-\caption{Comparison of the Constructor and Evaluator on which phases requires the most time.}
+    \caption{}
+    \label{fig:mesurement_ms}
 \end{figure}
 
-\begin{figure}
-    \label{fig:mesurement_kb}
-    \centering
-
-    \begin{subfigure}{\textwidth}
-        \label{fig:const_kb_plot}
-        \includegraphics[width=\textwidth]{figurs/const_kb_plot.eps}
-        \caption{Constructor: $kb$ sent in different phases.}
-    \end{subfigure}
-
-    \vspace*{1cm}
-
-    \begin{subfigure}{\textwidth}
-        \label{fig:eval_kb_plot}
-        \includegraphics[width=\textwidth]{figurs/eval_kb_plot.eps}
-        \caption{Evaluator: $kb$ sendt in different phases.}
-    \end{subfigure}
-
-\caption{Comparison of Constructor and Evaluator on which phases most $kb$ are sent to the other party.}
-\end{figure}
 
 
 \begin{table}[!htb]
@@ -723,53 +850,13 @@ First a shuffle algorithm is compiled wich is described how to do in appendix \r
 \caption{Comparison of the time consumption of the Constructor and Evaluator.}
 \end{table}
 
+\todo{Timing total, phases, different amount od shuffles, different amount of delay, different amount of bandwidth}
 
-\begin{table}[!htb]
-\label{table:mesurmet_kb}
-\centering
+\todo{Mesurement of data send, total, pr. shuffle}
 
-    \begin{subtable}{\textwidth}
-    \label{table:const_kb}
-    \centering
-    \scalebox{1}{
-    \begin{tabular}{l || r r r r r}
-                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
-    \hline
-    Setup                       &     12.70 &     1.27 &    0.12 &    0.01 &    0.00 \\
-    Circuit Preprocess          & 158470.00 & 22518.10 & 7023.94 & 4837.94 & 4127.91 \\
-    Auth. Preprocess            &  13329.90 &  4170.08 & 2249.69 & 2437.49 & 1986.51 \\
-    Build                       &    327.71 &   128.49 &  107.24 &  105.12 &  104.96 \\
-    Evaluate                    &    122.84 &   122.84 &  122.84 &  122.48 &  122.84 \\
-    Decode keys                 &      5.94 &     2.38 &    2.02 &    1.99 &    1.99\\
-    \end{tabular}
-    }
-    \caption{Constructor: $kb$ sent per shuffled deck in different phases.}
-    \end{subtable} 
-    
-    \vspace*{1cm}
-    
-    \begin{subtable}{\textwidth}
-    \label{table:eval_kb}
-    \centering
-    \scalebox{1}{
-    \begin{tabular}{l || r r r r r}
-                                & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase                       &         1 &       10 &     100 &    1000 & 3000 \\
-    \hline
-    Setup                       &  16.55 &  1.65 &  0.17 &  0.02 &  0.01 \\
-    Circuit Preprocess          &   1.59 &  0.16 &  0.02 &  0.00 &  0.00 \\
-    Auth. Preprocess            &   1.06 &  0.11 &  0.01 &  0.00 &  0.00 \\
-    Build                       & 174.55 & 34.67 & 18.95 & 17.55 & 17.49 \\
-    Evaluate                    &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
-    Decode keys                 &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 
-    \end{tabular}
-    }
-    \caption{Evaluator: $kb$ sent per shuffled deck in different phases.}
-    \end{subtable}%
+\todo{Test different latencies to see the development, evt on 1000 shuffles}
 
-\caption{Comparison of the Constructor and Evaluator on the amount of data sent in the different phases.}
-\end{table}
+\todo{Test ram only variant to see the rise in ms in online pahse is do to disk read, evt on 1000 shuffles}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -925,6 +1012,8 @@ Using the \verb|-it| flag in docker instead of the \verb|-d| flag allow for inte
 In this section a link to the repository on GitHub with all the generated statistics. Here all generated graphs and timings can be found. The repositor can be found here \footnote{\url{https://github.com/cbobach/speciale_thesis/tree/master/figurs}}
 
 \todo{Add log files to GitHub}
+
+\todo{describe test bash script}
 
 
 
