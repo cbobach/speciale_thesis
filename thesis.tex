@@ -107,21 +107,16 @@ The hope is to show that a MPC protocol can be used to guarantee that the cards 
 
 \bigskip
 
-For the inplemetation of the poker game I have studied various fields both in computer science and other fields. I have read up on different types of poker games to figure out which one was best suited for a two party setting. I have studied the underlying MPC protocol to understand how it works and to ensure that it for fills the right properties needed for an application as a poker game. I have studied different permutation algorithms and implemented them to compare them and see what effects they have on the underlying protocol.
-
-\bigskip
-\todo{introduce chapter on DUPLO}
+For the inplemetation of the poker game I have studied various fields both in computer science and other fields. I have read up on different types of poker games to figure out which one was best suited for a two party setting. I have studied the underlying MPC protocol to understand how it works and to ensure that it forfills the right properties needed for an application as a poker game. I have studied different permutation algorithms and implemented them to compare them and see what effects they have on the underlying protocol.
 
 \bigskip
 
-\todo{introduce chapter on shuffle algorithms}
-In chapter \ref{ch:shuffle} on shuffle algorithms I introduce the different algorithms studied during the project. I argue for the ideas behind the algorithm and why they work in the application of a poker game. Some optimizations that can be done to the algorithm to reduce their size are perposed. At last the algorithms will be compared on a teoretical level to see different benefits.
+I will now give a short introduction to each chapter such that you as a reader know what to expect. 
+In chapter \ref{ch:duplo} I cover the bacis of \DUPLO. The idea and their claims. I introduce why this protocol and framework was chosen. I argue for the security of the protocol and why it covers the case of implementing poker. Lastly I explain how the circuit compiler used in this project which shiped with the \DUPLO project works.
 
-\bigskip
+In chapter \ref{ch:shuffle} on shuffle algorithms I introduce the different algorithms studied during the project. I argue for the ideas behind the algorithm and why they work in the application of a poker game. I explain how the implementation of the algorithms was done. I introduce some optimizations to the algorithm such that their size in terms of gates are reduced. At last the algorithms are compared such that the most efficient one can be chosen.
 
-\todo{introduce chapter on Poker Implementation}
-
-\bigskip
+In chapter \ref{ch:implementation} I describe how the poker game was implemented and how I used the \DUPLO framework. I argue for the setting chosen to implement. I discuss some of the choises done when doing the implementation which resulted in reduced communication between the parties. Lastly I discuss the benchmarking of the implementation. The benchmarking was done on different parameters, the amount of simuntainios shuffles, the effect of network latency and the effect of bandwith. 
 
 \todo{introduce chapter on conclusion and proposals of futher studies}
 
@@ -157,7 +152,7 @@ As seen in section 7 on performance in \citeA{duplo} it is clearly that the expe
 
 \bigskip
 
-As this is the best performing 2PC protocol at the moment combined with the fact that it is developed at Aarhus University such that the people with knolaged of the protocol is in the same building was the main factors for using \DUPLO. The fact that \DUPLO supported the possibility of single and destinct wire openings to a desired party helped the decision. 
+The fact that it is developed at Aarhus University such that the people with knowleged of the protocol is in the same building is the main factors for using \DUPLO. But the fact that \DUPLO supported the possibility of single and distinct wire openings to a desired party helped the decision. Since this is needed to create uniqe opening of cards to one player without the other player learning anything abouth the card.
 
 \bigskip
 
@@ -181,7 +176,7 @@ After this the composed $Circuit$ is constructed by calling the \verb|Build| fun
 
 \bigskip
 
-The evaluation of circuits in the \DUPLO protocol allows for openings of outwires to both parties or only one. This will allow us to only reveal some cards to one player and other cards to the other. The split up of \verb|Evaluate| and \verb|DecodeKey| functions allows for opening of output wires in different rounds which helps us achive good round complexity when doing our implementation.
+The evaluation of circuits in the \DUPLO protocol allows for openings of outwires to both parties or only one. This will allow us to only reveal some cards to one player and other cards to the other player. The split up of \verb|Evaluate| and \verb|DecodeKeys| functions allows for opening of output wires in different rounds which helps us achive good round complexity when doing our implementation.
 
 
 \todo{Evt. introduction to; 2PC, GC, $XOR$-HC. Fordele ulemper}
@@ -194,17 +189,16 @@ In this section I will introduce the security of the protocol to show that plyer
 
 The proff of security for the protocol is done using the Universal Composision(UC) framework. This is an easy digested abstract protocol proof technuiqe which allows for sequential predefined interaction between parties using actions and reactions. It has a modular approche to functionality proofs, when one functionality has been proved it can be used as a steppingstone for the next proof. In \DUPLO they use the hybrid model with ideal functionalities $\mathcal{F}_{HCOM}$ and $\mathcal{F}_{OT}$. Where the $\mathcal{F}_{HCOM}$ functionality is for the $XOR$-homomorphic commitment scheme used by the protocol, and $\mathcal{F}_{OT}$ for the one out of two oblivious transfer. These functions are then used to prove $correctness$, $obliviousness$ and $authenticity$ of the protocol. 
 
-\todo{Protocol overall security proof appendix a}
 In the section on protocol details in \citeA{duplo} appendix $A$ they describe and analyse the protocol. Here structioring the main protocol and going into details on how $correctness$, $obliviousness$ and $authenticity$ is guaranteed therough the different protocol function calls. The proof end up beeing rather complex as the main structur consist of $8$ subfunctions, which each is a combination of futher subcircuits. All of these functions are guaranteed to satisfy the properties. During the analysis of these functions they end up with lemmas proving correctness of; soldering and evaluation of subcircuits. They end up with leammas proving robustness of; the key authenticator bucketes, evaluation of key authenticators, input of constructor, input of evaluator, evaluation of subcircuits and output of evaluator. This colminate in the theorem proving robustness of the protocol, showing that if the $constructor$ is corrupt and the $evaluator$ is honest and the protocol does not abort, then the protocol compleets holding the before mentioned property, except with negligible propability. As known when using MPC protocols where half or more of the parties are corrupt we can not guarantee termination.
 
-\todo{Protocol security analysis appendix b}
 In appendix $B$ they prove the fact that the protocol is secure agains a corrupt $constructor$ or $evaluator$. Since it is a 2PC we may assume that one of the parties is honest as the partis trust in them selfs. When proving in the UC framework it is worth to remember that a poly-time simulator $\mathcal{S}$ should be presented. For the case of a corrupted $constructor$, $\mathbf{G}$ for generator, and a honest $Evaluator$, $\mathbf{E}$. $\mathcal{S}$ plays the role of $\mathbf{E}$ in the protocol, but is not given acces to the inputs of $\mathbf{E}$, $x_{\mathbf{E}}$. Instead $\mathcal{S}$ has access to an oracle $\mathcal{O}_{x_{\mathbf{E}}}(\cdot)$ containing $x_{\mathbf{E}}$. $\mathcal{S}$ might contact $\mathcal{O_{x_{\mathbf{E}}}}$ giving input $x_{\mathbf{G}}$ and in return learn $y_{\mathbf{G}}$ as if the evaluation of the functionality was done with $x_{\mathbf{E}}$ and $x_{\mathbf{G}}$ as input.
 
 To show that the protocol is secure in this setting we need to show that a $constructor$ running the protocol can not distinguige between talking to $\mathbf{E}$ or $\mathcal{S}$. \todo{END PROOF}
 
-\todo{What is needed of the protocol, active security, single wire opening, duplo}
+\bigskip
 
-\todo{Preprocessing of duplo, serversetting interresting to study in stead of application}
+While I whent through the proof of \DUPLO I found a typo both in section $B.1$ and $B.2$ where they had switched around on the corrupt and honest party when they recall the task of the proof.  This has been anaunced to them and a fix will be made.
+
 
 %%%%%%%%%%%%%%%%%%% Frigate %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,7 +208,6 @@ In this section I will introduce how the new version of the $Frigate$ circuit co
 
 First of all when installing the compiler some special versions of libarys are required, which are not the latest. Folowing the instructions in the installation guide and some amount of internet search I was able to get it up and running. During the thesis I have been using hardware running Ubuntu 16.04 LTS or higher. Where the standard version of $flex$ and $bison$ is higher that supported by \DUPLO. This requires that the right versions are installed and keapt back such that these are nut updated later. But as the compilation of circuits are done once and prior to the compilation of the actual \DUPLO implemetation this is not a complete deal breaker.
 
-\todo{Describe the frigate programming language}
 The $Frigate$ compiler came shipped with the documentation for the first version and was not updated when extended to fit the \DUPLO framework. This should not be expected since the functionality of the compilers input language was not changed. But this resulted in some time consuming trial and error since it was not well written and specified. It was a long time since I last had worked with circuits in such a way as was the case for generating big circuits with a circuit compiler. This resulted in some hard earned experience on small exapmles.
 
 Some of the most important and different things to take into account when programming for circuit generation is the possibility to do wirre access. First of all it is possible to specify which and how many wires should represent a value by using \verb|y=x{index:size}|. This is the way long bit input strings are translated into higher level representations of smaler instances. This gave some occasions for frustrations because is it not possible to acces vires based on variable inputs which cannot be pre determined by $Frigate$. This makes perfect sence since the compiler can not know which wires should be used as the representation.
@@ -460,7 +453,7 @@ In this section I will try to compare the two algorithms on their internal struc
 
 \bigskip
 
-The first we will look at is the input to the \verb|shuffleDeck| functions. The both take the $deck$ as input, which in both cases is generated by the function \verb|initDeck|. This does therfore not yeald any difference to the algorithms. Then when looking at the $seed$ it is clear that there are some differences. Both in terms of representation and in size. First looking at the representation of $seed$, in \FY $seed_{FY}$ and \CS $seed_{CS}$. The $seed_{FY}$ is a representation of $20$ values $seed_{FY_i}$ in the interval $[0;52-i]$, for $i=1,\dots, 52$. Where $seed_{CS}$ does not have any abstrac representation and therefore $seed_{CS_i}$ has the binary representation $[0;1]$. The difference in the representations is one reason why we se a difference in the size of the $seed_{FY}$ and $seed_{CS}$ in terms of bits. Where the size of $seed_{FY}$ is $112$ since $6$ bists are used for the representation of the $20$ seed values. The size of $seed_{FY}$ is $830$ because one bit is needed per swap gadget, which is $\sum_{i=52-20}^{51} i$. As we see it is also the way the algorithm uses the $seed$ that effect the size. Where the \FY algorithm constructs composed gadgest consisting of multiple swap gadets the \CS algorithm only constructs swap gadgets. Even thoug the algorithms has different approches to generate the swap gadgets they end up generating the same amount of swap gadgets. Because \FY generates $19$ composed gedgest $CG_i$ consisting of $52-i$ swap gadgets, for $i=1,\dots,19$. Yealding the same number of swap gadgets as in \CS .
+The first we will look at is the input to the \verb|shuffleDeck| functions. The both take the $deck$ as input, which in both cases is generated by the function \verb|initDeck|. This does therfore not yeald any difference to the algorithms. Then when looking at the $seed$ it is clear that there are some differences. Both in terms of representation and in size. First looking at the representation of $seed$, in \FY $seed_{FY}$ and \CS $seed_{CS}$. The $seed_{FY}$ is a representation of $20$ values $seed_{FY_i}$ in the interval $[0;52-i]$, for $i=1,\dots, 52$. Where $seed_{CS}$ does not have any abstrac representation and therefore $seed_{CS_i}$ has the binary representation $[0;1]$. The difference in the representations is one reason why we se a difference in the size of the $seed_{FY}$ and $seed_{CS}$ in terms of bits. Where the size of $seed_{FY}$ is $112$ since $6$ bists are used for the representation of the $20$ seed values. The size of $seed_{FY}$ is $830$ because one bit is needed per swap gadget, which is $\sum_{i=52-20}^{51} i$. As we see it is also the way the algorithm uses the $seed$ that effect the size. Where the \FY algorithm constructs composed gadgest consisting of multiple swap gadets the \CS algorithm only constructs swap gadgets. Even thoug the algorithms has different approches to generate the swap gadgets they end up generating the same amount of swap gadgets. Because \FY generates $19$ composed gedgest $CG_i$ consisting of $52-i$ swap gadgets, for $i=1,\dots,19$. Yealding the same number of swap gadgets as in \CS.
 
 If we then instead turn our attention to the way the algorithms handle the $seed$ before they are fead to \verb|shuffleDeck| we se some big differences. Because both algorithms takes $seed_C$ and $seed_E$ as inputs from $Constructor$ and $Evaluator$ the algorithms needs to generate one single $seed$ that can be used by \verb|shuffleDeck|. This adds an overhead to the algorithms. This is not much for the \CS algorithm since it can use the $XOR$ function because it uses one bit of randomness at a time. As described in section \ref{sec:fisher-yates} this is not the case for \FY since it uses $6$ bits of randomness $seed_i$ at a time. Because there is the restriction on the $seed_C$ and $seed_E$ and the $seed$ input to \verb|shuffleDeck| in \FY the overhead added is more. The split-up of $seed_C$ and $seed_E$ into $seed_{C_i}$ and $seed_{E_i}$ does not add any overhead, but the addition of these does. Also the check to test if $seed_i$ is greather then $I_u$ and the subtraction adds an overhead to the overall circuit. The differences can be seen in table \ref{table:alg_preprocess_overhead} where it is clear that \verb|xorSeed| adds significantly less overhead to the circuit compared to \verb|correctedSeed|. 
 
@@ -482,7 +475,7 @@ We see that the \verb|xorSeed| has two non-free gates, which is strange since it
 
 \bigskip
 
-When looking in to the overall composition of \FY and \CS we get the results as seen in table \ref{table:circuit_gate_types}. We see that \CS is overall $4\%$ bigger in terms of the amount of gates than \FY. On the more important comparison is that \CS has $18\%$ less non-free $XOR$ gates. Therefore is the \CS algorithm the one that will be used in the implementation of the poker game.
+When looking in to the overall composition of \FY and \CS we get the results as seen in table \ref{table:circuit_comp}. We see that \CS is overall $4\%$ bigger in terms of the amount of gates than \FY. On the more important comparison is that \CS has $18\%$ less non-free $XOR$ gates. Therefore is the \CS algorithm the one that will be used in the implementation of the poker game.
 
 \begin{table}
 \centering
@@ -498,13 +491,11 @@ Total          & $59790$ & $57364$ &  $4$
 \label{table:circuit_comp}
 \end{table}
 
-As a note to the comparison it shouls be mentioned that some of the variables used in \verb|correctedSeed| are bigger in terms of bit size than needed. But since this is only a fraction of the $1873$ non-free gates seen in table \ref{table:alg_preprocess_overhead} this wouls not change that \CS has less non-free gates then \FY .
+As a note to the comparison it shouls be mentioned that some of the variables used in \verb|correctedSeed| are bigger in terms of bit size than needed. But since this is only a fraction of the $1873$ non-free gates seen in table \ref{table:alg_preprocess_overhead} this wouls not change that \CS has less non-free gates then \FY.
 
 \bigskip
 
-At last I will give a short comment on another possible shuffle algorithm that could have been used. This other types of sorting networks that the one studdied in section \ref{sec:con_swap}. In \citeA{psi} they also uses a algorithm known as the $Bitonic$ merge sort algorithm. Such an algorithm is constructed of what is known as $half-cleansers$. These $half-cleansers$ are constructed such that the input is guaranteed to have one peak $p$, $i_1\leq \dots \leq p \geq \dots \geq i_n$. Then the output is half sorted such that the highest values are in one of the two halfs. Resulting in a algorithm that can sort any input. This guarantees that one input $seed_i$ can every other place. If the conditional swap gadget is used then it can be used as a shuffle algorithm instead of a sorting algorithm. This type of sorting network generates a circuit of size $O(n\cdot log(n))$ which is better then what the \CS and \FY algorithms can aquire which is $O(n^2)$. But as argued earlier the \CS and \FY algorithms are easily optimized.
-
-\todo{Bitonic algorithm, optimization? can maybe be done by flipping such a sorting network and removing half cleansers}
+At last I will give a short comment on another possible shuffle algorithm that could have been used. This other types of sorting networks that the one studdied in section \ref{sec:con_swap}. In \citeA{psi} they also uses a algorithm known as the $Bitonic$ merge sort algorithm. Such an algorithm is constructed of what is known as $half-cleansers$. These $half-cleansers$ are constructed such that the input is guaranteed to have one peak $p$, $i_1\leq \dots \leq p \geq \dots \geq i_n$. Then the output is half sorted such that the highest values are in one of the two halfs. Resulting in a algorithm that can sort any input. This guarantees that one input $seed_i$ can every other place. If the conditional swap gadget is used then it can be used as a shuffle algorithm instead of a sorting algorithm. This type of sorting network generates a circuit of size $O(n\cdot log(n))$ which is better then what the \CS and \FY algorithms can aquire which is $O(n^2)$. But as argued earlier the \CS and \FY algorithms are easily optimized. This seems not to be the case for a $Bitonic$ shuffle network.
 
 As a result of this we see that for some card games it can be better to use another algorithm then the ones studied in this thesis since it may outperform them. We now know that a $Bitonic$ algorithm would produce a smaller circuit that \FY and \CS but since the two algorithm are easy to optimize such that they produce a relative small circuit. It is not clear that a $Bitonic$ algorithm will produce a circuit that is smaller. This implies that there will ba a cross over at some point where it is better to shuffle a complete deck then only parts of it as is done in our case. This can even be the case when only a part of the deck is needed.
 
@@ -515,23 +506,24 @@ As a result of this we see that for some card games it can be better to use anot
 \label{ch:implementation}
 The main idea of this chapter is to introduce the different stages during the implementation. Here I will introduce the different problems I have encountered and how I have chosen to overcome those.
 
-\todo{Introduce different sections}
+In section \ref{sec:poker_imp} I describe the process of implementing the poker game using \DUPLO. First I discuss the setting in which the implementation is done. Then an introduction to the decissions made and woh the interaction with the framework was done.
+
+In section \ref{sec:bechmarking} I introduce the testing that was done on the implementation. I explain what and how it was done. The implementation was tested on several parameters to try to compare the perfoemance against what could be expected of a real world online poker game. The inplementation was tested against the amount of data sent and time consumption in different phases. When the optimal setting was found this was used to test the effect of network latency and bandwith on the protocol. All test were done per simountaious shuffled deck.
 
 %%%%%%%%%%%%%%%% 2PC POKER IMPLEMENTATION %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Poker Game}
+\label{sec:poker_imp}
 As described in section \ref{sec:duplo_framework} where the structure of the framework was introduced. This structure is what every implemetation using the \DUPLO protocol needs to have. In the next part I will introduce how this was used to implement the poker game in this project.
 
 \bigskip
 
-\todo{The pokser setting}
 \begin{figure}
 \centering
 \input{figurs/poker_setting}
 \caption{The two different settings discussed to implement. The one on the left where the $Constructor$ and the $Evaluator$ also are the players and the one on the right wher they act as servers where players connect and then localy construct output based on output from the servers.}
 \label{fig:poker_setting}
 \end{figure}
-
 
 Before starting on the implemetation it is inportant to decide which setting of the poker game should be studdied. Two different settings was proposed and discussed, these can be seen in figure \ref{fig:poker_setting}. The first is one where the $Constructor$ and $Evaluatr$ act as players of the poker game themselves. They will play against each other and each decide on which and how many cards should be changed. The other setting is where the $Constructor$ and $Evaluator$ act as servers where players connect to. These players will act as clients connecting to both the $Constructor$ and $Evaluator$. Here the $Constructor$ and $Evaluator$ will run the protocol as described, but use inputs from the clients. The first one is the one chosen mainly because of the simplicity and timelimit of the project. The other setting has some interesting features which I will mention here. The second setting resembles what is used in real world online poker today. Today a player connects to a server which handles the shuffleing and dealing of cards. Then instead of connecting to one server which is not completly trusted the player connects to two servers which runs a secret share of the \DUPLO protocol. Then the player will recieve a share from each party and reconstruct the computed output. This setting distribut the trust issiue with the setting used to day. It could be the example that one of the serves in the \DUPLO setting is a State authorized server in which the palyer then would put its trust. Then game makers is then required to use the protocol against this server to be allowed to sell games in that contry. It will alow for a distributed instead of a single piont trus issiue. In the second setting there are no limits to how many playes could connect to the servers to play a game of poker. In this way the $2PC$ is not a restriction for the amount of players. This setting requiers a way of handling authentisity between the players, the $Constructor$ and $Evaluator$. This is needed to encure that non of the players sends different inputs to the $Constructor$ and $Evaluator$, and to encure that the $Constructor$ and $Evaluator$ does not send different outputs to the players. This is not a simple task to overcome, therefor the first setting was chosen.
 
@@ -541,7 +533,7 @@ The way \DUPLO is constructed it allows for preprocessing of the circuits, such 
 
 I will now describe the implementation of the poker game. First of all we need to both implementa a $Constructor$ and an $Evaluator$. These runs the protocol in parallel with the same framework calls, but holds different information during the phases. First we read the composed circuits in to both parties such that they know which functionality is to be computed. 
 Then the first interaction between the two parties is when the \verb|Connect| call is done. On the $Constructor$ site this generates the server functionality which the $Evaluator$ connect to with this call. 
-\todo{Missing setup???}
+After this a call to \verb|Setup| was done to \todo{Missing setup???}.
 Then a call to \verb|PreprocessComponetType| is done on each of the subcircuits. \todo{What does preprocessComponetType???}.  
 Efter this a call to \verb|PrepareComponets| is done, such that \todo{What does prepareComponets???}.
 At last the circuit are generated by the call to \verb|Build|. \todo{What deos build???}.
@@ -568,7 +560,7 @@ A small note on the leak of information when communication indexes for \verb|Dec
 \section{Benchmarking}
 \label{sec:bechmarking}
 
-In this section I will introduce all the testing that have been done on the poker implementation. This has been done to see if a implementaion using a $2PC$ framework can reach runningtimes close to known solutions.
+In this section I will introduce all the testing that have been done on the poker implementation. This has been done to see if a implementaion using a $2PC$ framework can reach runningtimes close to real life online poker.
 
 To do benchmarking a local machine was used. The hardware setup can be found in appendix \ref{app:hardware}. This setup was used to ensure a stabile environment such that no newtwork latency chunks would obstruct the results. To handle the experience of real networks a script was used to simulate bandwidth and latency. The bandwith was set to 1 Gb/s during all test. This is in the high end compared to most bandwith connections found in Denmark, but was choosen to get a faster roudtrip on the test environment. The latency was changed during the testing to see how it effected the implementation.
 
@@ -640,74 +632,11 @@ When dicussing the results I will refer to the phases as described in section \r
     \label{fig:mesurement_kb}
 \end{figure}
 
-The first we will look at is the amount of data send in $kb$ per shuffled card deack as seen in figure \ref{fig:mesurement_kb}. We see the accumulated dats sent per deck shuffled. The data is represented on a duble logaritmic scale. It is easy to see that as more simuntainiously shuffles are done the least data is sent. This implies that the most data sent is the overhead of setting up the protocol. As we see it is har to distinguish the different lines on the plot. This is because the $Preprocess$ phase is the one where the most data is sent. Relative to this nearly no data is sent in the $Evaluate$ and $Online$ phase. Remembering har it is only the input to the functionality that is sent in the $Evaluate$ pahse. In the $Online$ pahse we call $DecodeKey$ three times and therefore is only these keys that are sent. Where as in the $Preprocess$ phase the information of the garbling, soldering and authentication is done. Therfore more data is sent.
+The first we will look at is the amount of data send in $kb$ per shuffled card deack as seen in figure \ref{fig:mesurement_kb}. We see the accumulated dats sent per deck shuffled. The data is represented on a duble logaritmic scale. It is easy to see that as more simuntainiously shuffles are done the least data is sent. This implies that the most data sent is the overhead of setting up the protocol. As we see it is har to distinguish the different lines on the plot. This is because the $Preprocess$ phase is the one where the most data is sent. Relative to this nearly no data is sent in the $Evaluate$ and $Online$ phase. Remembering har it is only the input to the functionality that is sent in the $Evaluate$ pahse. In the $Online$ pahse we call \verb|DecodeKeys| three times and therefore is only these keys that are sent. Where as in the $Preprocess$ phase the information of the garbling, soldering and authentication is done. Therfore more data is sent.
 
-In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicating that there are not much more to gain on the $Evaluator$ site in terms of $kb$ sent, by shuffleing more decks simuntainious. Looking at figure \ref{fig:const_kb_plot} we see a different tendency where the plot is still decreasing indicating that some gain can still be done on the $Constructor$ site. This may indicate that more than $3000$ simuntainus shuffles can benefit on the amount of data sent as seen in \ref{fig:total_kb_plot}, which is still decreasing. In table \ref{table:mesurmet_kb} it is possible to se the actual amounts of data sent. Here it is obvious that it is the $Constructor$ that sents the most data and therefore the one that require the most simuntanious shuffles to bring the overhead of doing $2PC$ down.
+In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicating that there are not much more to gain on the $Evaluator$ site in terms of $kb$ sent, by shuffleing more decks simuntainious. Looking at figure \ref{fig:const_kb_plot} we see a different tendency where the plot is still decreasing indicating that some gain can still be done on the $Constructor$ site. This may indicate that more than $3000$ simuntainus shuffles can benefit on the amount of data sent as seen in \ref{fig:total_kb_plot}, which is still decreasing. Looking at the scale on $kb$ axis it is obvious that it is the $Constructor$ that sents the most data and therefore the one that require the most simuntanious shuffles to bring the overhead of doing $2PC$ down.
 
-\begin{table}
-\centering
-
-    \begin{subtable}{\textwidth}
-    \label{table:const_kb}
-    \centering
-    \scalebox{1}{
-    \begin{tabular}{l || r r r r r}
-               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
-    \hline
-    Preprocess & 172140.31 & 26817.94 & 9380.99 & 7380.56 & 6219.38  \\
-    Evaluate   &    122.84 &   122.84 &  122.84 &  122.84 &  122.84  \\
-    Online     &      5.94 &     2.38 &    2.02 &    1.99 &    1.99  \\
-    \hline
-    Total      & 172269.09 & 26943.16 & 9505.85 & 7505.42 & 6344.21
-    \end{tabular}
-    }
-    \caption{$Constructor$}
-    \end{subtable}%
-    
-    \vspace*{.5cm}
-    
-    \begin{subtable}{\textwidth}
-    \label{table:eval_kb}
-    \centering
-    \scalebox{1}{
-    \begin{tabular}{l || r r r r r}
-               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &      1 &    10 &   100 &  1000 & 3000 \\
-    \hline
-    Preprocess & 193.75 & 36.59 & 19.15 & 17.57 & 17.50 \\
-    Evaluate   &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
-    Online     &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 \\
-    \hline
-    Total      & 195.30 & 37.27 & 19.74 & 18.15 & 18.08
-    \end{tabular}
-    }
-    \caption{$Evaluator$}
-    \end{subtable}%
-
-    \vspace*{.5cm}
-    
-    \begin{subtable}{\textwidth}
-    \label{table:eval_kb}
-    \centering
-    \scalebox{1}{
-    \begin{tabular}{l || r r r r r}
-               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
-    \hline
-    Preprocess & 172334.06 & 26854.53 & 9400.14 & 7398.13 & 6236.88 \\
-    Evaluate   &    122.95 &   122.94 &  122.94 &  122.94 &  122.94 \\
-    Online     &      7.38 &     2.96 &    1.50 &    2.47 &    2.47 \\
-    \hline
-    Total      & 172464.39 & 26980.43 & 9525.59 & 7523.57 & 6362.29 
-    \end{tabular}
-    }
-    \caption{$Total$}
-    \end{subtable}%
-
-    \caption{Data sent: Comparison of $Constructor$ and $Evaluator$ in $kb$'s sent to the other party. (a) $Constructor$: $kb$'s data sent in different phases. (b) $Evaluator$: $kb$'s data sent in different phases.}
-    \label{table:mesurmet_kb}
-\end{table}
+This is excatly as expected before doing the experiments. The amount of $kb$ sent would decrease as more shuffles were done because of the overhead of doing $2PC$. Even going beond the $3000$ shuffles seems to give a decrese in data sent. Even though the gain is not the same as for the first $1000$ shuffles there seems to be some data transfer gain.
 
 \bigskip
 
@@ -720,7 +649,7 @@ In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicati
         \includegraphics[width=\textwidth]{figurs/const_ms_log_xy.eps}
         }
         \caption{}
-        \label{fig:const_kb_plot}
+        \label{fig:const_ms_plot}
     \end{subfigure}
 
     \vspace*{0cm}
@@ -731,7 +660,7 @@ In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicati
         \includegraphics[width=\textwidth]{figurs/eval_ms_log_xy.eps}
         }
         \caption{}
-        \label{fig:eval_kb_plot}
+        \label{fig:eval_ms_plot}
     \end{subfigure}
 
     \vspace*{0cm}
@@ -742,96 +671,166 @@ In figure \ref{fig:eval_kb_plot} we see that the line is flattening out indicati
         \includegraphics[width=\textwidth]{figurs/total_ms_log_xy.eps}
         }
         \caption{}
-        \label{fig:total_kb_plot}
+        \label{fig:total_ms_plot}
     \end{subfigure}
 
     \caption{Time: Comparison of $Constructor$ and $Evaluator$ in $ms$'s used. (a) $Constructor$: Accumulated time per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated time per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated time per deck shuffled on a duble logaritmic scale.}
     \label{fig:mesurement_ms}
 \end{figure}
 
-In the next section we will look a the time used per shuffled deck. 
+In the next section we will look a the time used per shuffled deck, which can be seen in figure \ref{fig:mesurement_ms}. The plots are the accumulated runningtimes per shuffled deck on a duble logarithmic scale. In figure \ref{fig:const_ms_plot} we see the time used in the different phases for the $Constructor$, in \ref{fig:eval_ms_plot} the $Evaluator$ and lastly in \ref{fig:total_ms_plot} we see the total time used on the framework calls. In figure \ref{fig:const_ms_plot} on the $Constructor$ side we see that the $Preprocess$ phase accumulates the most of the time. We also see that the time use in the $Preprocess$ phase is decreasing an approching $100$ ms per deck shuffled when shuffeling $3000$ decks simuntainiously. We also see that the $Evaluate$ phase does not add any significant time consumption to the evaluation. Where it is a completly different case when looking at the $Online$ phase. Here we see that the space between graphs encreases significantly when approching the $3000$ shuffled deck. We will take a look at this later. But for now we can conclude from the perspective of the $Constructor$ and in terms of accumulated running time per shuffled deck an optimum on this hardware is around $1500$ siminutanious shuffels. 
+When looking at the $Evaluator$ in figure \ref{fig:eval_ms_plot} we see the same tendency as for the $Constructor$. The $Preprocess$ is the one using the most time and approching $150$ ms per shuffled deack. For the $Evaluator$ we see a small encreas in time used per shuffled deck when pasing the $1000$ mark. But over all the time spent on these two phases is still slightly decreasing. Once again we see a increase in the time used on the $Online$ phase. For the $Evaluator$ the encrease is more significant than for the $Constructor$. Therefore the optimal amount of shuffled deck from the $Evaluator$'s point of view is around $500$ decks.
+When combining the running times from the $Constructor$ and $Evaluatro$ we get what we see in figure \ref{fig:total_ms_plot}. We see the same tendencies but with a optimum around $1500$.
 
+This was not what was expected before doing the experiments. The expected outcome was that we would se a decrease in time used per shuffle. It was not expected that an encrease in time consumed would encrease when doing more than $2000$ shuffles. Therefore more experiments was done to cover the reasons.
+
+\bigskip
+
+\begin{figure}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/const_online_ms_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:const_online_ms_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/eval_online_ms_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:eval_online_ms_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/total_online_ms_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:total_online_ms_plot}
+    \end{subfigure}
+
+    \caption{$Online$ Time: Comparison of $Constructor$ and $Evaluator$ in $ms$'s used in the $Online$ phase. (a) $Constructor$: Accumulated time per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated time per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated time per deck shuffled on a duble logaritmic scale.}
+    \label{fig:mesurement_online_ms}
+\end{figure}
+
+In this part I will cover the reasons why we see a encrease in time consumed by the $Online$ phase. First off all we remember that the $Online$ phase has three \verb|DecodeKeys| calls. In figure \ref{fig:mesurement_online_ms} we see the accumulated times used on the \verb|DecodeKeys| framework calls. For the $Constructor$ in figure \ref{fig:const_online_ms_plot} we see a encreas in the time used on the first \verb|DecodeKeys| call. While the other calls decreases as expected. This implies that somthing happens in the first \verb|DecodeKeys| call that we did not expect. 
+Looking at the $Evaluator$ in figure \ref{fig:eval_online_ms_plot} we see a graph that looks different, this is because the main work done in the \verb|DecodeKeys| call is done by the $Evaluator$. Here we see a increase in bothe the first and second \verb|DecodeKeys| call, while the third seems constant. 
+When consulting the figure \ref{fig:total_online_ms_plot} for the combination of $Constructor$ and $Evaluator$ we see that the encrease in time used by the first \verb|DecodeKeys| call happend before $100$ shuffles, while the encrese by the second call happens after $500$ shuffles. 
+
+\bigskip
+
+The encrease in time spent on the \verb|DecodeKeys| calls is probably from the fact that the implementation tries to cach as much as possible. From figure \ref{fig:mesurement_kb} we see that in the $Online$ phase nearly no data is sent. By consulting the data appendix \ref{app:test-res} we see that approximatly $2.5$kb is sent. Sending this data on a network with a bandwith of $1$Gb/s takes $2.5$ms, which is negligable as the amount of data decreses. As explained earlier the test was done on a network with $50$ms latency. Since we do not know how many rounds of communication the two parties has, we can not conclude any thing from this, beside the fact that this can be seen as a constant. Therefor it must be some implementation specific detail of the framework which is different at the two parties. The fact that the $Constructo$ does not use any time in the second and third \verb|DecodeKeys| call indicate that some form of caching is taking place. 
+
+\todo{Discuss the online phase.}
+\todo{Main idea is IO wait.}
 \todo{Timings in online phase is fluctuating, maybe I/O wait. More shuffles higher propability that some will end up waiting.}
-
-\begin{table}
-    \centering
-
-    \begin{subtable}{\textwidth}
-    \centering
-    \scalebox{.7}{
-    \begin{tabular}{l ||r r r r r}
-          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &       1 &      10 &    100 &   1000 & 3000    \\
-    \hline
-    Preprocess & 8202.12 &  918.74 & 193.32 & 116.73 & 106.89 \\
-    Evaluate   &  100.82 &   10.22 &   1.18 &   0.30 &   0.30 \\
-    Online     &  301.09 &  120.84 & 103.38 & 116.60 & 179.35 \\
-    \hline
-    Total      & 8604.03 & 1049.80 & 297.88 & 233.63 & 286.54 
-    \end{tabular}
-    }
-    \caption{$Constructor$}
-    \label{table:const_ms}
-    \end{subtable}%
-
-    \vspace*{.5cm}
-
-    \begin{subtable}{\textwidth}
-    \centering
-    \scalebox{.7}{
-    \begin{tabular}{l || r r r r r}
-          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &       1 &     10 &    100 &   1000 & 3000    \\
-    \hline
-    Preprocess & 6619.65 & 823.37 & 187.27 & 119.74 & 118.28\\    
-    Evaluate   &  129.49 &  17.91 &   5.43 &   5.44 &   9.58 \\
-    Online     &  301.76 & 121.09 & 116.34 & 159.80 & 430.11\\
-    \hline
-    Total      & 7050.90 & 962.37 & 309.04 & 284.98 & 557.97
-    \end{tabular}
-    }
-    \caption{$Evaluator$}
-    \label{table:eval_ms}
-    \end{subtable}%
-
-    \vspace*{.5cm}
-
-    \begin{subtable}{\textwidth}
-    \centering
-    \scalebox{.7}{
-    \begin{tabular}{l || r r r r r}
-          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
-    Phase      &        1 &      10 &    100 &   1000 & 3000    \\
-    \hline
-    Preprocess & 14821.77 & 1742.11 & 380.59 & 236.47 & 225.17 \\    
-    Evaluate   &   230.31 &   28.13 &   6.61 &   5.74 &   9.88 \\
-    Online     &   602.85 &  241.93 & 219.72 & 276.40 & 609.46 \\
-    \hline
-    Total      & 15654.93 & 2012.17 & 606.92 & 518.61 & 844.51 
-    \end{tabular}
-    }
-    \caption{Total}
-    \label{table:eval_ms}
-    \end{subtable}%
-
-    \caption{Comparison of $Constructor$ and $Evaluator$ in terms of time consumption in $ms$ during framework calls. (a) $Constructor$: Time consumption in different phases. (b) $Evalauator$: Time consumption in different phases. (c) $Total$: Time consumption in different phases.}
-    \label{table:mesurement_ms}
-\end{table}
-
-\todo{Timing total, phases, different amount od shuffles, different amount of delay, different amount of bandwidth}
-
-\todo{Mesurement of data send, total, pr. shuffle}
-
-\todo{Test different latencies to see the development, evt on 1000 shuffles}
-
 \todo{Test ram only variant to see the rise in ms in online pahse is do to disk read, evt on 1000 shuffles}
+
+
+\bigskip
+
+\begin{figure}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/const_delay_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:const_delay_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/eval_delay_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:eval_delay_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/total_delay_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:total_delay_plot}
+    \end{subfigure}
+    \caption{Delay: Comparison of $Constructor$ and $Evaluator$ in $ms$'s used when $1000$ shuffles are done with different latency on the network. (a) $Constructor$: Accumulated time per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated time per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated time per deck shuffled on a duble logaritmic scale.}
+    \label{fig:mesurement_delay}
+\end{figure}
+
+\todo{different amount of delay}
+In this section I will describe how the protocol handles network latency. This can be seen in figure \ref{fig:mesurement_delay}. In figure \ref{fig:total_delay_plot} that the overall impression is that the protocol handles delay fine until $100$ms. From here on it seems that there are a increase in the slowdown of the protocol. When looking at the $Constructor$ in figure \ref{fig:const_delay_plot} we see that the $Online$ phase is the one effected the most by the network latency. When comparing these graphs with table \ref{table:ping} it seems the protocol is performing fine for the latencies found there.
+
+\bigskip
+
+\begin{figure}
+    \centering
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/const_bandwith_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:const_bandwith_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/eval_bandwith_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:eval_bandwith_plot}
+    \end{subfigure}
+
+    \vspace*{0cm}
+
+    \begin{subfigure}{\textwidth}
+        \centering
+        \scalebox{.7}{
+        \includegraphics[width=\textwidth]{figurs/total_bandwith_log_xy.eps}
+        }
+        \caption{}
+        \label{fig:total_bandwith_plot}
+    \end{subfigure}
+    \caption{Bandwith: Comparison of $Constructor$ and $Evaluator$ in $ms$'s used when $1000$ shuffles are done with different bandwith on the network. (a) $Constructor$: Accumulated time per deck shuffled on a duble logarithmic scale. (b) $Evaluator$: Accumulated time per deck shuffled on a duble logaritmic scale. (c) $Total$: Accumulated time per deck shuffled on a duble logaritmic scale.}
+    \label{fig:mesurement_bandwith}
+\end{figure}
+
+\todo{different amount of bandwidth}
+
+\section{Discussion}
+\label{sec:discussion}
+
+\todo{ahead of time generation}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Conclusion}
-\label{ch:conclusion}
-\input{conclusion}
+\chapter{Conclution}
+\label{ch:conclution}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -978,6 +977,141 @@ Using the \verb|-it| flag in docker instead of the \verb|-d| flag allow for inte
 \subsection{Test results}
 \label{app:test-res}
 In this section a link to the repository on GitHub with all the generated statistics. Here all generated graphs and timings can be found. The repositor can be found here \footnote{\url{https://github.com/cbobach/speciale_thesis/tree/master/figurs}}
+
+\bigskip
+
+In the tables here the actual data used to generate the figure \ref{fig:mesurement_kb} and \ref{fig:mesurement_ms} in section \ref{sec:bechmarking} can be found.
+
+\begin{table}
+\centering
+
+    \begin{subtable}{\textwidth}
+    \label{table:const_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Preprocess & 172140.31 & 26817.94 & 9380.99 & 7380.56 & 6219.38  \\
+    Evaluate   &    122.84 &   122.84 &  122.84 &  122.84 &  122.84  \\
+    Online     &      5.94 &     2.38 &    2.02 &    1.99 &    1.99  \\
+    \hline
+    Total      & 172269.09 & 26943.16 & 9505.85 & 7505.42 & 6344.21
+    \end{tabular}
+    }
+    \caption{$Constructor$}
+    \end{subtable}%
+    
+    \vspace*{.5cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &      1 &    10 &   100 &  1000 & 3000 \\
+    \hline
+    Preprocess & 193.75 & 36.59 & 19.15 & 17.57 & 17.50 \\
+    Evaluate   &   0.11 &  0.10 &  0.10 &  0.10 &  0.10 \\
+    Online     &   1.44 &  0.58 &  0.49 &  0.48 &  0.48 \\
+    \hline
+    Total      & 195.30 & 37.27 & 19.74 & 18.15 & 18.08
+    \end{tabular}
+    }
+    \caption{$Evaluator$}
+    \end{subtable}%
+
+    \vspace*{.5cm}
+    
+    \begin{subtable}{\textwidth}
+    \label{table:eval_kb}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+               & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &         1 &       10 &     100 &    1000 & 3000 \\
+    \hline
+    Preprocess & 172334.06 & 26854.53 & 9400.14 & 7398.13 & 6236.88 \\
+    Evaluate   &    122.95 &   122.94 &  122.94 &  122.94 &  122.94 \\
+    Online     &      7.38 &     2.96 &    2.51 &    2.47 &    2.47 \\
+    \hline
+    Total      & 172464.39 & 26980.43 & 9525.59 & 7523.57 & 6362.29 
+    \end{tabular}
+    }
+    \caption{$Total$}
+    \end{subtable}%
+
+    \caption{Data sent: Comparison of $Constructor$ and $Evaluator$ in $kb$'s sent to the other party. (a) $Constructor$: $kb$'s data sent in different phases. (b) $Evaluator$: $kb$'s data sent in different phases.}
+    \label{table:mesurmet_kb}
+\end{table}
+
+\begin{table}
+    \centering
+
+    \begin{subtable}{\textwidth}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l ||r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &       1 &      10 &    100 &   1000 & 3000    \\
+    \hline
+    Preprocess & 8202.12 &  918.74 & 193.32 & 116.73 & 106.89 \\
+    Evaluate   &  100.82 &   10.22 &   1.18 &   0.30 &   0.30 \\
+    Online     &  301.09 &  120.84 & 103.38 & 116.60 & 179.35 \\
+    \hline
+    Total      & 8604.03 & 1049.80 & 297.88 & 233.63 & 286.54 
+    \end{tabular}
+    }
+    \caption{$Constructor$}
+    \label{table:const_ms}
+    \end{subtable}%
+
+    \vspace*{.5cm}
+
+    \begin{subtable}{\textwidth}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &       1 &     10 &    100 &   1000 & 3000    \\
+    \hline
+    Preprocess & 6619.65 & 823.37 & 187.27 & 119.74 & 118.28\\    
+    Evaluate   &  129.49 &  17.91 &   5.43 &   5.44 &   9.58 \\
+    Online     &  301.76 & 121.09 & 116.34 & 159.80 & 430.11\\
+    \hline
+    Total      & 7050.90 & 962.37 & 309.04 & 284.98 & 557.97
+    \end{tabular}
+    }
+    \caption{$Evaluator$}
+    \label{table:eval_ms}
+    \end{subtable}%
+
+    \vspace*{.5cm}
+
+    \begin{subtable}{\textwidth}
+    \centering
+    \scalebox{1}{
+    \begin{tabular}{l || r r r r r}
+          & \multicolumn{5}{c}{Number of Parallel Shuffles} \\
+    Phase      &        1 &      10 &    100 &   1000 & 3000    \\
+    \hline
+    Preprocess & 14821.77 & 1742.11 & 380.59 & 236.47 & 225.17 \\    
+    Evaluate   &   230.31 &   28.13 &   6.61 &   5.74 &   9.88 \\
+    Online     &   602.85 &  241.93 & 219.72 & 276.40 & 609.46 \\
+    \hline
+    Total      & 15654.93 & 2012.17 & 606.92 & 518.61 & 844.51 
+    \end{tabular}
+    }
+    \caption{Total}
+    \label{table:eval_ms}
+    \end{subtable}%
+
+    \caption{Comparison of $Constructor$ and $Evaluator$ in terms of time consumption in $ms$ during framework calls. (a) $Constructor$: Time consumption in different phases. (b) $Evalauator$: Time consumption in different phases. (c) $Total$: Time consumption in different phases.}
+    \label{table:mesurement_ms}
+\end{table}
+
 
 \todo{Add log files to GitHub}
 
