@@ -1,7 +1,6 @@
 thesis:
 	latex thesis.tex
-	bibtex A
-	bibtex B
+	bibtex thesis
 	latex thesis.tex
 	dvips -t letter -o thesis.tmp thesis.dvi
 	mv -f thesis.tmp thesis.ps
@@ -10,8 +9,7 @@ thesis:
 
 latex:
 	latex thesis
-	bibtex A
-	bibtex B
+	bibtex thesis
 	latex thesis && (pkill -USR1 xdvi\* || echo "No xdvi!")
 
 xdvi:
