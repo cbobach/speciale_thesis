@@ -835,7 +835,7 @@ We will now take a closer look at the $Online$ phase, to see there are some obvi
 
 The increase in time spent on the \verb|DecodeKeys| calls is probably from the fact that the implementation tries to cache as much as possible. From figure \ref{fig:mesurement_kb} we see that in the $Online$ phase nearly no data is sent. By consulting the data in appendix \ref{app:test-res}, table \ref{table:mesurmet_kb}, we see that approximately $2.5$kb is sent, during the $Online$ phase. Sending this amount of data on a network, with a bandwidth of $1$Gb/s, takes $2.5$ms. As explained earlier the test was done on a network with $50$ms latency. Since we do not know how many rounds of communication the two parties has, we can not conclude any thing from this, beside the fact that this can be seen as a constant. Therefor it must be some implementation specific detail of the framework which is different at the two parties, since we see a fine caching for the $Constructor$ in the second and third call to \verb|DecodeKeys|. The fact that graph looks as it does for the $Constructor$ may indicate that some form of caching is taking place. We cannot say the same about the $Evaluator$, it seems like some caching could take place as the second and third \verb|DecodeKeys| call starts by decrease. What then happens when passing the $100$ shuffle mark is hard to say. The best guess is that the cache may be full and therefore an increase in time is happening, because it has to get the data for a slower memory.
 
-One thing that could support this hypothesis is that it seems like the timings done by each of the \verb|DecodeKeys| calls seems to be more fluctuating when shuffling many decks simultaneous, in a small test I did. This supports the idea that it might be I/O wait that causes the decrease in performance. There simply is a higher risk of some call to wait when shuffling $3000$ decks compared to shuffling $100$. When we then take a look at the time used by each call we see that these task around $100$ms, if a call the has to wait for just $1$ms, we see an increase in time by $1\%$.
+One thing that could support this hypothesis is that it seems like the timings done by each of the \verb|DecodeKeys| calls seems to be more fluctuating when shuffling many decks simultaneous, in a small test I did. This supports the idea that it might be I/O wait that causes the decrease in performance. There simply is a higher risk of some call to wait when shuffling $3000$ decks compared to shuffling $100$. When we then take a look at the time used by each call we see that these task around $100$ms, if a call the has to wait for just $1$ms, we see an increase in time by $1\%$. The problem can also come from the fact that when machines run on high loads theri performances go down. When running the $3000$ shuffles test it consumed the most of the memory accessible.
 
 To test this hypothesis of a full cache a test run with the \verb|-d| flag, for the ram only mode, was performed. This did not show any change in the running time other then the uncertainty of the test results. Another approach to cover the reason, could be to take a deeper look at the framework and test the internal structure of the \verb|DecodeKeys| call, to understand what causes this development in the time consumption. This has not been done because of the time limits to this project.
 
@@ -886,7 +886,7 @@ In figure \ref{fig:total_delay_plot}, the overall impression is that the protoco
 
 \bigskip
 
-I will now turn the focus towards the benchmarking of the protocol against the bandwidth. To perform this test the $1000$ shuffle circuit was used once again. This time the latency was turned down to $0$ to speed up the process. The expectations of the test is to see a decrease in running time when the bandwidth goes up. It is worth mentioning that no tests are done with bandwidths slower then $50$Mb/s, because the test machine crashed when trying to perform test below this threshold. If consolidating the statistic\footnote{See link in footnote on page \pageref{footnote:bandwith_stats}.} a bandwidth of $50$ms is within the once used. 
+I will now turn the focus towards the benchmarking of the protocol against the bandwidth. To perform this test the $1000$ shuffle circuit was used once again. This time the latency was turned down to $0$ to speed up the process. The expectations of the test is to see a decrease in running time when the bandwidth goes up. It is worth mentioning that no tests are done with bandwidths slower then $50$Mb/s, because the test machine crashed when trying to perform test below this threshold. If consolidating the statistic\footnote{See link in footnote \ref{footnote:bandwith_stats} on page \pageref{footnote:bandwith_stats}.} a bandwidth of $50$ms is within the once used. 
 
 \bigskip
 
@@ -936,42 +936,58 @@ In this section I have tried to cover the tests done an argue for how they were 
 \section{Discussion}
 \label{sec:discussion}
 
-\todo{
-discuss the seating studied\\
-- latency fair\\
-- bandwidth unfair\\
-- amount of shuffle, 1000 may be high\\
-- hardware\\
-- preprocessing\\
-- evaluate\\
-- online\\
-- card choices, can hide latency\\}
+In this section the benchmarking done in section \ref{sec:bechmarking} will be compared to what can be expected in the real world. I will discuss both settings of the poker game introduced in section \ref{sec:poker_imp}. This will be done because some of the settings used when testing fits best in one setting and others in the other.
 
-\todo{discuss server setting\\
-- latency fair\\
-- bandwidth fair\\
-- amount of shuffles, 1000 may be low\\
-- hardware\\
-- preprocessing\\
-- evaluate\\
-- online\\
-- no card choices, to hide latency}
+The first setting that will be discussed is the seting implemented, where the $Constructor$ and $Evaluator$ both play the part of server and client. Before comparing this setting to the real world an decussion of the different parameters used will be done. If we start by looking at the latency used in figure \ref{fig:mesurement_ms}. This was done using $50$ms delay, compared to table \ref{table:ping} it seems to be a fair latency between two player in the real world. The bandwidth in this setting was set to $1024$Gb/s, as argued above this is to high when compared to statistics\footnote{Same as in footnote \ref{footnote:bandwith_stats} on page \pageref{footnote:bandwith_stats}}. Correcting the results according to this will imply that more time would be added to the running time. This can be done by combining the results from figure \ref{fig:mesurement_ms} and figure \ref{fig:mesurement_bandwith}. If we use the timing of the$50$Mb/s, then when doing $1000$ shuffles we would have to add around $1$ second to the running time per deck shuffled. This will yield a total running time of around $1.2$ second per deck for the $Constructor$ and $1.5$ for the $Evaluator$. Here it is important to remember that the time used in the $Preprocess$ phase can be done ahead of time. It may also be fair to argue that for two player to play $1000$ hands may be to the high site, as the preperation of the protocol can be done in a cycle, such that the preprocessing is done when they do not play. By reducing the amount of shuffles the running time per deck will go up but the total time may go down. We can then argue that the hardware used is to the extrem end when comparing to ordinary household machines, this may imply that the optimal number of simuntanious shuffles will be reduced and therefore fit better with the discussen about $1000$ shuffles being to many. This may yiald an uptimum around $500$ shuffles. From the test done it is not bossible to conclude on the excat time of such a game but an estimate would be below $1.5$ seconds per shuffle, in total $1000$ seconds which is around $13$ minute. Consolidating the graph the $Preprocess$ phase uses approximatly the half of this time, in this case around $7$ minutes. By doing this preprocess the playres are then able to play $500$ games of poker, with a running time of $6$ minutes in total. This yialds a runnig time of just belove $75$ms per game. Here we remember that the tests are done automatically without any change of cards, but when two players are playing against each other the decission of chosing cards would be significantly longer then this. Therefore we may argue that preformance of the poker implementation is good if the time for the preprocessing is not to high. In this setting we argue that on a comsomer computer it will take around $7$ minutes to preprocess $500$ decks. Two players of this type, must be assumed to leave their computer for more then $7$ minutes a day, and therefore may the protocol actually do well in this setting.
 
-\todo{Overhead of protocol, $Preprocess$ phase}
-\todo{ahead of time generation}
+In the other setting where the $Constructor$ and $Evaluator$ plays the role of servers, but not cliesnts them self, we may argue that we will see some other results. Once again the latency used during the test seems to be fair. The bandwidth used during the test may also be fair in this setting since servers prioritice a higher bandwidth to handle a big load. In this setting we may argue that $1000$ shuffles is to few.  The $1000$ shuffles takes around $1.2$ seconds for the $Condstructor$ and $1.5$ for the $Evaluator$ per deck shufled as argued above. Yielding $20$ minutes for the $Constructor$ and $25$ minutes for the $Evaluator$. We may argue that a poker provider use more then $1000$ decks in $25$ minutes, and the fact that no games can be played while the servers is in the $Preprocess$ phase. This prblem can be handled by having two sets of servers one preprocessing enough games to last the time it takes for the other set of servers to do their preprocessing. Then we may argue that servers of poker providers have more computation power then the hardware used during the test andt therefor can handle more simuntainious shuffles and therefor may be able to produce a greater amount in the same time. In this setting it is hard to argu whether the protocol can handle the task or not. In this setting we do not have the ability to do the preprocess when no game is ongoing, but the phase where the clients are dealt the cards are still aceptable, as it will be hidden in the choise of cards to be changed as argued above.
 
-\todo{Normal for a system reaching 80\%+ of capacity to drop in performance}
+\bigskip
 
-\todo{Time complexity of latency is fair, with high bandwidth. (other setting)}
-In the table we see an average latency of $47$ms. Consulting the graph on the total running time we see that, such a latency would result in a running time around $500$ms per deck shuffled.  
+All in all, the we seem to be able to draw the conclusion that the poker game implemented using \DUPLO in this project can actually handle real world scenarioes. The biggest consern is to find the time to do the preprocessing, but is a setting used where the time to the preprocessing can be found, then is the running time in the other phases acceptable.
 
+In the next chaper, I will do a summary of the project and reflect the conclusion done in this section. I will introduce some future work that could be done to see how things stack up in different scenarioes and why I got the results I did.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Conclusion}
 \label{ch:conclution}
 
-\todo{future work}
+In this chapter I will try to do a summary of the project and conclude on the results found in chapter \ref{ch:implementation}.
+
+In this project I have studdied the application of using the \DUPLO framework and protocol in the setting of a poker game. This was done to see how using a two party computation protocol will affect the overall running time and see if the protocols are mature enough to be used in real world situation. To do this the \DUPLO protocol was chosen, which is a secure two party computation protocol, using grabled circuits. This was chosen, because it has the posibility to do unique single wire opening, the existence of a circuit compiler and the fact that is developed at Aarhus University. Because of the sceurety of \DUPLO we are guaranteed to be able to provide privacy, correctness and independance of input. Privacy is the ability of the protocol to ensure that nothing more than the output is leaned. Correctness it the ability of the protocol to gurante that the right output is provided to the parties. Independance of input is the ability of the protocol to guarantee that the input of one of the parties can not depend on the input of the other. Because these poperties is given from the protocol we can start looking at the decission that should be made before the implementation could begin.
+
+First a decission was made on the setting of how the protocol shpuld be used. This could either be a setting where the two parties of the protocol acted as both server and client, or one where they only acted as server. The setting where the both acted as server and client, was the one chosen mainly because of its simplicity and the time limit of the project. The other seting is proposed as a future work below, for others to look into.
+
+A decisiion of which type of poker game to implement also had to be done. Here the five card draw variant was choosen. This was done mainly because it is the variant of poker used the most games when only two players participate. When only two parties partisipate it allowed for some optimizations of the shuffle algorithm, shuch a smaler circuit could be produced for evaluation in the protocol.
+
+To be able to use the \DUPLO protocol in the poker implementation we needed to generate the functionality that should be used. In this case it was the shuffeling of the cards, that should be handled by \DUPLO. We looked into different algorithms to compare their circuit size, to be able to choose the one giving the fastes runtime of the protocol. Because the complexity of circuits is hig,h when the complexity of the functionality implemented gets higher then simpel a compiler was used to generate the circuits. This alowed for a higher level of abstraction. The \FY and \CS algorithm was then implemented, both in a non-optimized and optimized version. This was done to see the affect of only shuffling the cards neccesary when only two players participated in the poker game. Based on the comparison of the shuffle algorithms the optimized version of \CS was the one chosen.
+
+The implementation of the game could then start. The \DUPLO protocol statede the oreder of the framework calls. The main purpose of the implementation was to generate the inputs to the protocol at the right time. Because of the way the \DUPLO framework had splitted the functions, three different phases was made. The first phase was based on the functionality of the circuits where this was garbled, such that it could be securly evaluated. This is denoted the preprocessing phase, as it can be done only based on the circuit generated. The second phase was the evaluation fase where the input to the functionality was given and the garbled circuit evaluated. The last phase was the online phase, this was the phase where per player would be shown their hand, chose which cards to change and see the oponents cards. No betting or declaration of a winner was implemented because of the time limits to the project. The betting functionality is proposed as future work as it could be interestin to see if this cuold be done using another secure protocol. Now that the implementation was in place the testing could begind.
+
+During the benchmarking different parameters was tested to see how the \DUPLO protocol handled these settings. Because the \DUPLO protocol should performe better when working with big circuits, different variants of the \CS shuffle was generated where different amount of shuffled decks was generated. This was done to see how big the benefit was of doing many simuntanious shuffles. The expected result was that it would performe better and better, but this was not the case. We saw that there existed an optimum for the protocol. This is propably because of the internal optimizations of the protocol where it tries to cache as much as possible, and when the limit of the cache is exeeded the performance decreases. The optimal number of shuffles was then used to test how the protocol reacted to different amounts of latency on the network. The expectation was that it would have a linear slowdown in performance when the latency on the network whent up. This was also the results we got when performing the benchmark. The optimal circuit was then also used to test how the bandwidth affected the protocol. Here the expectations was that we would see a linear encrease in performance when the bandwidth whent up. One agin it performed as expected. When the benchamrks was done the running times frome these was then compared to what could be expected of a real world poker game.
+
+
+
+\bigskip
+
+In the next section I will come up with som proposalt to futher work that could be done based on this project and the \DUPLO protocol.
+
+\section{Proposed future work}
+Here I will propose some interesting asspects i have tutched during the project but have not had the time to look into. Each of the proposals should be possible to cover in the time of a project. Some of them might not be for a thesis, but could be used as a preproject to get into the \DUPLO protocol and the working mecanisms of a $MPC$. I will give each project a short paragraph on why this could be interesting and how this could be done.
+
+\paragraph{DecodeKeys running time coverage:}
+In this project the development of the runnig times of the \verb|DecodeKeys| call could be studdied. It could be interresting to get a deeper understanding of why we see the development in the graphs in figure \ref{fig:mesurement_online_ms}, as we do. This could be done by going in to the framework an time the different calls made inside of the \verb|DecodeKeys| function. It could be interesting to see if the hypothesis of the full chace is the reason or somethig else. It could also be interesting to see the differences at the two parties, why do the timings differentiate in such a way they do.
+
+\paragraph{\DUPLO in a server setting:}
+It could be interesting in this project to study how the \DUPLO protocol would performe in the setting where the $Constructor$ and $Evaluator$ acts and servers and not clieants at the same time. How would the authenticity and correctness of the inputs be guaranteed. Would the addition of these properties add an extra overhed to the \DUPLO protocol making it perform significantly worse, or will it handle it well. 
+
+\paragraph{Five card draw vs. Texas hold'em:}
+This project could be interresting to see especially in the server setting where more then two player could participate. Overall it could be interesting to see how much the difference in the optimization of the circuit will affect the running times. In a two party setting only $9$ cards is used in Texas Hold'em compared to the $20$ in five card draw.
+
+\paragraph{Addition of betting:}
+Betting is a big part of online poker, therefore could it be interesting to add this to the implementation. This could be done by using smart contract in blockchain. by doing it this way the mony will noly be transvered if a conditino is satisfied. Some but not all cryptocurrency protocols allows for these contracts, but I think it should be possible to do.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
