@@ -114,7 +114,7 @@ Thank you everyone.
   \emph{Aarhus, \today.}
 \end{flushright}
 
-\changepage{-35mm}{}{}{}{}{}{}{}{}
+\addtocontents{toc}{\protect\enlargethispage{5mm}}
 \tableofcontents
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
@@ -391,7 +391,7 @@ I will introduce the poker game used in this thesis, and another to compare the 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% POKER %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Poker the Game}
+\section{Poker variants}
 \label{sec:poker}
 I will in this section introduce the poker game. Poker is a card game played in various rounds, where the players draw cards and places bets. The bets are won according to a predefined list, where the card constellation with the lowest probability wins. There exists many different variants of poker, but only one will be chosen to use during the project. The variant chosen to use is known as $five~card~draw$ poker. In this project the game will be played between two parties, as described in chapter \ref{ch:duplo}. In this variant of poker, five cards are dealt to each player, in the first round. After this the first betting round occurs. Then a swap round occurs, where the players have the possibility to chose how many cards to change, to try to improve their hand. At last a new betting round is performed, before the cards is revealed and a winner is declared. This variant of poker was chosen because it is one of the most used poker games when played between only two players.
 
@@ -645,7 +645,7 @@ In this chapter, the poker game that is used during this project has been introd
 
 %%%%%%%%%%%%%%%%%%%%%%%% POKER IMPLEMENTATION %%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{The Game}
+\chapter{Poker}
 \label{ch:implementation}
 The main idea of this chapter is to introduce the different stages of the poker game. The different problems encountered during the implementation and benchmarking will be introduced and solutions to overcome these will be presented.
 
@@ -998,7 +998,7 @@ In the other setting where the $Constructor$ and $Evaluator$ plays the role of s
 
 All in all, we seem to be able to draw the conclusion that the poker game implemented using \DUPLO in this project, can actually handle real world scenarios. The biggest concern is to find the time to do the preprocessing, but is a setting used where the time to the preprocessing can be found, then is the running time in the other phases acceptable.
 
-In the next chapter, I will do a summary of the project and reflect the conclusion done in this section. I will introduce some future work, that could be done, to see how things stack up in different scenarios and why I got the results I did.
+In the next chapter, I will do a summary of the project and reflect the conclusion done in this section. I will introduce some future work, that could be done, to see how things stack up in different scenarios.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
