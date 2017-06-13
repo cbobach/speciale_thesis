@@ -79,7 +79,7 @@ In this project the \DUPLO protocol is used to implement a two party five card d
 
 To handle the card shuffling of the game, two different shuffle algorithms are studied. These are compared to find the one performing best in the protocol. Both algorithms are optimized, to the two party poker setting, such an even better performance can be reached.
 
-The poker implementation is benchmarked to measure the performance of \DUPLO. Because of the \DUPLO construction, a test is done to see when the pest performance can be expected. This is done by doing different amounts of simultaneous shuffles in the circuit. The expectation is when more simultaneous shuffles are done, the performance of the protocol will be better, per shuffle. The results show a distribution of the overhead that is decreasing, when doing more simultaneous shuffles, but the cost of decoding the output is increasing. An optimum is then found from the test. The increase in the cost of decoding, is assumed to be the result of a full cach. This optimim was then tested to see the performance when different latency and bandwidth was used. The expectation is to see a linear development. The results is as expected. When a network with low latency is used the performance goes up. When a higher bandwidth is used the performance is better.
+The poker implementation is benchmarked to measure the performance of \DUPLO. Because of the \DUPLO construction, a test is done to see when the pest performance can be expected. This is done by doing different amounts of simultaneous shuffles in the circuit. The expectation is when more simultaneous shuffles are done, the performance of the protocol will be better, per shuffle. The results show a distribution of the overhead that is decreasing, when doing more simultaneous shuffles, but the cost of decoding the output is increasing. An optimum is then found from the test. The increase in the cost of decoding, is assumed to be the result of a full cache. This optimum was then tested to see the performance when different latency and bandwidth was used. The expectation is to see a linear development. The results is as expected. When a network with low latency is used the performance goes up. When a higher bandwidth is used the performance is better.
 
 When the results are combined a good performance is achieved by the implementation. Translating this into the setting of online poker as it is known today, no distinct conclusion can be made. There are to many unknown variables in the benchmarking. The tendency of the results indicates, that a good solution could be created.
 
@@ -89,22 +89,22 @@ When the results are combined a good performance is achieved by the implementati
 \chapter*{Resum\'e}
 \addcontentsline{toc}{chapter}{Resum\'e}
 
-Dette projekt er et studie af hvordan to-parts beregnings protokoller yder når de anvendes i et online poker spil. Online poker spillere kan på nuværende tidspunkt ikke vide sig sikre på at kortene bliver delt retfærdigt. der eksistere protokoller der kan sikre dette. Disse protokoller kaldes sikre flere-parts beregnings protokoller.
- 
-Dette projekt er et studie for at se, hvordan disse protokoller yder. I dette projekt bruges \DUPLO protokollen til at implementere et "five card draw" poker spil, med to spillere. I denne opsætning agere de to parter, af protokollen også som spillere i pokerspillet. I denne opsætning kan \DUPLO protokollen garantere både privatliv og korrekthed. Disse egenskaber i \DUPLO er opnået ved brug af følgende teknologier \textit{del og vælg}, \textit{kommitment systemer} og \textit{krypterede kredsløb}. På grund af måden \DUPLO er konstrueret tilføjes en margin til evalueringen af kredsløbet. Denne margin reduceres så meget som muligt i $DUPLO$.
- 
-Til at håndtere blandingen af kort, studeres to forskellige blanding algoritmer. Disse er sammenlignet for at finde den mest effektive, til bruge i pokerspillet. Begge algoritmer er optimeret så en bedre kørselstid kan opnås i to-parts beregningen.
- 
-Poker implementering er testet for at måle kørselstiden ad DUPLO. På grund af DUPLO's konstruktion er en test lavet for at se hvornår den præstere optimalt. Dette gøres ved at bruge kredsløb hvor flere kortsæt blandes samtidig. Det forventes at når flere blanding foretages samtidig bliver ydeevnen af DUPLO bedre og bedre jo flere samtidige blandinger der laves. Resultaterne viser at jo flere kortspil der blades jo laver bliver den tilføjet marginen per kortspil blandet, men samtidig stiger omkostningerne ved at blive tildelt kort. På baggrund af dette er et optimalt antal blandinger fundet. Stigningen i omkostningerne til uddeling af kort er forventet at komme fra en fuld    cach    . Det fundne optimum bliver herefter testet i forskellige omstændigheder for at se hvordan DUPLO yder. Her bliver både påvirkningen af forsinkelsen og båndbredden på netværket testet. Forventningen er at se en lineær udvikling. Det er også disse resultater vi får. Når forsinkelsen  på netværket går ned, går ydeevnen op. Når båndbredden går op går ydeevnen også op.
- 
-Da disse resultater foreligger bliver de kombineret til at, konkludere at implementationen præstere godt. Oversættes resultaterne til hvad der kan forventes af online poker udbydere, er det svært at sammenligne, da der er for mange ukendte variabler i testningen, men tendensen ser ud til at god løsning kan konstrueres med DUPLO.
+Dette projekt er et studie af hvordan to-parts beregnings protokoller yder når de anvendes i et online poker spil. Online poker spillere kan på nuvrende tidspunkt ikke vide sig sikre på at kortene bilver delt retfærdigt. der eksistere protokoller der kan sikre dette. Disse protokoller kaldes sikre flere-parts beregnings protokoller.
+
+Dette projekt er et studie for at se, hvordan disse protokoller yder. I dette projekt bruges \DUPLO protokollen til at implementere et "five card draw" poker spil, med to spillere. I denne opsætninge agere de to parter, af protokollen oså som spillere i pokerspillet. I denne opsætning kan \DUPLO protokollen garantere både privatliv og korrekthed. Disse egenskaber i \DUPLO er opnået ved brug af følgende teknologier \textit{del og vælg}, \textit{kommitment systemer} og \textit{krypterede kredsløb}. På grund af måden \DUPLO er kostrueret tilføjs en margin til evalueringen af kredsløbet. Denne margin reduceres så meget som muligt i $DUPLO$. 
+
+Til at håndtere blandingen af kort, studeres to forskellige blanding algoritmer. Disse er sammenlignet for at finde den mest effektive, til bruge i pokerspillet. Begge algoritmer er optimenret så en bedre kørselstid kan opnåes i to-parts beregningen.
+
+Poker implementering er tested for at måle kørselstiden ad DUPLO. På grund af DUPLO's konstruktion er en test lavet for at se hvornår den præstere optimalt. Dett gøres ved at bruge kredsløb hvor flere kortæst blandes samtidig. Det forventes at når flere blanding fårestages samtidig bliver ydeevnen af DUPLO bedre og bedre jo flere samtidige blandinger der laves. Resultaterne viser at jo flere kortspil der blades jo laver bliver den tilføjet marginen per kortspil blandet, men samtidig stiger omkostningerne ved at bilve tildelt kort. På bagrund af dette er et optimalt antal blandinger fundet. Stigningen i omkostningerne til uddeling af kort er forventet at komme fra et fyld hukommelses lager. Det fundne optimum bliver herefter tested i forskellige omstændigheder for at se hvordan DUPLO yder. Her bliver både påvirkningen af forsinkelsen og båndbredten på netwærket testet. Forventningen er at se en lineær uvikling. Det er også disse resultater vi får. Når forsinkelsen  på netværket går ned, går ydeevnen op. Når båndbreden går op går ydeeven også op.
+
+Da disse resultater foreligger bliver de kombineret til at, konkludere at implementationen præstere godt. Oversættes resultaterne til hvad der kan forventes af online poker udbydere, er det svært at sammenligne, da der er for mange ukendte variabler i testningen, men tendensen ser ud til at god løsning kan kostrueres med DUPLO.
 
 
 %%%%%%%%%%%%%%%%%%%%% ACKNOWLEDGMENTS %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Acknowledgments}
 \addcontentsline{toc}{chapter}{Acknowledgments}
-During the work of this project, I have had the help of some great people. Both when it comes to the problem of finding the right solutions, but also when looking at the nifty little details. I would like to thank Kristoffer Arnsfelt, who has been a great help in the beginning of the process, when I was trying to find the best shuffle solution to use. He came up with the idea to look into sorting networks, because he was concerned with the security of the \FY algorithm. Ni Ni Trieu has been a great help with learning to understande the $Frigate$ compiler. She has allways been ready to answer my stupid questions fast, in a short precise way. I would like to thank Claudio Orlandi, for the well guided hand he has been giving me through the thesis. He has always been open hearted and said what was on his mind regarding the project. Roberto Trifiletti should have my biggest thank as he proposed this exciting project to me many months ago, even before the \DUPLO was a reality. He has supported me with all his knowledge during the project, from the early beginning to the bitter end. He has been there every time I needed someone to discuss a problem or solution with. Lastly, but not least I need to thank my wife for holding up with me, when I whent on one of my coding sprees, and for her details for commas.
+During the work of this project, I have had the help of some great people. Both when it comes to the problem of finding the right solutions, but also when looking at the nifty little details. I would like to thank Kristoffer Arnsfelt, who has been a great help in the beginning of the process, when I was trying to find the best shuffle solution to use. He came up with the idea to look into sorting networks, because he was concerned with the security of the \FY algorithm. Ni Ni Trieu has been a great help with learning to understand the $Frigate$ compiler. She has all ways been ready to answer my stupid questions fast, in a short precise way. I would like to thank Claudio Orlandi, for the well guided hand he has been giving me through the thesis. He has always been open hearted and said what was on his mind regarding the project. Roberto Trifiletti should have my biggest thank as he proposed this exciting project to me many months ago, even before the \DUPLO was a reality. He has supported me with all his knowledge during the project, from the early beginning to the bitter end. He has been there every time I needed someone to discuss a problem or solution with. Lastly, but not least I need to thank my wife for holding up with me, when I went on one of my coding sprees, and for her details for commas.
 
 Thank you everyone.
 
@@ -114,6 +114,7 @@ Thank you everyone.
   \emph{Aarhus, \today.}
 \end{flushright}
 
+\changepage{-35mm}{}{}{}{}{}{}{}{}
 \tableofcontents
 \pagenumbering{arabic}
 \setcounter{secnumdepth}{2}
@@ -123,29 +124,30 @@ Thank you everyone.
 \chapter{Introduction}
 \label{ch:intro}
 
-We can all put our self in the place of players of online poker, where it is not possible to know if the cards are dealt fairly or the provider collobarate with one of the opponents to win. The players need to put is trust in the provider to guarantte that the cards are dealt fairly. This problem can be overcom by using a secure protocol that can give this gurantee. It is here secure multiparty computation($MPC$) protocols come into play.
+In this chapter I will introduce the thoughts about this project. I will give an introduction to the ideas behind the project and why this is interesting. In the following an overall description of the project will be given.
 
-Secure multiparty computations is a construction that allow multi parties to collaborate on evaluating a function. The protocol is desigend such that the evaluation is guaranteed to have the right output, with negligable propability. The idea behind using a secure multiparty computation protocol is that, if we allow the players of poker to colloborativly shuffle the cards used in the game, then they are guaranteed that the cards are dealt fairly.
+First of all, we can all put ourself in the place of players of online poker, where it is not possible to know if the cards are dealt fairly or the provider collaborate with one of the opponents to win. The players puts their trust in the provider to guarantee, that the cards are dealt fairly. This problem can be overcomed by using a secure protocol, that can give this guarantee. This can be done by secure multiparty computation($MPC$) protocols.
 
-In this project a secure two party computation($2PC$) protocol will be used. This will only allow for two parties collaborating in shuffleing the cards. The protocol chosen is the \DUPLO protocol, this was chosen because of the functionality of allowing one of the parties to learn some part of the output of the function, while the other learn the other part. This gives the posibility to dealing some cards to one party and other cards to the other party.
+Secure multiparty computations are a construction, that allow multi parties to collaborate on evaluating a function. The protocol is designed such that the evaluation is guaranteed to have the right output, with negligible probability. The idea behind using a secure multiparty computation protocol is that, if we allow the players of poker to collaboratively shuffle the cards used in the game, then they are guaranteed that the cards are dealt fairly.
 
-The intent of this project is to see how an implementation of poker using the \DUPLO protocol perform agains what is known today. An implementation of a poker game using the \DUPLO protocol is therefore made. During the implementation pahse different shuffle algorithms is studdied to find the one performing best. The shuffle algorithms is optimized to the poker setting used. The poker game that will be implemented is the five card draw version. This is done because it is one of the most used when played between two players. This alows for some optimizations of the shuffle algortihms, as only a certain amount of cards are used during a game.
+In this project a secure two party computation($2PC$) protocol will be used. This will only allow for two parties collaborating in shuffling the cards. The protocol chosen is the \DUPLO protocol. This was chosen because of the functionality of allowing one of the parties to learn some part of the output of the function, while the other learn the other part. This gives the possibility to deal some cards to one party and other cards to the other party.
 
-Asonly two parties are partisipating in the poker game, one player may expect the otehr to try to cheat. This could be by tying to affect the shuffle to deal better cards to guarantee a win. As \DUPLO is proven to be secure in the malicious setting, where the opponent may deviate for the protocol, we are on the safe site.
+The intent of this project is to see how, an implementation of poker using the \DUPLO protocol perform against what is known today. An implementation of a poker game using the \DUPLO protocol is therefore made. During the implementation phase, different shuffle algorithms are studied to find the one performing best. The shuffle algorithms are optimized to the poker setting used. The poker game that will be implemented is the five card draw version. This is done, because it is one of the most used when played between two players. This allows for some optimizations of the shuffle algorithms, as only a certain amount of cards are used during a game.
 
-The poker implementation is then used to benchmark the performance of the \DUPLO protocol. This is done to get some numbers to hold up against what can be expected by online poker games. Based on this benchmarking will a conclusin be done.
+As only two parties are participating in the poker game, one player may expect the other to try to cheat. This could be by tying to affect the shuffle to deal better cards to guarantee a win. As \DUPLO is proven to be secure in the malicious setting, where the opponent may deviate for the protocol, we are on the safe site.
+
+The poker implementation is then used to benchmark the performance of the \DUPLO protocol. This is done to get some numbers to hold up against, what can be expected by online poker games. Based on this benchmarking, a conclusion will be done.
 
 \bigskip
 
-In the following section will an overview of the structure of this thesis be given. Before doing this a timeline of the project will be introdused to give an understanding of some of the problems that was covered during the project. The main reason for some the problems covered is, because the \DUPLO project was still ongiong when I started this thesis. The main structure and functionality was in place, but was not of a production quality. Therefor some bugs was uncovered in the \DUPLO project. The \DUPLO project and paper were first published late in my project, but I have been in touch with them during the hole process of the project.
+In the following section, an overview of the structure of this thesis will be given. Before doing this, a timeline of the project will be introduced to give an understanding of some of the problems, that was covered during the project. The main reason for some of the problems is, because the \DUPLO project was still ongoing, when I started this thesis. The main structure and functionality was in place, but was not of a production quality. Therefore, some bugs were uncovered in the \DUPLO project. The \DUPLO project and paper were first published late in my project, but I have been in touch with them during the whole process of the project. The main reason for this has been to get support when things didnot work as expected and be able to give the feedback on my findings.
 
-Now to the outline of this thesis.
-
+We can now tur our attention to the outline of the thesis.
 
 
 \section{Chapter Overviews}
-
-A short description of each chapter will be given here, such that you as a reader know what to expect adn where the different contents can be found. 
+\label{ch:overview}
+In this section a short description of each chapter will be given. This is done, such that you as a reader know what to expect and where the different contents can be found. The chapters follow in this order, first the chapter on \DUPLO, the Shuffle Algorithms, The Game and lastly, the Conclusion.
 
 \paragraph{Chapter \ref{ch:duplo}:}
 In chapter \ref{ch:duplo} I cover the basics of \DUPLO. 
@@ -153,31 +155,32 @@ In chapter \ref{ch:duplo} I cover the basics of \DUPLO.
 \todo{Introduce chapter duplo}
 
 \paragraph{Chapter \ref{ch:shuffle}:}
-The main focus of this chapter is to compare different shuffle algorithms, such that the one assumed to perform fastes in the implementation can be choosen to use. First an introduction to why thise are needed are given. Then an introduction to the version of poker that wil be used in the implementation of the poker game. This is done shuch that the requirements of the shuffle algorithms cna be anlyzed. In this part a proposal to optimizations of the shuffles are introduced. 
+The main focus of this chapter is to compare different shuffle algorithms, such that the one assumed to perform fasts in the implementation, can be chosen to use. First an introduction to why these are needed, are given. Then an introduction to the version of poker that will be used in the implementation of the poker game. This is done, such that the requirements of the shuffle algorithms Can be analyzed. In this part a proposal to optimizations of the shuffles are introduced. 
 
-The first algorithm studied is the \FY algorithm. This is studied in great depth to understand the ideas benind the construction.
+The first algorithm studied is the \FY algorithm. This is studied in great depth to understand the ideas behind the construction.
 
-The second algorithm studied is the \CS algorithm. This is also studied in great deapth, to understand the constructions. This algorithm is created based on ideas from different consepts. The main idea comes from shuffle network which are introduced here. 
+The second algorithm studied is the \CS algorithm. This is also studied in great depth to understand the constructions. This algorithm is created based on ideas from different concepts. The main idea comes from shuffle network which is introduced here. 
 
-A decription is given on how these algorithms are implemented and optimized to perform even better. Based on these implementations is a comparison of the algorithms are done. This comparison makes the basis of the choise of, which algorithm will be used during the benchmarking.
+A description is given on how these algorithms are implemented and optimized to perform even better. Based on these implementations, a comparison of the algorithms are done. This comparison makes the basis of the choice of, which algorithm will be used during the benchmarking.
 
 
 \paragraph{Chapter \ref{ch:implementation}:}
-The main focus of this chapter is to generate the basis for the conclusion done in chapter \ref{ch:conclution}. First a discussion of the setting of the poker game is made, such that the implementation an implementation can be made to fit the setting. A description of the implementation of the poker game is given. This is done by explaining how the interaction with the \DUPLO framework is done and what is handled in between. It is also here an introduction to the different chioses during the implementation process will be given.
+The main focus of this chapter is to generate the basis for the conclusion done in chapter \ref{ch:conclution}. First a discussion of the setting of the poker game is done, such that the implementation can be made to fit the setting. A description of the implementation of the poker game is given. This is done by explaining how the interaction with the \DUPLO framework is done and what is handled in between. It is also here an introduction to the different choices during the implementation process will be given.
 
-The implementation is the used during the benchmarking in this chapter. This is a thourough test of how the \DUPLO protocol performs in the implementation. Here thests are done to cover when the protocol performs optimal, in terms of simuntaniuos shuffles, network latency and bandwidth.
+The implementation is then used during the benchmarking in this chapter. This is a thorough test of how the \DUPLO protocol performs in the implementation. Here these are done to cover, when the protocol performs optimal, in terms of simultaneous shuffles, network latency and bandwidth.
 
-Based on the results of the benchmarking a descussin is made. This compares the results with the expectation and conclude on the application of the \DUPLO protocol.
+Based on the results of the benchmarking, a discussing is made. This compares the results with the expectation and conclude on the application of the \DUPLO protocol.
 
 
 \paragraph{Chapter \ref{ch:conclution}:}
-In this chapter the conclusion of the project is done. Is \DUPLO and secure two party protocols mature enough to work in the real world. Here both the setting studdied during the project and a more real world version will be discussed. 
+In this chapter the conclusion of the project is done. Is \DUPLO and secure two party protocols mature enough to work in the real world. Here both the setting studied during the project and a more real world version will be discussed. 
 
-During the project multible corners had been cutted, because of the time limit. These are presented in this chapter in a section with proposed future projects.
+During the project multiple corners had been cut, because of the time limit. These are presented in this chapter in a section with proposed future projects.
 
 \bigskip
 
-In this chapter a introduction to the project and the cumming chapters was given. In the next chapter a introduction to the \DUPLO framework will be given. The reasons of why this was chosen and the security will be discussed. Some of the consepts, which is used by \DUPLO will be introduced, as is the case for the $Frigate$ circuits compiler that come shipped with \DUPLO.
+In this chapter a introduction to the project and the cumming chapters were given. In the next chapter an introduction to the \DUPLO framework will be given. The reasons of why this was chosen and the security will be discussed. Some of the concepts, which is used by \DUPLO will be introduced, as is the case for the $Frigate$ circuits compiler that came shipped with \DUPLO.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% DUPLO %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,11 +287,13 @@ While I went through the proof of \DUPLO I found typos in both section $B.1$ and
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Frigate the \DUPLO Circuit Compiler}
 \label{sec:frigate}
-In this section, I will introduce how the new version of the $Frigate$ circuit compiler works. First I will introduce which requirements there are to the compiler to get it up and running. Then I will describe how the programming language used to generate the circuits works. Lastly I will cover the bug I found in the compiler, how it was done and what results this had on the \DUPLO project.
+In this section, an introduce to the \DUPLO version of the $Frigate$ circuit compiler will be done. First an introduction to the requirements for the compiler, to work will be given. Then a describe of how the programming language used to generate the circuits works, and lastly a coverage of the bug found in the compiler. Here an explenation of how this was done and what affect that had on the \DUPLO project will be given.
 
-First of all, when installing the compiler some special versions of libraries are required. These laborers are not the newest updates and therefor they are required to be hold back. Following the instructions in the installation guide, which can be found via the appendix \ref{app:frigate}, and some amount of internet search, I was able to get it up and running. The hardware I have been using to run both $Frigate$ and \DUPLO, can be found in appendix \ref{app:hardware}. The standard version of $flex$ and $bison$, which ships with system I used, is newer then the one required by \DUPLO. This required, that an older versions was installed and kept back, such that no updates was made to no compatible versions. As the compilation of circuits are done once, and due not effect the compilation of the \DUPLO implementation, this is not a complete deal breaker for using $Frigate$. For future circuit compilations, this can be done using \verb|docker| via the duplo image linked in \ref{app:duplo-impl} where the right versions of $flex$ and $bison$ are installed. When I had $Frigate$ up and running I could start looking into the documentation of how it worked.
+First of all a reson will be given of why a circuit compiler is needed. Because the \DUPLO framework uses $garbled~circuits$ to represent its functionality, we need a way to give the functionality on a circuit form. This could be done by writing the circuit gate by gate. This is in no way feaseble, as when functions get the least complex, their respective circuits will have a great complexity. Small simple functions can be implemented in circuits, but not if the function should do some complex. One of the reasons for chosing \DUPLO was the ability to have a compiler translating a higher level programming language to its respective circuit representation. When using a compiler is is posible to go from one abstration level to another.
 
-The \DUPLO $Frigate$ compiler came shipped with the documentation for the first version and was not updated, when the functionality was extended to cover the \DUPLO framework. This should not be expected as the functionality of the compilers input language was not changed, but it resulted in some time consuming trial and error for my site, as the documentation was not well written and specified. The documentation is very short and not that precise. I have not in resent time worked with circuit compilation in the way $Frigate$ required, where a higher level abstraction language was used to generate a circuit. This resulted in some hard earned experience on very small examples. 
+First we need to install the compiler. To do this some instalation of libraries are required. These libraries are not the newest version and are therefore not easily installed. Following the instructions in the installation guide will get the libaries installed. The hardware I have been using to run both $Frigate$ and \DUPLO, can be found in appendix \ref{app:hardware}. The packaged required by $Frigate$ is $flex$ and $bison$. The specific versions required by $Frigate$ is older then the one in my package management system. They were therefore required to be hold back, such that no updates was installed and brok the $Frigate$ compiler. To ensure a consistency on the system a \verb|docker| image was created, such that the correct versions was allways installe. This can be found via the link it the docker image in \ref{app:duplo-impl}. When $Frigate$ was up and running it was time to look into the documentation.
+
+The documentation for the \DUPLO $Frigate$ compiler was from the first version. This was not updated, when the functionality was extended to cover the \DUPLO framework. This is what could be expected as the functionality of the compilers input language was not changed. Because the documentation was weak at pints it resulted in some time consuming trial and error. It allways takes some time to get familiare with a new programming language. This resulted in some hard earned experience on very small examples. An example is shown in figure \ref{fig:wir_ex}. In this example the $XOR$ is done on different parts of the inputs and stored in different sections of the output. A more detaild description of the programming language will follow in the next section.
 
 \begin{figure}[t]
 \begin{verbatim}
@@ -306,17 +311,15 @@ function SEED xorSeeds(SEED s1, SEED s2) {
 \label{fig:wir_ex}
 \end{figure}
 
-Some of the most important and different things to take into account, learned from my time using the $Frigate$ compiler is, the possibility to due wire access. It allows you to specify exactly which and how many wires should be represent in a certain value. This is bone by the following syntax \verb|s=s1{index:size}| in the $Frigate$ \verb|wir| format, the can be seen in figure \ref{fig:wir_ex}. This allows for single bit inputs to be translated into higher level representations, like variables. This gave some occasional frustrations, as it is not possible to access wires based on variable inputs. As these variable inputs cannot be predetermined by $Frigate$. This makes perfect sense, since the compiler cannot know which wires should be used for the representation. This is due to the fact that, circuits are static representations and therefore to overcome, variable wire access the compiler needs to know all possible wire accesses on compile time. It the compiler could due this, it could generate components for each of these possibilities. If this approach was chosen, it will result in a huge blow up in the complexity and number of gates in the circuit. Therefore it makes perfect sense that this feature is not implemented.
-A second point to remember, when working with $Frigate$ is that it due not allow for more than one level functions. This result in some restrictions when programming for circuit generation, compared to normal programming languages. This restriction makes it harder to create small functions with one single specific focus. This could be the case for generating a conditional swap gate, which we will due in section \ref{sec:con_swap}, or something similar. 
-Because of this restriction it is nor possible to generate recursive functions. Because circuits are a static representation, the problem of recursive functions cannot easily be handled, since the size of the circuit can not variate based on inputs, as it is generated ahead of time. 
-It is another case when looking at one level functions. I due not completely understand why this restriction was made. It may be because of the way they stitch the functions together when generating the circuit. It should be possible to handle multiple level functions via some intermediate representations. As long the depth of the function calls are static.
-Another small problem I had, which was not stated anywhere in the documentation, is that $Frigate$ only allows for assignments in the main method through function calls. This gives completely sense when looking into the \DUPLO circuit file.
+Some of the most important and different things to take into account is, the possibility to do wire access. It allows you to specify exactly which and how many wires should be represent in a certain value. This is done by the following syntax \verb|s=s1{index:size}| in the $Frigate$ \verb|wir| format, as shown in figure \ref{fig:wir_ex}. This allows for single bit inputs to be translated into higher level representations, like variables. The \verb|index| indicate the wire position to start from and the \verb|size| indicate ho many wires from \verb|index| should be included in the representation. Here it is important to notice that it is not possible to access wires based on variable inputs. As the variable input cannot be predetermined by the compiler. Which makes perfect sense because circuits are static representations.
 
-Otherwise the programming language used by $Frigate$ resembles the well known $C$ language. The compiler requires you to specify how many parties the functionality is used by, by the call to \verb|#parties n|. At the same time, it requires that the size of input is specified for each of the parties using \verb|input i size_i| and \verb|#output i size_o|. Other wise it allowed for definitions of constants, types, structures and imports just like in $C$ which allows for some easy readability. The programming language format used by $Frigate$ is called \verb|.wir|.
+A second point to remember, when working with $Frigate$ is that it do only allow one level functions. This puts some restrictions on the programming language, as it makes it harder to create small functions with a single specific focus. This restriction  may be because of the way the functions are stitched together when generating the circuit. When we look at the functions another thing to remember, is that $Frigate$ only aupports assignments of variables in the main method through function calls. This gives completely sense when looking into the \DUPLO circuit file, as the main function do not contain any gates.
+
+Otherwise the \verb|wir| programming language resembles the well known $C$ language. The compiler requires you to specify how many parties the functionality is used by, by the decleration of \verb|#parties n|, where \verb|n| is the number of parties. At the same time, it requires that the size of the input and output for each party is specified using \verb|input i size_i| and \verb|#output i size_o|, here \verb|i| is the party and \verb|size| is the size. The programming language allows for definitions of constants, types, structures and imports like $C$.
 
 \bigskip
 
-When the desired functionality has been implemented using the \verb|.wir| format described above used by $Frigate$, the compiler can be used to translate it in to a format the \DUPLO framework can handle. This can be done from inside the compiled \DUPLO framework, if the right versions of the libraries are installed. The compilation is done by running the following command:
+When the desired functionality has been implemented using the \verb|wir| format, the compiler can be used to translate it into the \DUPLO format. This is be done from inside the compiled \DUPLO framework, by running the following command:
 
 \begin{center}
 \begin{verbatim}
@@ -324,11 +327,11 @@ When the desired functionality has been implemented using the \verb|.wir| format
 \end{verbatim}
 \end{center}
 
-The \verb|-db| flag ensures that the right \DUPLO format is generated. This call to the compiler generates a bunch of different files with different file extensions. The file we are interested in is the file with the \verb|.wir.GC_duplo| extension. This is the file the \DUPLO framework uses as input.
+The \verb|-db| flag ensures that the \DUPLO format is generated. This call to the compiler generates a lot of different files, with different extensions. The file required by \DUPLO is the \verb|.wir.GC_duplo| file.
 
 \bigskip
 
-In this section I will cover the bug found in the \DUPLO updated version of the $Frigate$ compiler. I will cover how it was found and which fix it resulted in. First of all the \DUPLO framework has a functionality, that allows for evaluation of a circuit files without setting up both parties, the $Constructor$ and $Evaluator$. This possibility gave the opportunity to specify the input values, from both the $Constructor$ and the $Evaluator$, for the computation of the circuit. This allowed me to learn the outputs, in a fast return cycle. This possibility allowed me to study the implementations of the $Frigate$ compiler and learn the programming language. This opportunity allowed me to see how the algorithms, found in chapter \ref{ch:shuffle}, behaved compared to expected while implementing them. First I tried to implement the \FY algorithm in the \verb|.wir| format. The \FY algorithm is is described in details in section \ref{sec:fisher-yates}, and can be seen as algorithm \ref{alg:fisher_yates}. During the implementation, I encountered some problems, when trying to generate the seeds from the to parties to the shuffle algorithm. Because I did not have any prior experience working with the $Frigate$ compiler, I was not able to determine if the problem arose from the implementation of the algorithm, or the compiler it self. At first the focus was on the implementation, as my lack of experience working with $Frigate$ easily could lead to errors. After a lot of modulation and debugging, it was clear that something was wrong with the compiler. During the debugging process, I created a framework that allowed me to test the different modules of the implementation one by one. It became clear during this process that something was off when using the modulo reduction. The modulo operator \verb|%| is specified in the documentation and should therefore be possible to use. Since the compiler I used was a modified version of the original $Frigate$ compiler, the posibility was that a bug could have been introduced when adding the new \DUPLO featurs. Therefore the original $Frigate$ compiler was installed to test, if that implemetation introduced the same problems with my algorithm. This idea introduced a new problme, since the original version of $Frigate$ due not support the \DUPLO circuit format. Luckely for me the \DUPLO framework interpeter has supports for another circuit file format known as $bristol$\footnote{The $bristol$ format can be found at \newline\url{https://www.cs.bris.ac.uk/Research/CryptographySecurity/MPC/}}. To be able to use this file format, I wrote a parser that took the output format from the original $Frigate$ compiler, and translated that into the $bristol$ file format. This gave me the possibility to evaluate two different compiled circuit files that could tested to see if the problem also was in the original version of $Frigate$. Based on these two formats I created a test framework, to see if the two circuits generated the same output. This showed that there was a difference in the results produced, especially in the test case wher the modular reduction was used. When taking a deeper look at the problem, it became clear that not all gate types was generated during compilation, using the \DUPLO version of the $Frigate$ compiler. I was lucky that the modulo reduction triggered one of these gates. It was then discovered that multiple gates was not supported as they were forgotten during implementation.
+In this section I will cover the bug found in the \DUPLO updated version of the $Frigate$ compiler. I will cover how it was found and which fix was done to the \DUPLO project based on it. First of all, the \DUPLO framework has a functionality, that allows for evaluation of a circuit files without setting up both parties. This opportunity give the posibility to specify the input values, for the computation of the circuit. This gave the ability to test the functionality of the circuits in a fast return cycle. This helped when learning the \verb|wir| programming language. First I tried to implement the \FY shuffle algorithm, which will be introduced in chapter \ref{ch:shuffle}. During the implementation, an anormaly was encountered, when trying to use the modulo operater. The modulo operator \verb|%| is specified in the documentation and should therefore be possible to use. It could easily have been the problem that the implementation of the algorithm was wrong. Therefore at first the focus was debug the implementation. After a while it was clear that the compiler was the reason to the error. Since the compiler used, was a modified version of the original $Frigate$ compiler, the hinch was that a bug could have been introduced when adding the new \DUPLO functionality. The original $Frigate$ compiler was therefore installed to test, if that implemetation had the same problem. Since the original version of $Frigate$ did not support the \DUPLO circuit format, a parser was generated to translate that format into one \DUPLO could read. It is the case that \DUPLO supports two different file formats. One that uses circuit representated as on big circuit and one where the representation is splited into smaler functions. I was therefore not forced to make a new implementation of the \DUPLO features. The gate format used is known as $bristol$\footnote{The $bristol$ format can be found at \newline\url{https://www.cs.bris.ac.uk/Research/CryptographySecurity/MPC/}}. In this format a gate lookes like this \verb|n_i n_o [i] o g|, where \verb|n_i| is the number of input wires to the gate, \verb|n_o| the number of output wires, \verb|[i]| a list of length \verb|n_i| specifying the input wires indexes ins the circuit, \verb|o| specifying the ouput wire index in of the gate and lastly, \verb|g| specifying the gate type. An exor gate could then look liker \verb|2 1 1 2 3 XOR|. This was the original format used to rperesent gates in \DUPLO. This was late changed, because of the bug discovered. To be able to use the file format with the full circuit representation, I wrote a parser that took the output format from the original $Frigate$ compiler, and translated that into the $bristol$ format. The original compiler format for a gate looked like \verb|g o [i]|. Where the gate ty[e \verb|g| was represented as the truth values from table \ref{table:gate_rep}, where xor would be represented like \verb|0110 3 1 2|. After the parser was implemented a test run showed that there was a difference between the \DUPLO and the original version of the $Frigate$ compiler. Especially when the modulo reducion was used. This showed that not all gate types was implemented in the \DUPLO version. The modulo reduction triggered one of the gates not implemented and therefore coursed an error in the circuit.
 
 \bigskip
 
@@ -349,11 +352,11 @@ $l$ & $r$ & $0$ & NOR & $\neg x$ AND $y$ & $\neg x$ & $x$ AND $\neg y$ & $\neg y
 \end{table}
 
 
-This discovery resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format used for the circuits. Now all gates in the \DUPLO format has two input and one output wire. Because of this shift in supported gate types the amount of input and output wires was removed from the file format. The representation of gates changed, from the more readable type like $XOR$, to a truth table friendly type like $0110$, for the $XOR$ gate. This change in representation ensured that all $16$ gate types was implemented. The $16$ gate types can be seen in table \ref{table:gate_rep}. The representation of the two constant \textbf{0} and \textbf{1} are handled as special cases, because all gates now has two input wires. For the case of \textbf{0} it is handled as an $XOR$ gate, with input wires with the same value. For the case of \textbf{1} it is now handled as the $NXOR$ of input wires, with the same value.
+This discovery resulted in a fix of the new version of the $Frigate$ compiler and a complete change in the representation format used for the circuits. After this all gates in the \DUPLO format was changed from the bristol format. The new format used a cobination of the olde $Frigate$ format and the $bristol$, such that it looked like \verb|[i] o g|. The specification of \verb|n_i| anf \verb|n_o| was removed and the \verb|g| was changed from \verb|XOR| to \verb|0110|. This change in representation off gates only allow for gate types with two input wires. This allowed for the $16$ gate types shown in table \ref{table:gate_rep}. The representation of binary constants in the circuit for the \textbf{0}, is \verb|1 1 3 0110|, and \textbf{1}, \verb|1 1 3 1001|.
 
-In this way by going into details and debugging my implementation of the \FY algorithm, I have contributed to the \DUPLO project by reporting my findings and allowed them to fix this problem before publishing. This has helped to secure a stronger overall research product.
+In this way by going into details and debugging the implementation of the \FY algorithm, I contributed to the \DUPLO project by reporting the findings and thereby adding value to their reaserch project by securing a more stable product.
 
-They have made the changes to the compiles as mentioned above, but has not updated it to support modulo with a divisor that is not the power of $2$. This behavior of modulo is not mentioned anywhere in the documentation for the original or the updated compiler. When I discovered the problem of the modulo operator I used some time to research it, and see if a solution could be made to implement this functionality easily. During the research, I noticed that implementing the modulo reduction to some power of $2$ is simple. While the implementation of modulo with a divisor different from $2$ does not seem to be trivial. The problem was therefore left unfixed. In my implementation of \FY I use a workaround to overcome the problem, which is explained in section \ref{sec:fisher-yates}.
+While a fix was done to the $Frigate$ compiler, such that the gate types are now all supported. The modulo operater does not work for devisors with other values then thoes that are powers of two. This behavior of modulo is specified in the documentation and is a lefower from the original $Frigate$ project. Some time was used to research if a fix could be made, such that this functionality could be implement. While it seems to be rather easy to do the implementation of modulo with divisors of powers of two, it seemes not to be the case for all other devisors. The modolo operator was therefore left unfixed. In the implementation of \FY I use a workaround to overcome the problem, which is explained in section \ref{sec:fisher-yates}.
 
 \bigskip
 
@@ -1042,7 +1045,7 @@ Betting is a big part of online poker, therefore could it be interesting to add 
 
 \begin{appendices}
 \chapter{Code base}
-In this appendix references will presented to the different Code base used during the thesis. An URL to the repositories on GitHub will be presented together with a short description of where the most interesting parts for this project can be found.
+In this appendix references will presented to the different code bases used during the thesis. An URL to the repositories on GitHub will be presented together with a short description of where the most interesting parts for this project can be found.
 
 \section{Hardware}
 \label{app:hardware}
@@ -1061,7 +1064,7 @@ RAM:       12 GB
 I did not encounter any problems or slow compilations of circuits using this setup.
 
 \bigskip
-For the testing of the poker game that setup was not sufficient as it could not handle more than 500 simultaneous shuffles. Therefore another setup up was used:
+For the testing of the poker game, that setup was not sufficient as it could not handle more than 500 simultaneous shuffles. Therefore another setup was used:
 
 \begin{center}
 \begin{verbatim}
@@ -1073,18 +1076,18 @@ RAMS:      32 GB
 \end{verbatim}
 \end{center}
 
-This setup allowed for testing up to 3000 simultaneous shuffles, which is the highest done in the testing phase. When going up to 4000 this setup ran out of memory on the $Evaluator$ site of the execution.
+This setup allowed for testing up to 3000 simultaneous shuffles, which are the highest done in the testing phase. When going up to 4000, this setup ran out of memory on the $Evaluator$ site of the execution.
 
 
 \section{DUPLO}
 \label{app:duplo}
 The \DUPLO repository at GitHub can be found here \footnote{\url{https://github.com/AarhusCrypto/DUPLO}}.
 
-The documentation on the site is clear and illustrates clearly how it is compiled such it can be tested. No documentation is presented for how interacting with the framework can be done for new implementations. The most interesting part for the sake of this project is located in the \verb|src| folder. Here the \verb|CMakeLists.txt| file is located which specifies how the project is compiled, this is overwritten when compiling the poker implementation. The folder \verb|src/duplo-mains| is where the actual implementations of the $Constructor$ and $Evaluator$ can be found. Here the implementations of the poker $Constructor$ and $Evaluator$ will be placed.
+The documentation on the site is clear and clearly illustrates, how it is compiled such it can be tested. No documentation is presented for how interacting with the framework can be done for new implementations. The most interesting part for the sake of this project, is located in the \verb|src| folder. Here the \verb|CMakeLists.txt| file is located, which specifies how the project is compiled. This is overwritten when compiling the poker implementation. The folder \verb|src/duplo-mains| is where the actual implementations of the $Constructor$ and $Evaluator$ can be found. Here the implementations of the poker $Constructor$ and $Evaluator$ will be placed.
 
 \bigskip
 
-For a easy setup of duplo a docker instance is created and can be found here \footnote{\url{https://hub.docker.com/r/cbobach/duplo/}}. This can be started in docker version \verb|17.05.0-ce| with the command;
+For a easy setup of \DUPLO a docker instance is created and can be found on docker hub\footnote{\url{https://hub.docker.com/r/cbobach/duplo/}}. This can be started in docker version \verb|17.05.0-ce| with the command;
 
 \begin{center}
 \begin{verbatim}
@@ -1092,7 +1095,7 @@ docker run -it --network:host cbobach/duplo
 \end{verbatim}
 \end{center}
 
-The \verb|--network:host| flag is not secure but is the fart easy way to let the container running the $Constructor$ expose the port on which the container running the $Evaluator$ needs to connect. When running two instances of these docker containers the $Constructor$ and $Evaluator$ is run using one for these commands for the default setting:
+The \verb|--network:host| flag is not secure, but is the easy way to let the container running the $Constructor$, expose the port on which the container running the $Evaluator$ needs to connect. When running two instances of these docker containers the $Constructor$ and $Evaluator$ are runned using one for these commands for the default setting:
 
 \begin{center}
 \begin{verbatim}
@@ -1104,15 +1107,15 @@ The \verb|--network:host| flag is not secure but is the fart easy way to let the
 
 \section{Frigate}
 \label{app:frigate}
-The $Frigate$ repository on GitHub is a sub-repository to \DUPLO and can be found here \footnote{\url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}.
+The $Frigate$ repository on GitHub is a sub-repository to \DUPLO and can be found here\footnote{\url{https://github.com/AarhusCrypto/DUPLO/tree/master/frigate}}.
 
-The documentation of how $Frigate$ is installed with the special versions of some of the libraries used is specified in the documentation of \DUPLO, the link can be found in appendix \ref{app:duplo}. It is also here the documentation of how to compile \DUPLO circuit formats are done.
+The documentation of how $Frigate$ is installed with the special versions of some of the libraries used is specified in the documentation of \DUPLO. The link can be found in appendix \ref{app:duplo}. It is also here the documentation of how to compile \DUPLO circuit formats are done.
 
-To find the documentation of the \verb|.wir| file format a look should be taken at the link above. Here the specifications are of how wire access is done for example. It is here all functionalities that are implemented in the language is listed and how they are used. This documentation is narrow at some places. It does for example not specify that the modulo operator \verb|%| does only work on powers of $2$.
+To find the documentation of the \verb|.wir| file format a look should be taken at the link above. Here the specifications are of how wire access is done for example. It is here all functionalities that are implemented in the language are listed and how they are used. This documentation is not well written at some places. It does for example not specify that the modulo operator \verb|%| does only work on powers of $2$.
 
 \bigskip
 
-Using the docker image from docker \footnote{\url{https://hub.docker.com/r/cbobach/duplo/}} and running the following command, in docker version \verb|17.05.0-ce|;
+Using the docker image from docker hub\footnote{\url{https://hub.docker.com/r/cbobach/duplo/}} and running it, in docker version \verb|17.05.0-ce| with the followin command;
 
 \begin{center}
 \begin{verbatim}
@@ -1120,7 +1123,7 @@ docker run -it -v host/dir:container/dir cbobach/duplo
 \end{verbatim}
 \end{center}
 
-will start a container where it is possible to compiler a \verb|.wir| file using the container. For it to work the \verb|.wir| files has to be located in the \verb|host/dir| then the following command can be run to compile the functionality:
+This will start a container where it is possible to compiler a \verb|.wir| file using the container. For this to work the \verb|.wir| file has to be located in the \verb|host/dir| directory. If this is the case, the following command can be run to compile the functionality:
 
 \begin{center}
 \begin{verbatim}
@@ -1128,7 +1131,7 @@ will start a container where it is possible to compiler a \verb|.wir| file using
 \end{verbatim}
 \end{center}
 
-The \verb|-db| flag ensures that the \DUPLO file format is generated. The \DUPLO generate file will have the extension \verb|.wir.GC_duplo| this can then be fed to the \DUPLO framework using
+The \verb|-db| flag ensures that the \DUPLO file format is generated. The \DUPLO generated file will have the extension \verb|.wir.GC_duplo|. This can then be fed to the \DUPLO framework using
 
 \begin{center}
 \begin{verbatim}
@@ -1137,25 +1140,25 @@ The \verb|-db| flag ensures that the \DUPLO file format is generated. The \DUPLO
 \end{verbatim}
 \end{center}
 
-Then the new functionality will be run in the default \DUPLO environment.
+Then the new functionality will run in the default \DUPLO environment.
 
 \section{Poker}
 \label{app:poker}
-In this section the GitHub repositories to the different phases will be linked. A short description to where the interesting parts are will be presented.
+In this section the GitHub repositories to the different phases will be linked. A short description to where the interesting parts are, will be presented.
 
 \subsection{Circuit implementation}
 \label{app:circuit-impl}
 The different circuit \verb|.wir| files can be found in the GitHub repository here \footnote{\url{https://github.com/cbobach/speciale_circuit}}.
 
-Here the implementations of the shuffle algorithms are present as \verb|fisher_yates_shuffle.wir| and \verb|conditional_swap_shuffle*.wir|. Multiple versions of the \verb|conditiona_swap_shuffle*.wir| file are present with different values for \verb|*|. This is to allow for multiple sequential hands to be played, these files are then used when testing the \DUPLO framework to show its capabilities.
+Here the implementations of the shuffle algorithms are present as \verb|fisher_yates_shuffle.wir| and \verb|conditional_swap_shuffle*.wir|. Multiple versions of the \verb|conditiona_swap_shuffle*.wir| file are present with different values for \verb|*|. This is to allow for multiple sequential hands to be played. These files are then used when testing the \DUPLO framework to show its capabilities.
 
-Only one version of \verb|fisher_yates_shuffle.wir| is located in the repository since this is a slower algorithm in this setting as discussed in section \ref{sec:comp}.
+Only one version of \verb|fisher_yates_shuffle.wir| is located in the repository, since this is a slower algorithm in this setting as discussed in section \ref{sec:comp}.
 
-The files \verb|init_deck.wir|, \verb|xor_seed.wir| and \verb|correcred_seed.wir| are all modules that are called by the shuffle algorithms. The \verb|init_deck.wir| file is used by both algorithms and hard wires the card values to their respective wires. The \verb|corrected_seed.wir| file is used by the \FY algorithm to ensure that the seed fed to the shuffle algorithm is in the correct intervals as explained in section \ref{sec:fisher-yates}. The \verb|xor_seed.wir| file is used by the \CS algorithm to generate the seed used by the shuffle.
+The files \verb|init_deck.wir|, \verb|xor_seed.wir| and \verb|correcred_seed.wir| are all modules that are called by the shuffle algorithms. The \verb|init_deck.wir| file is used by both algorithms. This hard wires the card values to their respective wires in the circuit. The \verb|corrected_seed.wir| file is used by the \FY algorithm to ensure, that the seed fed to the shuffle algorithm is in the correct intervals as explained in section \ref{sec:fisher-yates}. The \verb|xor_seed.wir| file is used by the \CS algorithm to generate the seed used by the shuffle.
 
 \bigskip
 
-It is also here that the parser used to debug the $Frigate$ compiler is located and is found as \verb|parse.py|. The other python script found in \verb|count-gate-types.py| is the one used to compare the amount of gates types for the compiled circuits.
+It is also here, that the parser used to debug the $Frigate$ compiler is located and is found as \verb|parse.py|. The other python script found in \verb|count-gate-types.py| is the one used to compare the amount of gates types for the compiled circuits.
 
 
 \subsection{DUPLO implementation}
@@ -1166,7 +1169,7 @@ Here the \verb|CMakeLists.txt| file is the one used to overwrite the original fi
 
 \bigskip
 
-Back in the main dir of the repository the docker files are found for generating the docker instance of \DUPLO used in appendix \ref{app:duplo} and \ref{app:frigate}. This is the \verb|Dockerfile.DUPLO| where as the \verb|Dockerfile| is the one used for running the poker implementation. The \verb|entry-point.sh| files is used to start the docker containers correct such that they can run in the background. The docker image can be found here \footnote{\url{https://hub.docker.com/r/cbobach/duplo-poker/}}. The containers can be started using the following commands in docker:
+Back in the main directory of the repository, the docker files are found for generating the docker instance of \DUPLO used in appendix \ref{app:duplo} and \ref{app:frigate}. This is the \verb|Dockerfile.DUPLO| where as the \verb|Dockerfile| is the one used for running the poker implementation. The \verb|entry-point.sh| files are used to start the docker containers correct, such that they can run in the background. The docker image can be found here\footnote{\url{https://hub.docker.com/r/cbobach/duplo-poker/}}. The containers can be started using the following commands in docker:
 
 \begin{center}
 \begin{verbatim}
@@ -1175,9 +1178,9 @@ docker run -d -network:host cbobach/duplo-poker --profile eval -i 0
 \end{verbatim}
 \end{center}
 
-The \verb|-d| flag tells docker that the containers should run detached. The \verb|-p| flags tells docker to connect the host port $2800$ to the containers internal port 2800. \verb|--network:host| is the easy way to let the container have access to the hosts network ports. These commands will play one hand of poker in the background, if more are required the \verb|-f| flag can be used to specify which circuits should be used. To get the the right timings the \verb|-n| flag is required together with the \verb|-f| flag. This flag needs to reflect the number of simultaneous shuffles in the circuit.
+The \verb|-d| flag tells docker that the containers should run detached. The \verb|-p| flags tells docker to connect the host port $2800$ to the containers internal port 2800. \verb|--network:host| is the easy way to let the container have access to the hosts network ports. These commands will play one hand of poker in the background. If more are required the \verb|-f| flag can be used to specify which circuits should be used. To get the the right timings, the \verb|-n| flag is required together with the \verb|-f| flag. This flag needs to reflect the number of simultaneous shuffles in the circuit.
 
-Using the \verb|-it| flag in docker instead of the \verb|-d| flag allow for interactive rounds of poker if the \verb|-i| flag is set to $1$ instead of $0$.
+Using the \verb|-it| flag in docker instead of the \verb|-d| flag allow for interactive rounds, of poker if the \verb|-i| flag is set to $1$ instead of $0$.
 
 
 \subsection{Test results}
@@ -1321,7 +1324,7 @@ In the tables here the actual data used to generate the figure \ref{fig:mesureme
 
 \todo{Add log files to GitHub}
 
-\todo{describe test bash script}
+\todo{Describe test bash script}
 
 
 
